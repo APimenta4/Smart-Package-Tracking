@@ -105,14 +105,14 @@ O pedido enviado a este recurso segue o formato JSON:
         "codigo": 82737,
         "unidades": 5
       },
-      ...
+      //...
     ], 
     "sensores": [
       {
         "codigo": 432,
         "tipo": "ACELERACAO"
       },
-      ...
+      //...
     ], 
   }
 }
@@ -154,7 +154,7 @@ A resposta devolvida por este recurso segue o formato JSON:
               "categoria": "ELETRODOMESTICOS",
               "unidades": 5
             },
-            ...
+            //...
           ],
           "sensores": [
             {
@@ -162,13 +162,13 @@ A resposta devolvida por este recurso segue o formato JSON:
               "codigoVolume": 42,
               "tipo": "ACELERACAO"
             },
-            ...
+            //...
           ],
         },
-        ...
+        //...
       ]
     },
-    ...
+    //...
   ]
 }
 ```
@@ -209,7 +209,7 @@ A resposta devolvida por este recurso segue o formato JSON:
               "categoria": "ELETRODOMESTICOS",
               "unidades": 5
             },
-            ...
+            //...
           ],
           "sensores": [
             {
@@ -217,13 +217,13 @@ A resposta devolvida por este recurso segue o formato JSON:
               "codigoVolume": 42,
               "tipo": "ACELERACAO"
             },
-            ...
+            //...
           ],
         },
-        ...
+        //...
       ]
     },
-    ...
+    //...
   ]
 }
 ```
@@ -262,7 +262,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5
         },
-        ...
+        //...
       ],
       "sensores": [
         {
@@ -270,10 +270,10 @@ A resposta devolvida por este recurso segue o formato JSON:
           "codigoVolume": 42,
           "tipo": "ACELERACAO"
         },
-        ...
+        //...
       ],
     },
-    ...
+    //...
   ]
 }
 ```
@@ -312,7 +312,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5
         },
-        ...
+        //...
       ],
       "sensores": [
         {
@@ -320,10 +320,10 @@ A resposta devolvida por este recurso segue o formato JSON:
           "codigoVolume": 42,
           "tipo": "ACELERACAO"
         },
-        ...
+        //...
       ],
     },
-    ...
+    //...
   ]
 }
 ```
@@ -358,7 +358,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "categoria": "ELETRODOMESTICOS",
       "unidades": 5
     },
-    ...
+    //...
   ],
   "sensores": [
     {
@@ -366,7 +366,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "codigoVolume": 42,
       "tipo": "ACELERACAO"
     },
-    ...
+    //...
   ],
 }
 ```
@@ -401,7 +401,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "categoria": "ELETRODOMESTICOS",
       "unidades": 5
     },
-    ...
+    //...
   ],
   "sensores": [
     {
@@ -409,7 +409,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "codigoVolume": 42,
       "tipo": "ACELERACAO"
     },
-    ...
+    //...
   ],
 }
 ```
@@ -452,7 +452,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "aceleracao": 6,
       "timestamp":"2024-12-27 19:18:41"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -495,7 +495,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "aceleracao": 6,
       "timestamp":"2024-12-27 19:18:41"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -526,14 +526,14 @@ O pedido enviado a este recurso segue o formato JSON:
       "codigo":1256,
       "unidades": 5
     },
-    ...
+    //...
   ],
   "sensores": [
     {
       "codigo": 345,
       "tipo": "ACELERACAO"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -590,7 +590,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5
         },
-        ...
+        //...
       ],          
       "sensores": [
         {
@@ -598,10 +598,10 @@ A resposta devolvida por este recurso segue o formato JSON:
           "codigoVolume": 42,
           "tipo": "ACELERACAO"
         },
-        ...
+        //...
       ], 
     },
-    ...
+    //...
   ]
 }
 ```
@@ -638,7 +638,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5,
         },
-        ...
+        //...
       ],          
       "sensores": [
         {
@@ -646,10 +646,10 @@ A resposta devolvida por este recurso segue o formato JSON:
           "codigoVolume": 42,
           "tipo": "ACELERACAO"
         },
-        ...
+        //...
       ], 
     },
-    ...
+    //...
   ]
 }
 ```
@@ -684,7 +684,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "categoria": "ELETRODOMESTICOS",
       "unidades": 5
     },
-    ...
+    //...
   ],          
   "sensores": [
     {
@@ -692,7 +692,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "codigoVolume": 42,
       "tipo": "ACELERACAO"
     },
-    ...
+    //...
   ], 
 }
 ```
@@ -727,7 +727,7 @@ A resposta devolvida por este recurso segue o formato JSON:
         "categoria": "ELETRODOMESTICOS",
         "unidades": 5
     },
-    ...
+    //...
   ],          
   "sensores": [
     {
@@ -735,7 +735,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "codigoVolume": 42,
       "tipo": "ACELERACAO"
     },
-    ...
+    //...
   ], 
 }
 ```
@@ -778,7 +778,7 @@ A resposta devolvida por este recurso segue o formato JSON:
     "aceleracao": 6,
     "timestamp":"2024-12-27 19:18:41"
   },
-  ...
+  //...
 ]
 }
 ```
@@ -821,7 +821,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "aceleracao": 6,
       "timestamp":"2024-12-27 19:18:41"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -858,7 +858,7 @@ ou
     "aceleracao": 5
 }
 ou
-...
+//...
 ```
 
 ---
@@ -899,7 +899,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "aceleracao": 6,
       "timestamp":"2024-12-27 19:18:41"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -940,7 +940,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "aceleracao": 6,
       "timestamp":"2024-12-27 19:18:41"
     },
-    ...
+    //...
   ]
 }
 ```
@@ -978,7 +978,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "temperatura": 16,
       "timestamp":"2024-12-28 19:20:49"
     },
-    ...
+    //...
   ]
 }
 ```
