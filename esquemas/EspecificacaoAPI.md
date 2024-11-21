@@ -952,7 +952,7 @@ Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor 
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/leituras/{codigoSensor}
+/monitorizacao/api/sensor/{codigoSensor}/leituras
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
