@@ -386,32 +386,33 @@ Um utilizador, autenticado como cliente, consulta todos os volumes de uma das su
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "codigo": 42,
-  "codigoEncomenda": 2,
-  "estado": "ENTREGUE",
-  "dataEnvio": "28/12/2024",
-  "dataEntrega": "08/01/2024",
-  "tipoEmbalagem": "FRAGIL",
-  "produtos": [
-    {
-      "codigo":1256,
-      "codigoVolume": 42,
-      "descricao": "LG Smart TV LED UHD 4K",
-      "categoria": "ELETRODOMESTICOS",
-      "unidades": 5
-    },
-    ...
-  ],
-  "sensores": [
-    {
-      "codigo": 345,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO"
-    },
-    ...
-  ],
-}
+[
+  {
+    "codigo": 42,
+    "codigoEncomenda": 2,//? neste n é preciso mas no api/volumes é
+    "estado": "ENTREGUE",
+    "dataEnvio": "28/12/2024",
+    "dataEntrega": "08/01/2024",
+    "tipoEmbalagem": "FRAGIL",
+    "produtos": [
+      {
+        "codigo": 1256,
+        "descricao": "LG Smart TV LED UHD 4K",
+        "categoria": "ELETRODOMESTICOS",
+        "unidades": 5
+      },
+      ...
+    ],
+    "sensores": [
+      {
+        "codigo": 345,
+        "tipo": "ACELERACAO"
+      },
+      ...
+    ]
+  },
+  ...
+]
 ```
 
 ---
