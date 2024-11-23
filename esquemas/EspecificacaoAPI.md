@@ -9,6 +9,30 @@ Entrega Intermédia
 - Rodrigo Camarada, 2221486
 - Tiago Garcia, 2222277
 
+## TODOS
+
+- Codigos das relações não devem parecer nos json.
+  
+  Não me faz sentido mas o stor disse, vou so deixar aqui a nota.
+  Em alguns endpoints realmente não é preciso mas nos endpoints especificos
+  dessas entidades são necessarios.
+  Exemplo do que seria no [EP07](#ep07-consultar-volumes-associados-á-sua-encomenda)
+
+  ```json
+  // exemplo embalagem
+  {
+    "codigo": 441,
+    "volume": {
+      "codigo": 23,
+      "codigoEmbalagem": 23,// remover este
+    }
+  }
+  ```
+
+- Codigo dos volumes nas leituras
+
+  O stor reclamou, mas concordou quando lhe disse que faria sentido se tiveres a ver uma leitura pelo endoint das leituras vai dar jeito no front end para n teres de ir á pagina do sensor para depois poderes ir ao volume.
+
 ## Indíce
 
 - [Tipos de Usuários e Permissões](#tipos-de-usuários-e-permissões)
@@ -38,13 +62,13 @@ Entrega Intermédia
     - [EP16 Consultar Leituras Associadas a Um Volume](#ep16-consultar-leituras-associados-a-um-volume)
     - [EP17 Consultar Leituras Associadas ao Seu Volume](#ep17-consultar-leituras-associados-ao-seu-volume)
 
+  - [Sensores](#sensores)
+    - [EP18 Consultar as Leituras de um Sensor](#ep18-consultar-as-leituras-de-um-sensor)
+  
   - [Leituras](#leituras)
-    - [EP18 Enviar Leituras](#ep18-enviar-leituras)
-    - [EP19 Consultar Todas as Leituras](#ep19-consultar-todas-as-leituras)
-    - [EP20 Consultar Todas as Suas Leituras](#ep20-consultar-todas-as-suas-leituras)
-    - [EP21 Consultar as Leituras de um Sensor](#ep21-consultar-as-leituras-de-um-sensor)
-
-  - [Esquemas](#esquemas)
+    - [EP19 Enviar Leituras](#ep19-enviar-leituras)
+    - [EP20 Consultar Todas as Leituras](#ep20-consultar-todas-as-leituras)
+    - [EP21 Consultar Todas as Suas Leituras](#ep21-consultar-todas-as-suas-leituras)
 
 ### Tipos de Usuários e Permissões
 
@@ -133,44 +157,42 @@ Um utilizador, autenticado como gestor, consulta todas as encomendas.
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "encomendas": [
-    {        
-      "codigo": 2,
-      "codigoCliente": 65,
-      "volumes": [
-        {
-          "codigo": 42,
-          "codigoEncomenda": 2,
-          "estado": "ENTREGUE",
-          "dataEnvio": "28/12/2024",
-          "dataEntrega": "08/01/2024",
-          "tipoEmbalagem": "FRAGIL",
-          "produtos": [
-            {
-              "codigo":1256,
-              "codigoVolume": 42,
-              "descricao": "LG Smart TV LED UHD 4K",
-              "categoria": "ELETRODOMESTICOS",
-              "unidades": 5
-            },
-            ...
-          ],
-          "sensores": [
-            {
-              "codigo": 345,
-              "codigoVolume": 42,
-              "tipo": "ACELERACAO"
-            },
-            ...
-          ],
-        },
-        ...
-      ]
-    },
-    ...
-  ]
-}
+[
+  {        
+    "codigo": 2,
+    "codigoCliente": 65,
+    "volumes": [
+      {
+        "codigo": 42,
+        "codigoEncomenda": 2,
+        "estado": "ENTREGUE",
+        "dataEnvio": "28/12/2024",
+        "dataEntrega": "08/01/2024",
+        "tipoEmbalagem": "FRAGIL",
+        "produtos": [
+          {
+            "codigo":1256,
+            "codigoVolume": 42, //TODO chave composta?
+            "descricao": "LG Smart TV LED UHD 4K",
+            "categoria": "ELETRODOMESTICOS",
+            "unidades": 5
+          },
+          ...
+        ],
+        "sensores": [
+          {
+            "codigo": 345,
+            "codigoVolume": 42,
+            "tipo": "ACELERACAO"
+          },
+          ...
+        ],
+      },
+      ...
+    ]
+  },
+  ...
+]
 ```
 
 ---
@@ -188,44 +210,42 @@ Um utilizador, autenticado como cliente, consulta as suas encomendas.
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "encomendas": [
-    {        
-      "codigo": 2,
-      "codigoCliente": 65,
-      "volumes": [
-        {
-          "codigo": 42,
-          "codigoEncomenda": 2,
-          "estado": "ENTREGUE",
-          "dataEnvio": "28/12/2024",
-          "dataEntrega": "08/01/2024",
-          "tipoEmbalagem": "FRAGIL",
-          "produtos": [
-            {
-              "codigo":1256,
-              "codigoVolume": 42,
-              "descricao": "LG Smart TV LED UHD 4K",
-              "categoria": "ELETRODOMESTICOS",
-              "unidades": 5
-            },
-            ...
-          ],
-          "sensores": [
-            {
-              "codigo": 345,
-              "codigoVolume": 42,
-              "tipo": "ACELERACAO"
-            },
-            ...
-          ],
-        },
-        ...
-      ]
-    },
-    ...
-  ]
-}
+[
+  {        
+    "codigo": 2,
+    "codigoCliente": 65,
+    "volumes": [
+      {
+        "codigo": 42,
+        "codigoEncomenda": 2,
+        "estado": "ENTREGUE",
+        "dataEnvio": "28/12/2024",
+        "dataEntrega": "08/01/2024",
+        "tipoEmbalagem": "FRAGIL",
+        "produtos": [
+          {
+            "codigo":1256,
+            "codigoVolume": 42, //TODO chave composta?
+            "descricao": "LG Smart TV LED UHD 4K",
+            "categoria": "ELETRODOMESTICOS",
+            "unidades": 5
+          },
+          ...
+        ],
+        "sensores": [
+          {
+            "codigo": 345,
+            "codigoVolume": 42,
+            "tipo": "ACELERACAO"
+          },
+          ...
+        ],
+      },
+      ...
+    ]
+  },
+  ...
+]
 ```
 
 ---
@@ -257,7 +277,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "produtos": [
         {
           "codigo":1256,
-          "codigoVolume": 42,
+          "codigoVolume": 42,//TODO chave composta?
           "descricao": "LG Smart TV LED UHD 4K",
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5
@@ -307,7 +327,7 @@ A resposta devolvida por este recurso segue o formato JSON:
       "produtos": [
         {
           "codigo":1256,
-          "codigoVolume": 42,
+          "codigoVolume": 42,//TODO chave composta?
           "descricao": "LG Smart TV LED UHD 4K",
           "categoria": "ELETRODOMESTICOS",
           "unidades": 5
@@ -343,32 +363,35 @@ Um utilizador, autenticado como gestor, consulta todos os volumes de uma encomen
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "codigo": 42,
-  "codigoEncomenda": 2,
-  "estado": "ENTREGUE",
-  "dataEnvio": "28/12/2024",
-  "dataEntrega": "08/01/2024",
-  "tipoEmbalagem": "FRAGIL",
-  "produtos": [
-    {
-      "codigo":1256,
-      "codigoVolume": 42,
-      "descricao": "LG Smart TV LED UHD 4K",
-      "categoria": "ELETRODOMESTICOS",
-      "unidades": 5
-    },
-    ...
-  ],
-  "sensores": [
-    {
-      "codigo": 345,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO"
-    },
-    ...
-  ],
-}
+[
+  {
+    "codigo": 42,
+    "codigoEncomenda": 2,
+    "estado": "ENTREGUE",
+    "dataEnvio": "28/12/2024",
+    "dataEntrega": "08/01/2024",
+    "tipoEmbalagem": "FRAGIL",
+    "produtos": [
+      {
+        "codigo":1256,
+        "codigoVolume": 42,//TODO chave composta?
+        "descricao": "LG Smart TV LED UHD 4K",
+        "categoria": "ELETRODOMESTICOS",
+        "unidades": 5
+      },
+      ...
+    ],
+    "sensores": [
+      {
+        "codigo": 345,
+        "codigoVolume": 42,
+        "tipo": "ACELERACAO"
+      },
+      ...
+    ],
+  },
+  ...
+]
 ```
 
 ---
@@ -430,32 +453,30 @@ Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "leituras":[
-    {
-      "codigo": 3453,
-      "codigoVolume": 42,
-      "tipo": "GPS",
-      "coordenadas":[-50.61, 165.97],
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "codigo": 3454,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA",
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {
-      "codigo": 3455,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO",
-      "aceleracao": 6,
-      "timestamp":"2024-12-27 19:18:41"
-    },
-    ...
-  ]
-}
+[
+  {
+    "codigo": 3453,
+    "codigoVolume": 42,
+    "tipo": "GPS",
+    "coordenadas":[-50.61, 165.97],
+    "timestamp":"2024-12-28 19:30:23"
+  },
+  {
+    "codigo": 3454,
+    "codigoVolume": 42,
+    "tipo": "TEMPERATURA",
+    "temperatura": 15,
+    "timestamp":"2024-12-28 19:25:20"
+  },
+  {
+    "codigo": 3455,
+    "codigoVolume": 42,
+    "tipo": "ACELERACAO",
+    "aceleracao": 6,
+    "timestamp":"2024-12-27 19:18:41"
+  },
+  ...
+]
 ```
 
 ---
@@ -473,32 +494,30 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "leituras":[
-    {
-      "codigo": 3453,
-      "codigoVolume": 42,
-      "tipo": "GPS",
-      "coordenadas":[-50.61, 165.97],
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "codigo": 3454,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA",
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {
-      "codigo": 3455,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO",
-      "aceleracao": 6,
-      "timestamp":"2024-12-27 19:18:41"
-    },
-    ...
-  ]
-}
+[
+  {
+    "codigo": 3453,
+    "codigoVolume": 42,
+    "tipo": "GPS",
+    "coordenadas":[-50.61, 165.97],
+    "timestamp":"2024-12-28 19:30:23"
+  },
+  {
+    "codigo": 3454,
+    "codigoVolume": 42,
+    "tipo": "TEMPERATURA",
+    "temperatura": 15,
+    "timestamp":"2024-12-28 19:25:20"
+  },
+  {
+    "codigo": 3455,
+    "codigoVolume": 42,
+    "tipo": "ACELERACAO",
+    "aceleracao": 6,
+    "timestamp":"2024-12-27 19:18:41"
+  },
+  ...
+]
 ```
 
 ---
@@ -574,37 +593,35 @@ Um utilizador, autenticado como gestor, consulta todos os volumes.
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "volumes": [
-    {
-      "codigo": 42,
-      "codigoEncomenda": 2, 
-      "estado": "ENTREGUE",
-      "dataEnvio": "28/12/2024",
-      "dataEntrega": "08/01/2024",
-      "tipoEmbalagem": "FRAGIL",
-      "produtos": [
-        {
-          "codigo":1256,
-          "codigoVolume": 42,
-          "descricao": "LG Smart TV LED UHD 4K",
-          "categoria": "ELETRODOMESTICOS",
-          "unidades": 5
-        },
-        ...
-      ],          
-      "sensores": [
-        {
-          "codigo": 345,
-          "codigoVolume": 42,
-          "tipo": "ACELERACAO"
-        },
-        ...
-      ], 
-    },
-    ...
-  ]
-}
+[
+  {
+    "codigo": 42,
+    "codigoEncomenda": 2, 
+    "estado": "ENTREGUE",
+    "dataEnvio": "28/12/2024",
+    "dataEntrega": "08/01/2024",
+    "tipoEmbalagem": "FRAGIL",
+    "produtos": [
+      {
+        "codigo":1256,
+        "codigoVolume": 42,//TODO chave composta?
+        "descricao": "LG Smart TV LED UHD 4K",
+        "categoria": "ELETRODOMESTICOS",
+        "unidades": 5
+      },
+      ...
+    ],          
+    "sensores": [
+      {
+        "codigo": 345,
+        "codigoVolume": 42,
+        "tipo": "ACELERACAO"
+      },
+      ...
+    ], 
+  },
+  ...
+]
 ```
 
 ---
@@ -622,37 +639,35 @@ Um utilizador, autenticado como cliente, consulta todos os seus volumes.
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "volumes": [
-    {
-      "codigo": 42,
-      "codigoEncomenda": 2, 
-      "estado": "ENTREGUE",
-      "dataEnvio": "28/12/2024",
-      "dataEntrega": "08/01/2024",
-      "tipoEmbalagem": "FRAGIL",
-      "produtos": [
-        {
-          "codigo":1256,
-          "codigoVolume": 42,
-          "descricao": "LG Smart TV LED UHD 4K",
-          "categoria": "ELETRODOMESTICOS",
-          "unidades": 5,
-        },
-        ...
-      ],          
-      "sensores": [
-        {
-          "codigo": 345,
-          "codigoVolume": 42,
-          "tipo": "ACELERACAO"
-        },
-        ...
-      ], 
-    },
-    ...
-  ]
-}
+[
+  {
+    "codigo": 42,
+    "codigoEncomenda": 2, 
+    "estado": "ENTREGUE",
+    "dataEnvio": "28/12/2024",
+    "dataEntrega": "08/01/2024",
+    "tipoEmbalagem": "FRAGIL",
+    "produtos": [
+      {
+        "codigo":1256,
+        "codigoVolume": 42,//TODO chave composta?
+        "descricao": "LG Smart TV LED UHD 4K",
+        "categoria": "ELETRODOMESTICOS",
+        "unidades": 5,
+      },
+      ...
+    ],          
+    "sensores": [
+      {
+        "codigo": 345,
+        "codigoVolume": 42,
+        "tipo": "ACELERACAO"
+      },
+      ...
+    ], 
+  },
+  ...
+]
 ```
 
 ---
@@ -680,7 +695,7 @@ A resposta devolvida por este recurso segue o formato JSON:
   "produtos": [
     {
       "codigo":1256,
-      "codigoVolume": 42,
+      "codigoVolume": 42,//TODO chave composta?
       "descricao": "LG Smart TV LED UHD 4K",
       "categoria": "ELETRODOMESTICOS",
       "unidades": 5
@@ -723,7 +738,7 @@ A resposta devolvida por este recurso segue o formato JSON:
   "produtos": [
     {
         "codigo":1256,
-        "codigoVolume": 42,
+        "codigoVolume": 42,//TODO chave composta?
         "descricao": "LG Smart TV LED UHD 4K",
         "categoria": "ELETRODOMESTICOS",
         "unidades": 5
@@ -756,8 +771,7 @@ Um utilizador, autenticado como gestor, consulta as leituras dos sensores de um 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "leituras":[
+[
   {
     "codigoSensor": 3453,
     "codigoVolume": 42,
@@ -781,7 +795,6 @@ A resposta devolvida por este recurso segue o formato JSON:
   },
   ...
 ]
-}
 ```
 
 ---
@@ -799,161 +812,44 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{
-  "leituras":[
-    {
-      "codigoSensor": 3453,
-      "codigoVolume": 42,
-      "tipo": "GPS",
-      "coordenadas":[-50.61, 165.97],
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "codigoSensor": 3453,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA",
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {     
-      "codigoSensor": 3453,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO",
-      "aceleracao": 6,
-      "timestamp":"2024-12-27 19:18:41"
-    },
-    ...
-  ]
-}
+[
+  {
+    "codigoSensor": 3453,
+    "codigoVolume": 42,
+    "tipo": "GPS",
+    "coordenadas":[-50.61, 165.97],
+    "timestamp":"2024-12-28 19:30:23"
+  },
+  {
+    "codigoSensor": 3453,
+    "codigoVolume": 42,
+    "tipo": "TEMPERATURA",
+    "temperatura": 15,
+    "timestamp":"2024-12-28 19:25:20"
+  },
+  {     
+    "codigoSensor": 3453,
+    "codigoVolume": 42,
+    "tipo": "ACELERACAO",
+    "aceleracao": 6,
+    "timestamp":"2024-12-27 19:18:41"
+  },
+  ...
+]
 ```
 
 ---
 
-### Leituras
+### Sensores
 
-#### `EP18` Enviar Leituras
-
-Um sensor envia uma nova leitura para o sistema de monitorização.
-
-**HTTP POST** para o sítio:
-
-```text
-/monitorizacao/api/leituras
-```
-
-O pedido enviado a este recurso segue o formato JSON:
-
-```json
-{
-    "codigoSensor": 5321,
-    "coordenadas": [-50.61, 165.97]
-}
-ou
-{
-    "codigoSensor": 5331,
-    "temperatura": 12
-}
-ou
-{
-    "codigoSensor": 5451,
-    "aceleracao": 5
-}
-ou
-...
-```
-
----
-
-#### `EP19` Consultar Todas as Leituras
-
-Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
-
-**HTTP GET** para o sítio:
-
-```text
-/monitorizacao/api/leituras
-```
-
-A resposta devolvida por este recurso segue o formato JSON:
-
-```json
-{
-  "leituras":[
-    {
-      "codigoSensor": 3453,
-      "codigoVolume": 42,
-      "tipo": "GPS",
-      "coordenadas":[-50.61, 165.97],
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "codigoSensor": 3454,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA",
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {
-      "codigoSensor": 3455,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO",
-      "aceleracao": 6,
-      "timestamp":"2024-12-27 19:18:41"
-    },
-    ...
-  ]
-}
-```
-
-#### `EP20` Consultar Todas as Suas Leituras
-
-Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
-
-**HTTP GET** para o sítio:
-
-```text
-/monitorizacao/api/leituras
-```
-
-A resposta devolvida por este recurso segue o formato JSON:
-
-```json
-{
-  "leituras":[
-    {
-      "codigoSensor": 3453,
-      "codigoVolume": 42,
-      "tipo": "GPS",
-      "coordenadas":[-50.61, 165.97],
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "codigoSensor": 3454,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA",
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {
-      "codigoSensor": 3455,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO",
-      "aceleracao": 6,
-      "timestamp":"2024-12-27 19:18:41"
-    },
-    ...
-  ]
-}
-```
-
-#### `EP21` Consultar as Leituras de Um Sensor
+#### `EP18` Consultar as Leituras de Um Sensor
 
 Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
 
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/sensor/{codigoSensor}/leituras
+/monitorizacao/api/sensores/{codigoSensor}/leituras
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -984,62 +880,117 @@ A resposta devolvida por este recurso segue o formato JSON:
 }
 ```
 
-## Esquemas
+---
 
-Encomenda:
+### Leituras
 
-- codigo
-- codigoCliente
-- volumes
+#### `EP19` Enviar Leituras
 
-Volume:
+Um sensor envia uma nova leitura para o sistema de monitorização.
 
-- codigo
-- codigoEncomenda
-- estado
-- dataEnvio
-- dataEntrega
-- embalagem
-- sensores
+**HTTP POST** para o sítio:
 
-Embalagem:
+```text
+/monitorizacao/api/leituras
+```
 
-- codigo
-- codigoVolume
-- tipos (lista de enumerações)
-- produtos
+O pedido enviado a este recurso segue o formato JSON:
 
-Produto:
+```json
+{
+  "codigoSensor": 5321,
+  "coordenadas": [-50.61, 165.97]
+}
+ou
+{
+  "codigoSensor": 5331,
+  "temperatura": 12
+}
+ou
+{
+  "codigoSensor": 5451,
+  "aceleracao": 5
+}
+ou
+...
+```
 
-- id
-- codigo
-- unidades
+---
 
-Informação Produto:
+#### `EP20` Consultar Todas as Leituras
 
-- codigo
-- descriçao
-- categoria (enumeração)
+Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 
-> categoria informa se o produto ja vem com sensor ou nao (e quais os tipos)
+**HTTP GET** para o sítio:
 
-Sensor:
+```text
+/monitorizacao/api/leituras
+```
 
-- codigo
-- volume
-- tipo (enumeração)
+A resposta devolvida por este recurso segue o formato JSON:
 
-Leitura:
+```json
+[
+  {
+    "codigoSensor": 3453,
+    "codigoVolume": 42,
+    "tipo": "GPS",
+    "coordenadas":[-50.61, 165.97],
+    "timestamp":"2024-12-28 19:30:23"
+  },
+  {
+    "codigoSensor": 3454,
+    "codigoVolume": 42,
+    "tipo": "TEMPERATURA",
+    "temperatura": 15,
+    "timestamp":"2024-12-28 19:25:20"
+  },
+  {
+    "codigoSensor": 3455,
+    "codigoVolume": 42,
+    "tipo": "ACELERACAO",
+    "aceleracao": 6,
+    "timestamp":"2024-12-27 19:18:41"
+  },
+  ...
+]
+```
 
-- id
-- codigoSensor
-- tipo (enumeração igual as dos sensores)
-- timestamp (colocado obrigatoriamente pela aplicação monitorização no momento em que a leitura chega)
-- valores (Variam consoante o tipo de sensor)
+#### `EP21` Consultar Todas as Suas Leituras
 
-Cliente: (para depois - cargos diferentes)
+Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
 
-OBS:
+**HTTP GET** para o sítio:
 
-- username: da jeito ter algo diferente do nome se implementarmos login)
-- email: para o caso de querermos implementar as notificações por email como extra // *ISA*
+```text
+/monitorizacao/api/leituras
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+[
+  {
+    "codigoSensor": 3453,
+    "codigoVolume": 42,
+    "tipo": "GPS",
+    "coordenadas":[-50.61, 165.97],
+    "timestamp":"2024-12-28 19:30:23"
+  },
+  {
+    "codigoSensor": 3454,
+    "codigoVolume": 42,
+    "tipo": "TEMPERATURA",
+    "temperatura": 15,
+    "timestamp":"2024-12-28 19:25:20"
+  },
+  {
+    "codigoSensor": 3455,
+    "codigoVolume": 42,
+    "tipo": "ACELERACAO",
+    "aceleracao": 6,
+    "timestamp":"2024-12-27 19:18:41"
+  },
+  ...
+]
+```
