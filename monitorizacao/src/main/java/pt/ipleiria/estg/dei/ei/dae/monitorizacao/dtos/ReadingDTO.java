@@ -3,8 +3,8 @@ package pt.ipleiria.estg.dei.ei.dae.monitorizacao.dtos;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.auxiliar.GeoCoordinate;
 
 public class ReadingDTO {
-    private int sensorCode;
-    private int volumeCode;
+    private long sensorCode;
+    private long volumeCode;
 
     private long timestamp;
     // values, sad. but it is what it is...
@@ -13,7 +13,7 @@ public class ReadingDTO {
     private int acceleration;
     /// ...
 
-    public ReadingDTO(int sensorCode, int volumeCode, long timestamp, GeoCoordinate coordinate, float temperature, int acceleration) {
+    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, GeoCoordinate coordinate, float temperature, int acceleration) {
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
         this.timestamp = timestamp;
@@ -25,19 +25,19 @@ public class ReadingDTO {
     public ReadingDTO() {
     }
 
-    public int getSensorCode() {
+    public long getSensorCode() {
         return sensorCode;
     }
 
-    public void setSensorCode(int sensorCode) {
+    public void setSensorCode(long sensorCode) {
         this.sensorCode = sensorCode;
     }
 
-    public int getVolumeCode() {
+    public long getVolumeCode() {
         return volumeCode;
     }
 
-    public void setVolumeCode(int volumeCode) {
+    public void setVolumeCode(long volumeCode) {
         this.volumeCode = volumeCode;
     }
 
