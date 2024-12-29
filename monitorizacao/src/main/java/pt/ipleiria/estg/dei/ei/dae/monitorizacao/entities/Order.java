@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,13 +28,15 @@ public class Order implements Serializable {
     @NotEmpty
     private List<Sensor> volumes;
 
-    public Order(long code, Client client, List<Sensor> volumes) {
+    public Order(long code, Client client) {
         this.code = code;
         this.client = client;
-        this.volumes = volumes;
+        this.volumes = new ArrayList<>();
     }
 
-    public Order() {}
+    public Order() {
+        this.volumes = new ArrayList<>();
+    }
 
     public long getCode() {
         return code;
