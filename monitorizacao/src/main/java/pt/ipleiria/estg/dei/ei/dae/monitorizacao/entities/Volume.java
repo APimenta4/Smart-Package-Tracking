@@ -60,4 +60,44 @@ public class Volume {
     public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
     }
+
+    public @NotNull Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(@NotNull Order order) {
+        this.order = order;
+    }
+
+    public VolumeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VolumeStatus status) {
+        this.status = status;
+    }
+
+    public PackingType getPackingType() {
+        return packingType;
+    }
+
+    public void setPackingType(PackingType packingType) {
+        this.packingType = packingType;
+    }
+
+    public Date getShippedDate() {
+        return shippedDate;
+    }
+
+    public void setShippedDate(Date shippedDate) {
+        this.shippedDate = shippedDate;
+    }
+
+    public Date getDeliveredDate() {
+        return deliveredDate;
+    }
+
+    public void setDeliveredDate(Date deliveredDate) {
+        this.deliveredDate = deliveredDate;
+    }
 }
