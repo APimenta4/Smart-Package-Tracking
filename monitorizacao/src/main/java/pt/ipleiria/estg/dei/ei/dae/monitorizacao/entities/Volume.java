@@ -2,7 +2,10 @@ package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -11,7 +14,12 @@ public class Volume {
     @Id
     private long code;
 
+    @ManyToOne
+    @NotNull
+    private Order order;
+
     @OneToMany(mappedBy = "sensor")
+    @NotEmpty
     private List<Sensor> sensors;
 
     public Volume() {
