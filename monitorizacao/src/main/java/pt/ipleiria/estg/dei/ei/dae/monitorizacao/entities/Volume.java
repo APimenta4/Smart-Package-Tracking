@@ -1,9 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.PackingType;
@@ -14,6 +11,13 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "volumes")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllVolumes",
+                query = "SELECT v FROM Volume v"
+        )
+})
 public class Volume {
     @Id
     private long code;
@@ -30,8 +34,7 @@ public class Volume {
 
     private Date deliveredDate;
 
-    @OneToMany(mappedBy = "sensor")
-    @NotEmpty
+    @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors;
 
     public Volume(Order order, VolumeStatus status, PackingType packingType) {
@@ -51,14 +54,6 @@ public class Volume {
 
     public void setCode(long code) {
         this.code = code;
-    }
-
-    public List<Sensor> getSensors() {
-        return sensors;
-    }
-
-    public void setSensors(List<Sensor> sensors) {
-        this.sensors = sensors;
     }
 
     public @NotNull Order getOrder() {
@@ -99,5 +94,25 @@ public class Volume {
 
     public void setDeliveredDate(Date deliveredDate) {
         this.deliveredDate = deliveredDate;
+    }
+
+    public List<Sensor> getSensors() {
+        return new ArrayList<>(sensors);
+    }
+
+    public void addSensors(Sensor sensor) {
+        sensors.add(sensor);
+    }
+
+    public void removeSensors(Sensor sensor) {
+        sensors.remove(sensor);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Volume other = (Volume) o;
+        return this.code == other.code;
     }
 }

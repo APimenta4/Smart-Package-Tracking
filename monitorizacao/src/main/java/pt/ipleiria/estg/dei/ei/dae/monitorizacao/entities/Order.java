@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
@@ -24,9 +23,8 @@ public class Order implements Serializable {
     @NotNull
     private Client client;
 
-    @OneToMany(mappedBy = "volumes")
-    @NotEmpty
-    private List<Sensor> volumes;
+    @OneToMany(mappedBy = "order")
+    private List<Volume> volumes;
 
     public Order(long code, Client client) {
         this.code = code;
@@ -54,11 +52,16 @@ public class Order implements Serializable {
         this.client = client;
     }
 
-    public List<Sensor> getVolumes() {
-        return volumes;
+    public List<Volume> getVolumes() {
+        return new ArrayList<>(volumes);
     }
 
-    public void setVolumes(List<Sensor> volumes) {
-        this.volumes = volumes;
+    public void addVolume(Volume volume) {
+        volumes.add(volume);
     }
+
+    public void removeVolume(Volume volume) {
+        volumes.remove(volume);
+    }
+
 }

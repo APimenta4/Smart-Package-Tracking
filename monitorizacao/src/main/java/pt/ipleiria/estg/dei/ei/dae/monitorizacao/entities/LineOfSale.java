@@ -4,16 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@IdClass(LineOfSalePK.class)
+@IdClass(LineOfSalePK.class) // Specify the composite key class
 public class LineOfSale {
+
     @Id
     @ManyToOne
-    @JoinColumn(name = "VOLUME_CODE", referencedColumnName = "CODE")
     private Volume volume;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "PRODUCT_CODE", referencedColumnName = "CODE")
     private Product product;
 
     @NotNull
