@@ -3,9 +3,11 @@ package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 @Entity
 @IdClass(LineOfSalePK.class) // Specify the composite key class
-public class LineOfSale {
+public class LineOfSale implements Serializable {
 
     @Id
     @ManyToOne
