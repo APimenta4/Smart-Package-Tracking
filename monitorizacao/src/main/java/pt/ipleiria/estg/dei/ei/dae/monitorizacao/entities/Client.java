@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "clients")
@@ -28,13 +30,18 @@ public class Client implements Serializable {
     @NotNull
     private String email;
 
+    @OneToMany(mappedBy = "client")
+    private List<Order> orders;
+
     public Client() {
+        this.orders = new ArrayList<>();
     }
 
     public Client(String name, String password, String email) {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.orders = new ArrayList<>();
     }
 
     public long getCode() {
@@ -67,6 +74,18 @@ public class Client implements Serializable {
 
     public void setEmail(@Email @NotNull String email) {
         this.email = email;
+    }
+
+    public List<Order> getOrders() {
+        return new ArrayList<>(orders);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
     }
 
     @Override
