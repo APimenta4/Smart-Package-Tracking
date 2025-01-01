@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "clients")
 @NamedQueries({
@@ -12,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
                 query = "SELECT c FROM Client c"
         )
 })
-public class Client {
+public class Client implements Serializable {
     @Id
     private long code;
 
