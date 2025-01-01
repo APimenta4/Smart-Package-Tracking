@@ -100,11 +100,11 @@ public class Volume {
         return new ArrayList<>(sensors);
     }
 
-    public void addSensors(Sensor sensor) {
+    public void addSensor(Sensor sensor) {
         sensors.add(sensor);
     }
 
-    public void removeSensors(Sensor sensor) {
+    public void removeSensor(Sensor sensor) {
         sensors.remove(sensor);
     }
 
