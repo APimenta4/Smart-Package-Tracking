@@ -23,12 +23,12 @@ public class Client implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
-    private String password;
-
     @Email
     @NotNull
     private String email;
+
+    @NotNull
+    private String password;
 
     @OneToMany(mappedBy = "client")
     private List<Order> orders;
@@ -37,10 +37,11 @@ public class Client implements Serializable {
         this.orders = new ArrayList<>();
     }
 
-    public Client(String name, String password, String email) {
+    public Client(long code, String name, String email, String password) {
+        this.code = code;
         this.name = name;
-        this.password = password;
         this.email = email;
+        this.password = password;
         this.orders = new ArrayList<>();
     }
 
@@ -60,20 +61,20 @@ public class Client implements Serializable {
         this.name = name;
     }
 
-    public @NotNull String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@NotNull String password) {
-        this.password = password;
-    }
-
     public @Email @NotNull String getEmail() {
         return email;
     }
 
     public void setEmail(@Email @NotNull String email) {
         this.email = email;
+    }
+
+    public @NotNull String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotNull String password) {
+        this.password = password;
     }
 
     public List<Order> getOrders() {

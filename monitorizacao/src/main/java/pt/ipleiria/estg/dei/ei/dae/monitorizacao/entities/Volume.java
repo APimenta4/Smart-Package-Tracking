@@ -37,7 +37,8 @@ public class Volume {
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors;
 
-    public Volume(Order order, VolumeStatus status, PackingType packingType) {
+    public Volume(long code, Order order, VolumeStatus status, PackingType packingType) {
+        this.code = code;
         this.order = order;
         this.status = status;
         this.packingType = packingType;
