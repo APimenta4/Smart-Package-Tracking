@@ -458,7 +458,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigo": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
@@ -499,7 +500,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigo": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
@@ -776,7 +778,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigoSensor": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
@@ -817,7 +820,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigoSensor": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
@@ -899,7 +903,8 @@ O pedido enviado a este recurso segue o formato JSON:
 ```json
 {
   "codigoSensor": 5321,
-  "coordenadas": [-50.61, 165.97]
+  "latitude": -50.61,
+  "longitude": 165.97
 }
 ou
 {
@@ -935,7 +940,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigoSensor": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
@@ -974,7 +980,8 @@ A resposta devolvida por este recurso segue o formato JSON:
     "codigoSensor": 3453,
     "codigoVolume": 42,
     "tipo": "GPS",
-    "coordenadas":[-50.61, 165.97],
+    "latitude": -50.61,
+    "longitude": 165.97,
     "timestamp":"2024-12-28 19:30:23"
   },
   {
