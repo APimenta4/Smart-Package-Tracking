@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class User implements Serializable {
+public abstract class User extends Versionable implements Serializable {
     @Id
     private long code;
 
