@@ -31,7 +31,7 @@ public class ClientBean {
                 Long.class
         );
         query.setParameter("code", code);
-        return (Long)query.getSingleResult() == 1L;
+        return (Long)query.getSingleResult() > 0L;
     }
 
     public void create(long code, String name, String email, String password)
