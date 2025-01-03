@@ -8,15 +8,12 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
-import org.hibernate.Hibernate;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Manager;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.security.Hasher;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless
