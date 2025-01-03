@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "readings_temperature")
 public abstract class ReadingTemperature extends Reading implements Serializable {
 
     @NotNull

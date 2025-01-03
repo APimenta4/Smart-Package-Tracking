@@ -1,11 +1,15 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 @Entity
-@IdClass(LineOfSalePK.class) // Specify the composite key class
-public class LineOfSale {
+@Table(name="lines_of_sale")
+@IdClass(LineOfSalePK.class)
+public class LineOfSale implements Serializable {
 
     @Id
     @ManyToOne
@@ -15,7 +19,7 @@ public class LineOfSale {
     @ManyToOne
     private Product product;
 
-    @NotNull
+    @Min(value = 1, message = "Quantity must be at least 1")
     private long quantity;
 
     public LineOfSale(Volume volume, Product product, long quantity) {

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.PackingType;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.VolumeStatus;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
                 query = "SELECT v FROM Volume v"
         )
 })
-public class Volume {
+public class Volume implements Serializable {
     @Id
     private long code;
 
@@ -37,7 +38,8 @@ public class Volume {
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors;
 
-    public Volume(Order order, VolumeStatus status, PackingType packingType) {
+    public Volume(long code, Order order, VolumeStatus status, PackingType packingType) {
+        this.code = code;
         this.order = order;
         this.status = status;
         this.packingType = packingType;
@@ -100,11 +102,11 @@ public class Volume {
         return new ArrayList<>(sensors);
     }
 
-    public void addSensors(Sensor sensor) {
+    public void addSensor(Sensor sensor) {
         sensors.add(sensor);
     }
 
-    public void removeSensors(Sensor sensor) {
+    public void removeSensor(Sensor sensor) {
         sensors.remove(sensor);
     }
 

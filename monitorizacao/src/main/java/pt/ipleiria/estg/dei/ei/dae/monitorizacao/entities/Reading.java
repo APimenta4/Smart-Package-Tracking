@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "readings")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Reading implements Serializable {
     @Id
     private long code;

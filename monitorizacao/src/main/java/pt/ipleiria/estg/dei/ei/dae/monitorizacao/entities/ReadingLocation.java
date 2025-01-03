@@ -1,11 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
 @Entity
+@Table(name = "readings_location")
 public abstract class ReadingLocation extends Reading implements Serializable {
 
     @NotNull

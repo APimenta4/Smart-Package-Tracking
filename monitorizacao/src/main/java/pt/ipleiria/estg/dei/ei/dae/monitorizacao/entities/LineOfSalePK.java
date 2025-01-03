@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
-import jakarta.persistence.Entity;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -10,16 +8,13 @@ public class LineOfSalePK implements Serializable {
     private Volume volume;
     private Product product;
 
-    // Default constructor (required by JPA)
     public LineOfSalePK() {}
 
-    // Constructor to initialize fields
     public LineOfSalePK(Volume volume, Product product) {
         this.volume = volume;
         this.product = product;
     }
 
-    // Getters and setters
     public Volume getVolume() {
         return volume;
     }
@@ -36,7 +31,6 @@ public class LineOfSalePK implements Serializable {
         this.product = product;
     }
 
-    // Override equals and hashCode based on composite key fields
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
