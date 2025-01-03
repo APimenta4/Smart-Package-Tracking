@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllProducts",
-                query = "SELECT o FROM Product o"
+                query = "SELECT p FROM Product p"
         )
 })
 public class Product implements Serializable {

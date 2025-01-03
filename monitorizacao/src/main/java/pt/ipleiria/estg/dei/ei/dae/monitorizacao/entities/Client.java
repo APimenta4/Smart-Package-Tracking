@@ -16,20 +16,7 @@ import java.util.List;
                 query = "SELECT c FROM Client c"
         )
 })
-public class Client implements Serializable {
-    @Id
-    private long code;
-
-    @NotNull
-    private String name;
-
-    @Email
-    @NotNull
-    private String email;
-
-    @NotNull
-    private String password;
-
+public class Client extends User implements Serializable {
     @OneToMany(mappedBy = "client")
     private List<Order> orders;
 
@@ -38,43 +25,8 @@ public class Client implements Serializable {
     }
 
     public Client(long code, String name, String email, String password) {
-        this.code = code;
-        this.name = name;
-        this.email = email;
-        this.password = password;
+        super(code, name, email, password);
         this.orders = new ArrayList<>();
-    }
-
-    public long getCode() {
-        return code;
-    }
-
-    public void setCode(long code) {
-        this.code = code;
-    }
-
-    public @NotNull String getName() {
-        return name;
-    }
-
-    public void setName(@NotNull String name) {
-        this.name = name;
-    }
-
-    public @Email @NotNull String getEmail() {
-        return email;
-    }
-
-    public void setEmail(@Email @NotNull String email) {
-        this.email = email;
-    }
-
-    public @NotNull String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@NotNull String password) {
-        this.password = password;
     }
 
     public List<Order> getOrders() {
@@ -87,13 +39,5 @@ public class Client implements Serializable {
 
     public void removeOrder(Order order) {
         orders.remove(order);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Client other = (Client) o;
-        return this.code == other.code;
     }
 }

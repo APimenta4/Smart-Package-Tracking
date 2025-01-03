@@ -20,7 +20,7 @@ public class Order implements Serializable {
     @Id
     private long code;
 
-    @NotNull
+    @ManyToOne
     private Client client;
 
     @OneToMany(mappedBy = "order")

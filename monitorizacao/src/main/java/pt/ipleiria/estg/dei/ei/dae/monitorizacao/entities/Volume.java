@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.PackingType;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.VolumeStatus;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
                 query = "SELECT v FROM Volume v"
         )
 })
-public class Volume {
+public class Volume implements Serializable {
     @Id
     private long code;
 
