@@ -59,7 +59,7 @@ public class ManagerBean {
         return manager;
     }
 
-    public void update(long code, String email, String name, String password)
+    public void update(long code, String email, String name)
             throws CustomEntityNotFoundException, IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
