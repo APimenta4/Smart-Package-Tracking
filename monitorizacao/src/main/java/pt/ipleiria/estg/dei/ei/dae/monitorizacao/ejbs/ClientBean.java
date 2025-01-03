@@ -1,12 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.ejbs;
 
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Client;
@@ -22,27 +22,21 @@ public class ClientBean {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB
+    private UserBean userBean;
+
     @Inject
     private Hasher hasher;
 
     private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
 
-    public boolean exists(long code) {
-        Query query = em.createQuery(
-                "SELECT COUNT(s.code) FROM Client s WHERE s.code = :code",
-                Long.class
-        );
-        query.setParameter("code", code);
-        return (Long)query.getSingleResult() > 0L;
-    }
-
     public void create(long code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
-        if (exists(code)){
-            throw new CustomEntityExistsException("Client '" +code+ "'");
-        }
+        logger.info("Creating new client '" + code + "'");
+
+        // TODO: this assertExists isn't doing nothing it throws even if is commented
+        userBean.assertExists(code);
         try {
-            logger.info("Creating new client '" + code + "'");
             Client client = new Client(code, name, email, hasher.hash(password));
             em.persist(client);
 
@@ -75,7 +69,6 @@ public class ClientBean {
         Client client = find(code);
         em.lock(client, LockModeType.OPTIMISTIC);
         logger.info("Updating client '" + code + "'");
-        // Update user
         client.setEmail(email);
         client.setName(name);
     }

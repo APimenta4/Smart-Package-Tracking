@@ -1,12 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.ejbs;
 
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Manager;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
@@ -21,27 +21,20 @@ public class ManagerBean {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB
+    private UserBean userBean;
+
     @Inject
     private Hasher hasher;
 
     private static final Logger logger = Logger.getLogger("ejbs.ManagerBean");
 
-    public boolean exists(long code) {
-        Query query = em.createQuery(
-                "SELECT COUNT(s.code) FROM Client s WHERE s.code = :code",
-                Long.class
-        );
-        query.setParameter("code", code);
-        return (Long)query.getSingleResult() > 0L;
-    }
-
     public void create(long code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
-        if (exists(code)){
-            throw new CustomEntityExistsException("Manager '" +code+ "'");
-        }
+        logger.info("Creating new manager '" + code + "'");
+        // TODO: this assertExists isn't doing nothing it throws even if is commented
+        userBean.assertExists(code);
         try {
-            logger.info("Creating new manager '" + code + "'");
             Manager manager = new Manager(code, name, email, hasher.hash(password));
             em.persist(manager);
 
@@ -67,7 +60,6 @@ public class ManagerBean {
         Manager manager = find(code);
         em.lock(manager, LockModeType.OPTIMISTIC);
         logger.info("Updating manager '" + code + "'");
-        // Update user
         manager.setEmail(email);
         manager.setName(name);
     }
