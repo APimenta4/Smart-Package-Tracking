@@ -16,6 +16,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFound
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.security.Hasher;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class ClientBean {
@@ -24,6 +25,8 @@ public class ClientBean {
 
     @Inject
     private Hasher hasher;
+
+    private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
 
     public boolean exists(long code) {
         Query query = em.createQuery(
@@ -40,6 +43,7 @@ public class ClientBean {
             throw new CustomEntityExistsException("Client '" +code+ "'");
         }
         try {
+            logger.info("Creating new client '" + code + "'");
             Client client = new Client(code, name, email, hasher.hash(password));
             em.persist(client);
 
@@ -57,10 +61,6 @@ public class ClientBean {
         return client;
     }
 
-    public List<Client> findAll() {
-        return em.createNamedQuery("getAllClients", Client.class).getResultList();
-    }
-
     public Client findWithOrders(long code)
             throws CustomEntityNotFoundException {
         Client client = find(code);
@@ -74,13 +74,11 @@ public class ClientBean {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
         }
         Client client = find(code);
-
         em.lock(client, LockModeType.OPTIMISTIC);
+        logger.info("Updating client '" + code + "'");
         // Update user
         client.setEmail(email);
         client.setName(name);
-        // TODO: Remove password from here
-        client.setPassword(hasher.hash(password));
     }
 
 
@@ -88,6 +86,7 @@ public class ClientBean {
         Client client = find(code);
         // Locks object that is being deleted
         em.lock(client, LockModeType.PESSIMISTIC_WRITE);
+        logger.info("Deleting client '" + code + "'");
         em.remove(client);
     }
 }
