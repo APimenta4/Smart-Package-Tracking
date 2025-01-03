@@ -14,7 +14,7 @@ public abstract class ReadingLocation extends Reading implements Serializable {
     private double latitude;
     private double longitude;
 
-    public ReadingLocation(long code, Sensor sensor, long timestamp, double latitude, double longitude) {
+    public ReadingLocation(String code, Sensor sensor, long timestamp, double latitude, double longitude) {
         super(code, sensor, timestamp);
         this.latitude = latitude;
         this.longitude = longitude;

@@ -17,7 +17,7 @@ import java.util.Objects;
 })
 public class Sensor extends Versionable implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @ManyToOne
     @NotNull
@@ -27,7 +27,7 @@ public class Sensor extends Versionable implements Serializable {
     private SensorType type;
 
 
-    public Sensor(long code, Volume volume, SensorType type) {
+    public Sensor(String code, Volume volume, SensorType type) {
         this.code = code;
         this.volume = volume;
         this.type = type;
@@ -36,11 +36,11 @@ public class Sensor extends Versionable implements Serializable {
     public Sensor() {
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

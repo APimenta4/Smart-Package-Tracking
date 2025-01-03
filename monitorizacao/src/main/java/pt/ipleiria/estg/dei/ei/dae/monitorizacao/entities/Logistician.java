@@ -19,7 +19,7 @@ public class Logistician extends User implements Serializable {
     public Logistician() {
     }
 
-    public Logistician(long code, String name, String email, String password) {
+    public Logistician(String code, String name, String email, String password) {
         super(code, name, email, password);
     }
 }

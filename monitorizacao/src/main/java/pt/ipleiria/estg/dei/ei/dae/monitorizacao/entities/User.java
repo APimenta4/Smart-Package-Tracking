@@ -13,7 +13,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class User extends Versionable implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @NotNull
     private String name;
@@ -28,18 +28,18 @@ public abstract class User extends Versionable implements Serializable {
     public User() {
     }
 
-    public User(long code, String name, String email, String password) {
+    public User(String code, String name, String email, String password) {
         this.code = code;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

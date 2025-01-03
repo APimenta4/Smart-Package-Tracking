@@ -13,7 +13,7 @@ public abstract class ReadingAcceleration extends Reading implements Serializabl
     @NotNull
     private double acceleration;
 
-    public ReadingAcceleration(long code, Sensor sensor, long timestamp, double acceleration) {
+    public ReadingAcceleration(String code, Sensor sensor, long timestamp, double acceleration) {
         super(code, sensor, timestamp);
         this.acceleration = acceleration;
     }

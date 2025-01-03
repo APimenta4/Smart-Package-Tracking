@@ -21,7 +21,7 @@ import java.util.List;
 })
 public class Volume extends Versionable implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @ManyToOne
     @NotNull
@@ -38,7 +38,7 @@ public class Volume extends Versionable implements Serializable {
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors;
 
-    public Volume(long code, Order order, VolumeStatus status, PackingType packingType) {
+    public Volume(String code, Order order, VolumeStatus status, PackingType packingType) {
         this.code = code;
         this.order = order;
         this.status = status;
@@ -50,11 +50,11 @@ public class Volume extends Versionable implements Serializable {
         this.sensors = new ArrayList<>();
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

@@ -16,14 +16,14 @@ import java.io.Serializable;
 })
 public class Product implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @NotNull
     private CategoryType category;
 
     private String description;
 
-    public Product(long code, CategoryType category, String description) {
+    public Product(String code, CategoryType category, String description) {
         this.code = code;
         this.category = category;
         this.description = description;
@@ -32,11 +32,11 @@ public class Product implements Serializable {
     public Product() {}
 
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

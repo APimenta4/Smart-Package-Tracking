@@ -19,7 +19,7 @@ public class Manager extends User implements Serializable {
     public Manager() {
     }
 
-    public Manager(long code, String name, String email, String password) {
+    public Manager(String code, String name, String email, String password) {
         super(code, name, email, password);
     }
 }
