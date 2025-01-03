@@ -23,7 +23,7 @@ public class Client extends User implements Serializable {
         this.orders = new ArrayList<>();
     }
 
-    public Client(long code, String name, String email, String password) {
+    public Client(String code, String name, String email, String password) {
         super(code, name, email, password);
         this.orders = new ArrayList<>();
     }

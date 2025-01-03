@@ -12,7 +12,7 @@ public abstract class ReadingTemperature extends Reading implements Serializable
     @NotNull
     private double temperature;
 
-    public ReadingTemperature(long code, Sensor sensor, long timestamp, double temperature) {
+    public ReadingTemperature(String code, Sensor sensor, long timestamp, double temperature) {
         super(code, sensor, timestamp);
         this.temperature = temperature;
     }

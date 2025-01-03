@@ -28,9 +28,18 @@ public class ClientBean {
     @Inject
     private Hasher hasher;
 
+    public boolean exists(String code) {
+        Query query = em.createQuery(
+                "SELECT COUNT(s.code) FROM Client s WHERE s.code = :code",
+                Long.class
+        );
+        query.setParameter("code", code);
+        return (Long)query.getSingleResult() == 1L;
+    }
+
     private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
 
-    public void create(long code, String name, String email, String password)
+    public void create(String code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new client '" + code + "'");
 
@@ -45,7 +54,7 @@ public class ClientBean {
         }
     }
 
-    public Client find(long code)
+    public Client find(String code)
             throws CustomEntityNotFoundException {
         Client client = em.find(Client.class, code);
         if (client == null) {
@@ -54,14 +63,18 @@ public class ClientBean {
         return client;
     }
 
-    public Client findWithOrders(long code)
+    public List<Client> findAll() {
+        return em.createNamedQuery("getAllClients", Client.class).getResultList();
+    }
+
+    public Client findWithOrders(String code)
             throws CustomEntityNotFoundException {
         Client client = find(code);
         Hibernate.initialize(client.getOrders());
         return client;
     }
 
-    public void update(long code, String email, String name)
+    public void update(String code, String email, String name, String password)
             throws CustomEntityNotFoundException, IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
@@ -74,7 +87,7 @@ public class ClientBean {
     }
 
 
-    public void delete(long code) throws CustomEntityNotFoundException {
+    public void delete(String code) throws CustomEntityNotFoundException {
         Client client = find(code);
         // Locks object that is being deleted
         em.lock(client, LockModeType.PESSIMISTIC_WRITE);

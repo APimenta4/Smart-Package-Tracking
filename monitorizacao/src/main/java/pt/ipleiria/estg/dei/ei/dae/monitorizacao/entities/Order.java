@@ -18,7 +18,7 @@ import java.util.List;
 })
 public class Order extends Versionable implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @ManyToOne
     private Client client;
@@ -26,7 +26,7 @@ public class Order extends Versionable implements Serializable {
     @OneToMany(mappedBy = "order")
     private List<Volume> volumes;
 
-    public Order(long code, Client client) {
+    public Order(String code, Client client) {
         this.code = code;
         this.client = client;
         this.volumes = new ArrayList<>();
@@ -36,11 +36,11 @@ public class Order extends Versionable implements Serializable {
         this.volumes = new ArrayList<>();
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
