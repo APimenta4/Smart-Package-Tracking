@@ -15,7 +15,6 @@ import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsEx
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.security.Hasher;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless
