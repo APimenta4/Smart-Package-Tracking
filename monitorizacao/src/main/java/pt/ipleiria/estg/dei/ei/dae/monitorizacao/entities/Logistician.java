@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "logisticians")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllLogisticians",

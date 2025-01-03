@@ -12,18 +12,19 @@ import java.util.logging.Logger;
 public class ConfigBean {
     @EJB
     private ClientBean clientBean;
+    @EJB
+    private LogisticianBean logisticianBean;
+    @EJB
+    private ManagerBean managerBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
     @PostConstruct
     public void populateDB()
     {
-        System.out.println("Hello Java EE!");
+        logger.info("Starting to populate DB");
 
-
-
-        // create clients
-        logger.info("Creating clients ...");
+        logger.info("Creating users");
         try {
             clientBean.create("1","manuel", "manuel@mail.pt","123");
             clientBean.create("2","joao", "joao@mail.pt","123");
@@ -31,7 +32,5 @@ public class ConfigBean {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         }
-
-
     }
 }
