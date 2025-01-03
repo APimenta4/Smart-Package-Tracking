@@ -19,7 +19,7 @@ import java.util.List;
                 query = "SELECT v FROM Volume v"
         )
 })
-public class Volume implements Serializable {
+public class Volume extends Versionable implements Serializable {
     @Id
     private long code;
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Entity
 @Table(name="lines_of_sale")
 @IdClass(LineOfSalePK.class)
-public class LineOfSale implements Serializable {
+public class LineOfSale extends Versionable implements Serializable {
 
     @Id
     @ManyToOne

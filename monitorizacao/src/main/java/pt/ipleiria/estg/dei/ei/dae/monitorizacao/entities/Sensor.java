@@ -15,7 +15,7 @@ import java.util.Objects;
                 query = "SELECT s FROM Sensor s"
         )
 })
-public class Sensor implements Serializable {
+public class Sensor extends Versionable implements Serializable {
     @Id
     private long code;
 
