@@ -6,5 +6,5 @@ import jakarta.persistence.Version;
 @MappedSuperclass
 public class Versionable {
     @Version
-    private long version;
+    private int version;
 }
