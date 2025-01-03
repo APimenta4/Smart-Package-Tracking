@@ -8,8 +8,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
-import org.hibernate.Hibernate;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Client;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Manager;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
@@ -18,14 +17,14 @@ import pt.ipleiria.estg.dei.ei.dae.monitorizacao.security.Hasher;
 import java.util.logging.Logger;
 
 @Stateless
-public class ClientBean {
+public class ManagerBean {
     @PersistenceContext
     private EntityManager em;
 
     @Inject
     private Hasher hasher;
 
-    private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
+    private static final Logger logger = Logger.getLogger("ejbs.ManagerBean");
 
     public boolean exists(long code) {
         Query query = em.createQuery(
@@ -39,32 +38,25 @@ public class ClientBean {
     public void create(long code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         if (exists(code)){
-            throw new CustomEntityExistsException("Client '" +code+ "'");
+            throw new CustomEntityExistsException("Manager '" +code+ "'");
         }
         try {
-            logger.info("Creating new client '" + code + "'");
-            Client client = new Client(code, name, email, hasher.hash(password));
-            em.persist(client);
+            logger.info("Creating new manager '" + code + "'");
+            Manager manager = new Manager(code, name, email, hasher.hash(password));
+            em.persist(manager);
 
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
     }
 
-    public Client find(long code)
+    public Manager find(long code)
             throws CustomEntityNotFoundException {
-        Client client = em.find(Client.class, code);
-        if (client == null) {
+        Manager manager = em.find(Manager.class, code);
+        if (manager == null) {
             throw new CustomEntityNotFoundException("Client '" +code+ "'");
         }
-        return client;
-    }
-
-    public Client findWithOrders(long code)
-            throws CustomEntityNotFoundException {
-        Client client = find(code);
-        Hibernate.initialize(client.getOrders());
-        return client;
+        return manager;
     }
 
     public void update(long code, String email, String name)
@@ -72,20 +64,19 @@ public class ClientBean {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
         }
-        Client client = find(code);
-        em.lock(client, LockModeType.OPTIMISTIC);
-        logger.info("Updating client '" + code + "'");
+        Manager manager = find(code);
+        em.lock(manager, LockModeType.OPTIMISTIC);
+        logger.info("Updating manager '" + code + "'");
         // Update user
-        client.setEmail(email);
-        client.setName(name);
+        manager.setEmail(email);
+        manager.setName(name);
     }
 
-
     public void delete(long code) throws CustomEntityNotFoundException {
-        Client client = find(code);
+        Manager manager = find(code);
         // Locks object that is being deleted
-        em.lock(client, LockModeType.PESSIMISTIC_WRITE);
+        em.lock(manager, LockModeType.PESSIMISTIC_WRITE);
         logger.info("Deleting client '" + code + "'");
-        em.remove(client);
+        em.remove(manager);
     }
 }

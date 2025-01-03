@@ -8,8 +8,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
-import org.hibernate.Hibernate;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Client;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Logistician;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
@@ -18,18 +17,18 @@ import pt.ipleiria.estg.dei.ei.dae.monitorizacao.security.Hasher;
 import java.util.logging.Logger;
 
 @Stateless
-public class ClientBean {
+public class LogisticianBean {
     @PersistenceContext
     private EntityManager em;
 
     @Inject
     private Hasher hasher;
 
-    private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
+    private static final Logger logger = Logger.getLogger("ejbs.LogisticianBean");
 
     public boolean exists(long code) {
         Query query = em.createQuery(
-                "SELECT COUNT(s.code) FROM Client s WHERE s.code = :code",
+                "SELECT COUNT(l.code) FROM Logistician l WHERE l.code = :code",
                 Long.class
         );
         query.setParameter("code", code);
@@ -39,32 +38,25 @@ public class ClientBean {
     public void create(long code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         if (exists(code)){
-            throw new CustomEntityExistsException("Client '" +code+ "'");
+            throw new CustomEntityExistsException("Logistician '" +code+ "'");
         }
         try {
-            logger.info("Creating new client '" + code + "'");
-            Client client = new Client(code, name, email, hasher.hash(password));
-            em.persist(client);
+            logger.info("Creating new logistician '" + code + "'");
+            Logistician logistician = new Logistician(code, name, email, hasher.hash(password));
+            em.persist(logistician);
 
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
     }
 
-    public Client find(long code)
+    public Logistician find(long code)
             throws CustomEntityNotFoundException {
-        Client client = em.find(Client.class, code);
-        if (client == null) {
-            throw new CustomEntityNotFoundException("Client '" +code+ "'");
+        Logistician logistician = em.find(Logistician.class, code);
+        if (logistician == null) {
+            throw new CustomEntityNotFoundException("Logistician '" +code+ "'");
         }
-        return client;
-    }
-
-    public Client findWithOrders(long code)
-            throws CustomEntityNotFoundException {
-        Client client = find(code);
-        Hibernate.initialize(client.getOrders());
-        return client;
+        return logistician;
     }
 
     public void update(long code, String email, String name)
@@ -72,20 +64,20 @@ public class ClientBean {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
         }
-        Client client = find(code);
-        em.lock(client, LockModeType.OPTIMISTIC);
-        logger.info("Updating client '" + code + "'");
+        Logistician logistician = find(code);
+        em.lock(logistician, LockModeType.OPTIMISTIC);
+        logger.info("Updating logistician '" + code + "'");
         // Update user
-        client.setEmail(email);
-        client.setName(name);
+        logistician.setEmail(email);
+        logistician.setName(name);
     }
 
 
     public void delete(long code) throws CustomEntityNotFoundException {
-        Client client = find(code);
+        Logistician logistician = find(code);
         // Locks object that is being deleted
-        em.lock(client, LockModeType.PESSIMISTIC_WRITE);
-        logger.info("Deleting client '" + code + "'");
-        em.remove(client);
+        em.lock(logistician, LockModeType.PESSIMISTIC_WRITE);
+        logger.info("Deleting logistician '" + code + "'");
+        em.remove(logistician);
     }
 }
