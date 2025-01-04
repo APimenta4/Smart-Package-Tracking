@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "readings")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Reading implements Serializable {
     @Id
-    private long code;
+    private String code;
 
     @ManyToOne
     @NotNull
@@ -19,7 +19,7 @@ public abstract class Reading implements Serializable {
     @NotNull
     private long timestamp;
 
-    public Reading(long code, Sensor sensor, long timestamp) {
+    public Reading(String code, Sensor sensor, long timestamp) {
         this.code = code;
         this.sensor = sensor;
         this.timestamp = timestamp;
@@ -27,11 +27,11 @@ public abstract class Reading implements Serializable {
 
     public Reading() {}
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

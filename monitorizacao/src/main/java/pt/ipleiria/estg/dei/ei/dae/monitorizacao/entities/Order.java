@@ -16,17 +16,17 @@ import java.util.List;
                 query = "SELECT o FROM Order o"
         )
 })
-public class Order implements Serializable {
+public class Order extends Versionable implements Serializable {
     @Id
-    private long code;
+    private String code;
 
-    @NotNull
+    @ManyToOne
     private Client client;
 
     @OneToMany(mappedBy = "order")
     private List<Volume> volumes;
 
-    public Order(long code, Client client) {
+    public Order(String code, Client client) {
         this.code = code;
         this.client = client;
         this.volumes = new ArrayList<>();
@@ -36,11 +36,11 @@ public class Order implements Serializable {
         this.volumes = new ArrayList<>();
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

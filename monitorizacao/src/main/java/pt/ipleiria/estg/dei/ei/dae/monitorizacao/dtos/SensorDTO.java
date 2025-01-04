@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SensorDTO {
-    private long code;
-    private long volumeCode;
+    private String code;
+    private String volumeCode;
     private SensorType type;
 
-    public SensorDTO(long code, long volumeCode, SensorType type) {
+    public SensorDTO(String code, String volumeCode, SensorType type) {
         this.code = code;
         this.volumeCode = volumeCode;
         this.type = type;
@@ -36,19 +36,19 @@ public class SensorDTO {
     }
 
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public long getVolumeCode() {
+    public String getVolumeCode() {
         return volumeCode;
     }
 
-    public void setVolumeCode(long volumeCode) {
+    public void setVolumeCode(String volumeCode) {
         this.volumeCode = volumeCode;
     }
 
