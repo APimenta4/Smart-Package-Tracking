@@ -2,11 +2,42 @@
 import { ref, onMounted } from "vue";
 
 const isDark = ref(false);
+const showFindDeliveryDialog = ref(false);
+const showFindVolumeDialog = ref(false);
+const showFindReadingDialog = ref(false);
+const searchDeliveryCode = ref("");
+const searchVolumeCode = ref("");
+const searchReadingCode = ref("");
+const router = useRouter();
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
   document.documentElement.classList.toggle("app-dark", isDark.value);
   localStorage.setItem("dark-mode", isDark.value ? "enabled" : "disabled");
+}
+
+function searchDelivery() {
+  if (searchDeliveryCode.value) {
+    router.push(`/deliveries/${searchDeliveryCode.value}`);
+    searchDeliveryCode.value = "";
+    showFindDeliveryDialog.value = false;
+  }
+}
+
+function searchVolume() {
+  if (searchVolumeCode.value) {
+    router.push(`/volumes/${searchVolumeCode.value}`);
+    searchVolumeCode.value = "";
+    showFindVolumeDialog.value = false;
+  }
+}
+
+function searchReading() {
+  if (searchReadingCode.value) {
+    router.push(`/readings/${searchReadingCode.value}`);
+    searchReadingCode.value = "";
+    showFindReadingDialog.value = false;
+  }
 }
 
 const items = ref([
@@ -15,7 +46,7 @@ const items = ref([
     icon: "pi pi-truck",
     items: [
       {
-        label: "New Delivery",
+        label: "New Delivery (Logistica)",
         icon: "pi pi-plus",
         route: "/deliveries/new",
       },
@@ -27,7 +58,7 @@ const items = ref([
       {
         label: "Find Delivery",
         icon: "pi pi-search",
-        route: "/deliveries",
+        command: () => showFindDeliveryDialog.value = true
       },
     ],
   },
@@ -43,7 +74,7 @@ const items = ref([
       {
         label: "Find Volume",
         icon: "pi pi-search",
-        route: "/volumes",
+        command: () => showFindVolumeDialog.value = true
       },
     ],
   },
@@ -59,7 +90,7 @@ const items = ref([
       {
         label: "Find Reading",
         icon: "pi pi-search",
-        route: "/readings",
+        command: () => showFindReadingDialog.value = true
       },
     ],
   },
@@ -75,12 +106,10 @@ onMounted(() => {
   }
 });
 </script>
+
 <template>
   <NuxtLoadingIndicator />
-  <Menubar
-    :model="items"
-    class="border-t-0 border-l-0 border-r-0 rounded-none h-14"
-  >
+  <Menubar :model="items" class="border-t-0 border-l-0 border-r-0 rounded-none h-14">
     <template v-slot:start>
       <router-link to="/">
         <img src="/logo.png" alt="Logo" class="h-10 inline-block mr-2" />
@@ -123,4 +152,94 @@ onMounted(() => {
       </div>
     </template>
   </Menubar>
+
+  <Dialog 
+    v-model:visible="showFindDeliveryDialog" 
+    modal 
+    :header="'Find Delivery'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-truck text-xl"></i>
+        <span class="text-xl font-bold">Find Delivery</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span class="p-float-label">
+        <label for="searchDeliveryCode">Delivery Code</label>
+        <InputText 
+          id="searchDeliveryCode" 
+          v-model="searchDeliveryCode" 
+          class="w-full"
+          @keyup.enter="searchDelivery"
+        />
+      </span>
+    </div>
+    
+    <template #footer>
+      <Button label="Cancel" text @click="showFindDeliveryDialog = false" />
+      <Button label="Find" @click="searchDelivery" />
+    </template>
+  </Dialog>
+
+  <Dialog 
+    v-model:visible="showFindVolumeDialog" 
+    modal 
+    :header="'Find Volume'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-box text-xl"></i>
+        <span class="text-xl font-bold">Find Volume</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span class="p-float-label">
+        <label for="searchVolumeCode">Volume Code</label>
+        <InputText 
+          id="searchVolumeCode" 
+          v-model="searchVolumeCode" 
+          class="w-full"
+          @keyup.enter="searchVolume"
+        />
+      </span>
+    </div>
+    
+    <template #footer>
+      <Button label="Cancel" text @click="showFindVolumeDialog = false" />
+      <Button label="Find" @click="searchVolume" />
+    </template>
+  </Dialog>
+
+  <Dialog 
+    v-model:visible="showFindReadingDialog" 
+    modal 
+    :header="'Find Reading'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+      <i class="pi pi-history text-xl"></i>
+      <span class="text-xl font-bold">Find Reading</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span class="p-float-label">
+        <label for="searchReadingCode">Reading Code</label>
+        <InputText 
+          id="searchReadingCode" 
+          v-model="searchReadingCode" 
+          class="w-full"
+          @keyup.enter="searchReading"
+        />
+      </span>
+    </div>
+    
+    <template #footer>
+      <Button label="Cancel" text @click="showFindReadingDialog = false" />
+      <Button label="Find" @click="searchReading" />
+    </template>
+  </Dialog>
 </template>

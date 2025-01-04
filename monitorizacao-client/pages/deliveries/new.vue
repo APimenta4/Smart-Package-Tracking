@@ -133,14 +133,14 @@ const saveEditedVolume = () => {
         <div class="flex gap-4 mb-6">
           <div class="flex-1">
             <span class="p-float-label">
-              <label for="deliveryCode">Delivery Code</label>
               <InputText id="deliveryCode" v-model="deliveryCode" class="w-full" />
+              <label for="deliveryCode">Delivery Code</label>
             </span>
           </div>
           <div class="flex-1">
             <span class="p-float-label">
-              <label for="clientCode">Client Code</label>
               <InputText id="clientCode" v-model="clientCode" class="w-full" />
+              <label for="clientCode">Client Code</label>
             </span>
           </div>
         </div>
@@ -209,18 +209,18 @@ const saveEditedVolume = () => {
     >
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
-          <label for="volumeCode">Volume Code</label>
           <InputText id="volumeCode" v-model="newVolume.code" class="w-full" />
+          <label for="volumeCode">Volume Code</label>
         </span>
 
         <span class="p-float-label">
-          <label for="packageType">Package Type</label>
           <Dropdown 
             id="packageType"
             v-model="newVolume.packageType" 
             :options="['FRAGILE', 'REGULAR']"
             class="w-full"
           />
+          <label for="packageType">Package Type</label>
         </span>
 
         <!-- Products Section -->
@@ -235,7 +235,7 @@ const saveEditedVolume = () => {
           </div>
           <div v-for="(product, index) in newVolume.products" :key="index" class="flex gap-2 mb-2">
             <InputText v-model="product.code" placeholder="Product Code" class="flex-1" />
-            <InputNumber v-model="product.quantity" placeholder="Qty" :min="1" class="flex-1" />
+            <InputNumber v-model="product.quantity" placeholder="Qty" :min="1" class="w-24" />
           </div>
         </div>
 
@@ -255,7 +255,7 @@ const saveEditedVolume = () => {
               v-model="sensor.type" 
               :options="['TEMPERATURE', 'SPEED', 'GPS']" 
               placeholder="Type"
-              class="flex-1"
+              class="w-40"
             />
           </div>
         </div>
@@ -282,13 +282,13 @@ const saveEditedVolume = () => {
         </span>
 
         <span class="p-float-label">
-          <label for="editPackageType">Package Type</label>
           <Dropdown 
             id="editPackageType"
             v-model="editVolume.packageType" 
             :options="['FRAGILE', 'REGULAR']"
             class="w-full"
           />
+          <label for="editPackageType">Package Type</label>
         </span>
 
         <!-- Products Section -->
@@ -307,15 +307,15 @@ const saveEditedVolume = () => {
           <div class="flex justify-between items-center mb-4">
             <h4 class="font-semibold">Sensors</h4>
           </div>
-            <div v-for="(sensor, index) in editVolume.sensors" :key="index" class="flex gap-2 mb-2">
+          <div v-for="(sensor, index) in editVolume.sensors" :key="index" class="flex gap-2 mb-2">
             <InputText v-model="sensor.code" placeholder="Sensor Code" class="flex-1" />
             <Dropdown 
               v-model="sensor.type" 
               :options="['TEMPERATURE', 'SPEED', 'GPS']" 
               placeholder="Type"
-              class="w-60"
+              class="w-40"
             />
-            </div>
+          </div>
         </div>
       </div>
 
