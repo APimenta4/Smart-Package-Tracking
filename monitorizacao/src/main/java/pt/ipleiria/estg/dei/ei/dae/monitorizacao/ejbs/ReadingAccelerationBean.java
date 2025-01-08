@@ -32,7 +32,7 @@ public class ReadingAccelerationBean {
 
     public void create(Sensor sensor, double acceleration)
             throws CustomConstraintViolationException {
-        logger.info("Creating new temperature acceleration");
+        logger.info("Creating new acceleration reading");
         try {
             ReadingAcceleration readingAcceleration = new ReadingAcceleration(sensor, Instant.now(),acceleration);
             em.persist(readingAcceleration);

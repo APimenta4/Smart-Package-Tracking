@@ -32,7 +32,7 @@ public class ReadingLocationBean {
 
     public void create(Sensor sensor, double latitude, double longitude)
             throws CustomConstraintViolationException {
-        logger.info("Creating new temperature location");
+        logger.info("Creating new location reading");
         try {
             ReadingLocation readingLocation = new ReadingLocation(sensor, Instant.now(),latitude, longitude);
             em.persist(readingLocation);
