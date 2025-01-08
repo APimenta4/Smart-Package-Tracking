@@ -29,11 +29,12 @@ public class ManagerBean {
 
     private static final Logger logger = Logger.getLogger("ejbs.ManagerBean");
 
-    public void create(long code, String name, String email, String password)
+    public void create(String code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new manager '" + code + "'");
-        // TODO: this assertExists isn't doing nothing it throws even if is commented
-        userBean.assertExists(code);
+        if (userBean.exists(code)) {
+            throw new CustomEntityExistsException("User '" + code + "'");
+        }
         try {
             Manager manager = new Manager(code, name, email, hasher.hash(password));
             em.persist(manager);
@@ -43,7 +44,7 @@ public class ManagerBean {
         }
     }
 
-    public Manager find(long code)
+    public Manager find(String code)
             throws CustomEntityNotFoundException {
         Manager manager = em.find(Manager.class, code);
         if (manager == null) {
@@ -52,7 +53,7 @@ public class ManagerBean {
         return manager;
     }
 
-    public void update(long code, String email, String name)
+    public void update(String code, String email, String name)
             throws CustomEntityNotFoundException, IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
@@ -64,7 +65,7 @@ public class ManagerBean {
         manager.setName(name);
     }
 
-    public void delete(long code) throws CustomEntityNotFoundException {
+    public void delete(String code) throws CustomEntityNotFoundException {
         Manager manager = find(code);
         // Locks object that is being deleted
         em.lock(manager, LockModeType.PESSIMISTIC_WRITE);

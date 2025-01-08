@@ -23,36 +23,33 @@ public class UserBean {
     private static final Logger logger = Logger.getLogger("ejbs.UserBean");
 
     /**
-     * Asserts that a user with the given code exists in the database.
-     * This method checks if a user exists by counting the number of users
-     * with the specified code. If no users are found, it throws a
-     * {@link CustomEntityExistsException}.
+     * Checks whether a user with the given code exists in the database.
+     * This method determines if a user exists by counting the number of users
+     * with the specified code. It returns a boolean indicating the result.
      *
      * @param code The unique identifier of the user to check.
-     * @throws CustomEntityExistsException if no user with the specified code exists.
+     * @return {@code true} if a user with the specified code exists, {@code false} otherwise.
      */
-    public void assertExists(long code) throws CustomEntityExistsException {
+    public boolean exists(String code){
         Query query = em.createQuery(
                 "SELECT COUNT(u.code) FROM User u WHERE u.code = :code",
                 Long.class
         );
         query.setParameter("code", code);
-        if ((Long)query.getSingleResult() <= 0L){
-            throw new CustomEntityExistsException("User '" +code+ "'");
-        }
+        return (Long)query.getSingleResult() > 0L;
     }
 
-    public User findOrFail(long code) {
+    public User findOrFail(String code) {
         User user = em.getReference(User.class, code);
         Hibernate.initialize(user);
         return user;
     }
-    public boolean canLogin(long code, String password) {
+    public boolean canLogin(String code, String password) {
         User user = em.find(User.class, code);
         return user != null && user.getPassword().equals(hasher.hash(password));
     }
 
-    public void updatePassword(long code, String newPassword) {
+    public void updatePassword(String code, String newPassword) {
         User user = em.find(User.class, code);
         em.lock(user, LockModeType.OPTIMISTIC);
         logger.info("Updating password for user '" + code + "'");

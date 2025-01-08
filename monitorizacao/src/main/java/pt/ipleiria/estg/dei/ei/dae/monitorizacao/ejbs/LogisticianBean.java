@@ -29,11 +29,12 @@ public class LogisticianBean {
 
     private static final Logger logger = Logger.getLogger("ejbs.LogisticianBean");
 
-    public void create(long code, String name, String email, String password)
+    public void create(String code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new logistician '" + code + "'");
-        // TODO: this assertExists isn't doing nothing it throws even if is commented
-        userBean.assertExists(code);
+        if (userBean.exists(code)) {
+            throw new CustomEntityExistsException("User '" + code + "'");
+        }
         try {
             Logistician logistician = new Logistician(code, name, email, hasher.hash(password));
             em.persist(logistician);
@@ -42,7 +43,7 @@ public class LogisticianBean {
         }
     }
 
-    public Logistician find(long code)
+    public Logistician find(String code)
             throws CustomEntityNotFoundException {
         Logistician logistician = em.find(Logistician.class, code);
         if (logistician == null) {
@@ -51,7 +52,7 @@ public class LogisticianBean {
         return logistician;
     }
 
-    public void update(long code, String email, String name)
+    public void update(String code, String email, String name)
             throws CustomEntityNotFoundException, IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
@@ -64,7 +65,7 @@ public class LogisticianBean {
     }
 
 
-    public void delete(long code) throws CustomEntityNotFoundException {
+    public void delete(String code) throws CustomEntityNotFoundException {
         Logistician logistician = find(code);
         // Locks object that is being deleted
         em.lock(logistician, LockModeType.PESSIMISTIC_WRITE);

@@ -26,11 +26,9 @@ public class ConfigBean {
 
         logger.info("Creating users");
         try {
-            clientBean.create("1","manuel", "manuel@mail.pt","123");
-            clientBean.create("2","joao", "joao@mail.pt","123");
-            clientBean.create("3","maria", "maria@mail.pt","123");
-        } catch (Exception e) {
-            logger.severe(e.getMessage());
-        }
+            clientBean.create("1","client", "client@mail.pt","123");
+            logisticianBean.create("1","logistician", "logistician@mail.pt","123");
+            managerBean.create("3","manager", "manager@mail.pt","123");
+        } catch (Exception ignore) {}
     }
 }
