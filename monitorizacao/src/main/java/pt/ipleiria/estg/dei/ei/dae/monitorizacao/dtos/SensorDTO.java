@@ -22,7 +22,6 @@ public class SensorDTO {
     }
 
     public static SensorDTO from(Sensor sensor) {
-
         Volume volume = sensor.getVolume();
         return new SensorDTO(
                 sensor.getCode(),

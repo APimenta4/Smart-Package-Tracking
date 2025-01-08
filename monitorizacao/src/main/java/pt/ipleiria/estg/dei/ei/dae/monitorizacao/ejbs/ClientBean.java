@@ -30,6 +30,8 @@ public class ClientBean {
     @Inject
     private Hasher hasher;
 
+    private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
+
     public boolean exists(String code) {
         Query query = em.createQuery(
                 "SELECT COUNT(c.code) FROM Client c WHERE c.code = :code",
@@ -38,15 +40,12 @@ public class ClientBean {
         query.setParameter("code", code);
         return (Long)query.getSingleResult() > 0L;
     }
-
-    private static final Logger logger = Logger.getLogger("ejbs.ClientBean");
-
     public void create(String code, String name, String email, String password)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new client '" + code + "'");
 
         if (userBean.exists(code)) {
-            throw new CustomEntityExistsException("User '" + code + "'");
+            throw new CustomEntityExistsException("User", code);
         }
         try {
             Client client = new Client(code, name, email, hasher.hash(password));
@@ -61,7 +60,7 @@ public class ClientBean {
             throws CustomEntityNotFoundException {
         Client client = em.find(Client.class, code);
         if (client == null) {
-            throw new CustomEntityNotFoundException("Client '" +code+ "'");
+            throw new CustomEntityNotFoundException("Client", code);
         }
         return client;
     }

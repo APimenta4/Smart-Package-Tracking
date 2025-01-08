@@ -33,7 +33,7 @@ public class LogisticianBean {
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new logistician '" + code + "'");
         if (userBean.exists(code)) {
-            throw new CustomEntityExistsException("User '" + code + "'");
+            throw new CustomEntityExistsException("User", code);
         }
         try {
             Logistician logistician = new Logistician(code, name, email, hasher.hash(password));
@@ -47,7 +47,7 @@ public class LogisticianBean {
             throws CustomEntityNotFoundException {
         Logistician logistician = em.find(Logistician.class, code);
         if (logistician == null) {
-            throw new CustomEntityNotFoundException("Logistician '" +code+ "'");
+            throw new CustomEntityNotFoundException("Logistician", code);
         }
         return logistician;
     }

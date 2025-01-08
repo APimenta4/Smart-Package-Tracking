@@ -33,7 +33,7 @@ public class ManagerBean {
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new manager '" + code + "'");
         if (userBean.exists(code)) {
-            throw new CustomEntityExistsException("User '" + code + "'");
+            throw new CustomEntityExistsException("User", code);
         }
         try {
             Manager manager = new Manager(code, name, email, hasher.hash(password));
@@ -48,7 +48,7 @@ public class ManagerBean {
             throws CustomEntityNotFoundException {
         Manager manager = em.find(Manager.class, code);
         if (manager == null) {
-            throw new CustomEntityNotFoundException("Client '" +code+ "'");
+            throw new CustomEntityNotFoundException("Manager", code);
         }
         return manager;
     }

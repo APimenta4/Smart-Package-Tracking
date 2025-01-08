@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.SensorType;
 
 import java.util.logging.Logger;
 
@@ -16,6 +17,8 @@ public class ConfigBean {
     private LogisticianBean logisticianBean;
     @EJB
     private ManagerBean managerBean;
+    @EJB
+    private SensorBean sensorBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
@@ -30,5 +33,11 @@ public class ConfigBean {
             logisticianBean.create("2","logistician", "logistician@mail.pt","123");
             managerBean.create("3","manager", "manager@mail.pt","123");
         } catch (Exception ignore) {}
+        logger.info("Users created");
+
+        logger.info("DB populated");
     }
 }
+
+
+
