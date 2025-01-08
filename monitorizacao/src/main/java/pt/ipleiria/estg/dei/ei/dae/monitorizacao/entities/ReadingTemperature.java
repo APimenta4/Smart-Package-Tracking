@@ -4,16 +4,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "readings_temperature")
-public abstract class ReadingTemperature extends Reading implements Serializable {
+public class ReadingTemperature extends Reading implements Serializable {
 
     @NotNull
     private double temperature;
 
-    public ReadingTemperature(String code, Sensor sensor, long timestamp, double temperature) {
-        super(code, sensor, timestamp);
+    public ReadingTemperature(Sensor sensor, Instant timestamp, double temperature) {
+        super(sensor, timestamp);
         this.temperature = temperature;
     }
 

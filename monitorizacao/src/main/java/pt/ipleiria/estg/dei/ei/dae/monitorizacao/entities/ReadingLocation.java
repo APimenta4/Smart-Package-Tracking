@@ -5,17 +5,18 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "readings_location")
-public abstract class ReadingLocation extends Reading implements Serializable {
+public class ReadingLocation extends Reading implements Serializable {
 
     @NotNull
     private double latitude;
     private double longitude;
 
-    public ReadingLocation(String code, Sensor sensor, long timestamp, double latitude, double longitude) {
-        super(code, sensor, timestamp);
+    public ReadingLocation(Sensor sensor, Instant timestamp, double latitude, double longitude) {
+        super(sensor, timestamp);
         this.latitude = latitude;
         this.longitude = longitude;
     }
