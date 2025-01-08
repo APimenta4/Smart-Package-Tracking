@@ -28,11 +28,11 @@ public abstract class Reading implements Serializable {
 
     public Reading() {}
 
-    public long getCode() {
+    public long getId() {
         return id;
     }
 
-    public void setCode(long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
