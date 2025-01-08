@@ -17,8 +17,6 @@ public class ConfigBean {
     private LogisticianBean logisticianBean;
     @EJB
     private ManagerBean managerBean;
-    @EJB
-    private SensorBean sensorBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
