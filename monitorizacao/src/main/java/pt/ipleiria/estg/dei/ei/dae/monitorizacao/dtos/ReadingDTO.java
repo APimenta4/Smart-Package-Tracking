@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.dtos;
 
+import java.time.Instant;
+
 public class ReadingDTO {
     private long sensorCode;
     private long volumeCode;
@@ -20,10 +22,10 @@ public class ReadingDTO {
      * @param timestamp the reading timestamp (ms)
      * @param temperature the temperature (°C)
      */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, float temperature) {
+    public ReadingDTO(long sensorCode, long volumeCode, Instant timestamp, float temperature) {
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.toEpochMilli();
         this.temperature = temperature;
     }
 
@@ -35,10 +37,10 @@ public class ReadingDTO {
      * @param timestamp the reading timestamp (ms)
      * @param acceleration the acceleration (m/s²)
      */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, double acceleration) {
+    public ReadingDTO(long sensorCode, long volumeCode, Instant timestamp, double acceleration) {
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.toEpochMilli();
         this.acceleration = acceleration;
     }
 
@@ -51,10 +53,10 @@ public class ReadingDTO {
      * @param latitude the latitude
      * @param longitude the longitude
      */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, double latitude, double longitude) {
+    public ReadingDTO(long sensorCode, long volumeCode, Instant timestamp, double latitude, double longitude) {
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.toEpochMilli();
         this.latitude = latitude;
         this.longitude = longitude;
     }

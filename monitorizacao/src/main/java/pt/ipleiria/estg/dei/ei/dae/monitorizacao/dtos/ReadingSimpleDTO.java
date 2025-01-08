@@ -1,34 +1,35 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.dtos;
 
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.SensorType;
+
+import java.time.Instant;
+
 public class ReadingSimpleDTO {
     private long timestamp;
 
-    private float temperature;
+    private double temperature;
     private double acceleration;
     private double latitude;
     private double longitude;
 
 
     /**
-     * Constructor for temperature reading.
+     * Constructor for temperature or acceleration reading.
      *
      * @param timestamp the reading timestamp (ms)
-     * @param temperature the temperature (°C)
+     * @param value the temperature (°C) or the acceleration
+     * @param sensorType the type of the value to use
      */
-    public ReadingSimpleDTO(long timestamp, float temperature) {
-        this.timestamp = timestamp;
-        this.temperature = temperature;
-    }
-
-    /**
-     * Constructor for acceleration reading.
-     *
-     * @param timestamp the reading timestamp (ms)
-     * @param acceleration the acceleration (m/s²)
-     */
-    public ReadingSimpleDTO(long timestamp, double acceleration) {
-        this.timestamp = timestamp;
-        this.acceleration = acceleration;
+    public ReadingSimpleDTO(Instant timestamp, double value, SensorType sensorType) {
+        this.timestamp = timestamp.toEpochMilli();
+        switch (sensorType) {
+            case TEMPERATURE:
+                this.temperature = value;
+                break;
+            case ACCELERATION:
+                this.acceleration = value;
+                break;
+        }
     }
 
     /**
@@ -38,8 +39,8 @@ public class ReadingSimpleDTO {
      * @param latitude the latitude
      * @param longitude the longitude
      */
-    public ReadingSimpleDTO(long timestamp, double latitude, double longitude) {
-        this.timestamp = timestamp;
+    public ReadingSimpleDTO(Instant timestamp, double latitude, double longitude) {
+        this.timestamp = timestamp.toEpochMilli();
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -54,11 +55,11 @@ public class ReadingSimpleDTO {
         this.timestamp = timestamp;
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
