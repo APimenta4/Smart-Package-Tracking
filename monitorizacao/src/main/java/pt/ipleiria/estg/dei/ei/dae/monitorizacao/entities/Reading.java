@@ -4,35 +4,36 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "readings")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Reading implements Serializable {
     @Id
-    private String code;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @ManyToOne
     @NotNull
     private Sensor sensor;
 
     @NotNull
-    private long timestamp;
+    private Instant timestamp;
 
-    public Reading(String code, Sensor sensor, long timestamp) {
-        this.code = code;
+    public Reading(Sensor sensor, Instant timestamp) {
         this.sensor = sensor;
         this.timestamp = timestamp;
     }
 
     public Reading() {}
 
-    public String getCode() {
-        return code;
+    public long getId() {
+        return id;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public @NotNull Sensor getSensor() {
@@ -44,11 +45,11 @@ public abstract class Reading implements Serializable {
     }
 
     @NotNull
-    public long getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(@NotNull long timestamp) {
+    public void setTimestamp(@NotNull Instant timestamp) {
         this.timestamp = timestamp;
     }
 }

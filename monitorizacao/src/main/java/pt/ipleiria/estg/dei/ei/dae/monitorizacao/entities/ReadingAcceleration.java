@@ -5,16 +5,17 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "readings_acceleration")
-public abstract class ReadingAcceleration extends Reading implements Serializable {
+public class ReadingAcceleration extends Reading implements Serializable {
 
     @NotNull
     private double acceleration;
 
-    public ReadingAcceleration(String code, Sensor sensor, long timestamp, double acceleration) {
-        super(code, sensor, timestamp);
+    public ReadingAcceleration(Sensor sensor, Instant timestamp, double acceleration) {
+        super(sensor, timestamp);
         this.acceleration = acceleration;
     }
 

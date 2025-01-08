@@ -1,45 +1,47 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.dtos;
 
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.SensorType;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ReadingDTO {
-    private long sensorCode;
-    private long volumeCode;
+    private String sensorCode;
+    private String volumeCode;
+    private long id;
 
     private long timestamp;
 
-    private float temperature;
+    private double temperature;
     private double acceleration;
     private double latitude;
     private double longitude;
 
 
     /**
-     * Constructor for temperature reading.
+     * Constructor for temperature or acceleration reading.
      *
      * @param sensorCode the sensor code
      * @param volumeCode the volume code
      * @param timestamp the reading timestamp (ms)
-     * @param temperature the temperature (°C)
+     * @param value the temperature (°C) or the acceleration (m/s²)
+     * @param sensorType the type of the value to use
      */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, float temperature) {
+    public ReadingDTO(long id, String sensorCode, String volumeCode, Instant timestamp, double value, SensorType sensorType) {
+        this.id = id;
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
-        this.temperature = temperature;
-    }
-
-    /**
-     * Constructor for acceleration reading.
-     *
-     * @param sensorCode the sensor code
-     * @param volumeCode the volume code
-     * @param timestamp the reading timestamp (ms)
-     * @param acceleration the acceleration (m/s²)
-     */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, double acceleration) {
-        this.sensorCode = sensorCode;
-        this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
-        this.acceleration = acceleration;
+        this.timestamp = timestamp.toEpochMilli();
+        switch (sensorType) {
+            case TEMPERATURE:
+                this.temperature = value;
+                break;
+            case ACCELERATION:
+                this.acceleration = value;
+                break;
+        }
     }
 
     /**
@@ -51,10 +53,11 @@ public class ReadingDTO {
      * @param latitude the latitude
      * @param longitude the longitude
      */
-    public ReadingDTO(long sensorCode, long volumeCode, long timestamp, double latitude, double longitude) {
+    public ReadingDTO(long id, String sensorCode, String volumeCode, Instant timestamp, double latitude, double longitude) {
+        this.id = id;
         this.sensorCode = sensorCode;
         this.volumeCode = volumeCode;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.toEpochMilli();
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -62,19 +65,59 @@ public class ReadingDTO {
     public ReadingDTO() {
     }
 
-    public long getSensorCode() {
+    public static ReadingDTO from(Reading reading) {
+        Sensor sensor = reading.getSensor();
+        Volume volume = sensor.getVolume();
+        if (reading.getClass() == ReadingTemperature.class){
+            ReadingTemperature readingTemperature = (ReadingTemperature) reading;
+            return new ReadingDTO(
+                    readingTemperature.getId(),
+                    sensor.getCode(),
+                    volume.getCode(),
+                    readingTemperature.getTimestamp(),
+                    readingTemperature.getTemperature(),
+                    sensor.getType()
+            );
+        }else if (reading.getClass() == ReadingAcceleration.class){
+            ReadingAcceleration readingAcceleration = (ReadingAcceleration) reading;
+            return new ReadingDTO(
+                    readingAcceleration.getId(),
+                    sensor.getCode(),
+                    volume.getCode(),
+                    readingAcceleration.getTimestamp(),
+                    readingAcceleration.getAcceleration(),
+                    sensor.getType()
+            );
+        } else  {//reading.getClass() == ReadingLocation.class
+            ReadingLocation readingLocation = (ReadingLocation) reading;
+            return new ReadingDTO(
+                    readingLocation.getId(),
+                    sensor.getCode(),
+                    volume.getCode(),
+                    readingLocation.getTimestamp(),
+                    readingLocation.getLatitude(),
+                    readingLocation.getLongitude()
+            );
+        }
+    }
+
+    public static List<ReadingDTO> from(List<Reading> readings) {
+        return readings.stream().map(ReadingDTO::from).collect(Collectors.toList());
+    }
+
+    public String getSensorCode() {
         return sensorCode;
     }
 
-    public void setSensorCode(long sensorCode) {
+    public void setSensorCode(String sensorCode) {
         this.sensorCode = sensorCode;
     }
 
-    public long getVolumeCode() {
+    public String getVolumeCode() {
         return volumeCode;
     }
 
-    public void setVolumeCode(long volumeCode) {
+    public void setVolumeCode(String volumeCode) {
         this.volumeCode = volumeCode;
     }
 
@@ -86,11 +129,11 @@ public class ReadingDTO {
         this.timestamp = timestamp;
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
