@@ -3,22 +3,34 @@ package pt.ipleiria.estg.dei.ei.dae.monitorizacao.ejbs;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.validation.ConstraintViolationException;
+import jdk.jshell.spi.ExecutionControl;
+import org.hibernate.Hibernate;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.SensorType;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class SensorBean {
     @PersistenceContext
-    private EntityManager entityManager;
+    private EntityManager em;
+//    @EJB
+//    private VolumeBean volumeBean;
 
+    private static final Logger logger = Logger.getLogger("ejbs.SensorBean");
 
-    public boolean exists(long code) {
-        Query query = entityManager.createQuery(
+    public boolean exists(String code) {
+        Query query = em.createQuery(
                 "SELECT COUNT(s.code) FROM Sensor s WHERE s.code = :code",
                 Long.class
         );
@@ -27,28 +39,31 @@ public class SensorBean {
     }
 
 
-    public void create(long code, long volumeCode, SensorType type){
-
-//        Volume volume = volumeBean.find(volumeCode);
-        Volume volume = new Volume();
-        if (exists(code)){
-            return;
-            //throw new MyEntityExistsException("Course '" +String.valueOf(code)+ "'");
-        }
-        Sensor sensor = new Sensor(code, new Volume(), type);
-        entityManager.persist(sensor);
-    }
-
-    public Sensor find(long code) {
-        Sensor sensor = entityManager.find(Sensor.class, code);
-//        if (sensor == null) {
-//            throw new MyEntityNotFoundException("Course '" + code + "'");
+    public void create(String code, String volumeCode, SensorType type)
+            throws CustomEntityExistsException, CustomEntityNotFoundException, CustomConstraintViolationException {
+        logger.info("NOT IMPLEMENTED YET, waiting VolumeBean");
+//        logger.info("Creating new sensor '" + code + "'");
+//        if (exists(code)) {
+//            throw new CustomEntityExistsException("Sensor", code);
 //        }
-        return sensor;
+//
+//        Volume volume = volumeBean.find(volumeCode);
+//
+//        try {
+//            Sensor sensor = new Sensor(code, volume, type);
+//            em.persist(sensor);
+//
+//        } catch (ConstraintViolationException e) {
+//            throw new CustomConstraintViolationException(e);
+//        }
     }
 
-    public List<Sensor> findAll() {
-        // remember, maps to: “SELECT c FROM Course c ORDER BY c.name”
-        return entityManager.createNamedQuery("getAllSensors", Sensor.class).getResultList();
+    public Sensor find(String code)
+            throws CustomEntityNotFoundException {
+        Sensor sensor = em.find(Sensor.class, code);
+        if (sensor == null) {
+            throw new CustomEntityNotFoundException("Sensor", code);
+        }
+        return sensor;
     }
 }
