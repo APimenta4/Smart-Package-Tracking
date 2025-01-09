@@ -38,16 +38,21 @@ public class Volume extends Versionable implements Serializable {
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors;
 
+
+    private List<Product> products;
+
     public Volume(String code, Order order, VolumeStatus status, PackingType packingType) {
         this.code = code;
         this.order = order;
         this.status = status;
         this.packingType = packingType;
         this.sensors = new ArrayList<>();
+        this.products = new ArrayList<>();
     }
 
     public Volume() {
         this.sensors = new ArrayList<>();
+        this.products = new ArrayList<>();
     }
 
     public String getCode() {
