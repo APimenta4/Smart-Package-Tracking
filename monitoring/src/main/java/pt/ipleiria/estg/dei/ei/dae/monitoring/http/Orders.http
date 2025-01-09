@@ -1,0 +1,3 @@
+### GET all orders
+GET http://localhost:8080/monitoring/orders
+###
