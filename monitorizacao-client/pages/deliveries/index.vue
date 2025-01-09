@@ -5,23 +5,37 @@ const deliveries = ref([
   { 
     code: 'DEL001', 
     clientCode: 'CLIENT1', 
-    status: 'PENDING',
     createdAt: '2024-03-15',
-    volumes: 3
+    volumes: [
+      {
+        code: 'VOL001',
+        status: 'PENDING',
+        packageType: 'FRAGILE',
+        sentDate: null,
+        deliveryDate: null
+      },
+      {
+        code: 'VOL002',
+        status: 'IN_TRANSIT',
+        packageType: 'REGULAR',
+        sentDate: '2024-03-16',
+        deliveryDate: null
+      }
+    ]
   },
   { 
     code: 'DEL002', 
     clientCode: 'CLIENT2', 
-    status: 'IN_TRANSIT',
     createdAt: '2024-03-14',
-    volumes: 1
-  },
-  { 
-    code: 'DEL003', 
-    clientCode: 'CLIENT3', 
-    status: 'DELIVERED',
-    createdAt: '2024-03-13',
-    volumes: 2
+    volumes: [
+      {
+        code: 'VOL003',
+        status: 'DELIVERED',
+        packageType: 'FRAGILE',
+        sentDate: '2024-03-14',
+        deliveryDate: '2024-03-15'
+      }
+    ]
   }
 ])
 
@@ -34,6 +48,8 @@ const statusSeverity = {
   IN_TRANSIT: 'info',
   DELIVERED: 'success'
 }
+
+const expandedRows = ref([])
 </script>
 
 <template>
@@ -53,10 +69,13 @@ const statusSeverity = {
           filterDisplay="menu"
           :rowsPerPageOptions="[5, 10, 20]"
           tableStyle="min-width: 50rem"
+          :expandedRows="expandedRows"
+          @update:expandedRows="expandedRows = $event"
+          v-model:expandedRows="expandedRows"
         >
           <template #header>
             <div class="flex justify-between">
-              <span class="p-input-icon-left ">
+              <span class="p-input-icon-left">
                 <i class="pi pi-search mr-3" />
                 <InputText 
                   v-model="filters['global'].value" 
@@ -69,15 +88,7 @@ const statusSeverity = {
           <Column field="code" header="Delivery Code" sortable />
           <Column field="clientCode" header="Client" sortable />
           <Column field="createdAt" header="Created" sortable />
-          <Column field="volumes" header="Volumes" sortable />
-          <Column field="status" header="Status" sortable>
-            <template #body="{ data }">
-              <Tag
-                :value="data.status"
-                :severity="statusSeverity[data.status]"
-              />
-            </template>
-          </Column>
+          <Column field="volumes.length" header="Volumes" sortable />
           <Column header="Actions" :exportable="false">
             <template #body="slotProps">
               <div class="flex gap-2">
@@ -89,21 +100,15 @@ const statusSeverity = {
                   @click="navigateTo(`/deliveries/${slotProps.data.code}`)"
                 />
                 <Button
-                  icon="pi pi-pencil"
+                  icon="pi pi-box"
                   rounded
                   text
                   severity="success"
-                  @click="navigateTo(`/deliveries/${slotProps.data.code}/edit`)"
-                />
-                <Button
-                  icon="pi pi-trash"
-                  rounded
-                  text
-                  severity="danger"
+                  @click="navigateTo('/', )"
                 />
               </div>
             </template>
-          </Column>
+          </Column>        
         </DataTable>
       </template>
     </Card>

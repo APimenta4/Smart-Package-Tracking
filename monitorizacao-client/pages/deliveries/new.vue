@@ -244,7 +244,7 @@ const showSensorDetails = (sensors) => {
               <template #body="{ data }">
                 <Button
                   link
-                  class="text-blue-600 hover:text-blue-800"
+                  class="text-blue-600 hover:text-blue-800 p-0"
                   @click="showProductDetails(data.products)"
                 >
                   {{ data.products.length }} products
@@ -255,7 +255,7 @@ const showSensorDetails = (sensors) => {
               <template #body="{ data }">
                 <Button
                   link
-                  class="text-blue-600 hover:text-blue-800"
+                  class="text-blue-600 hover:text-blue-800 p-0"
                   @click="showSensorDetails(data.sensors)"
                 >
                   {{ data.sensors.length }} sensors
