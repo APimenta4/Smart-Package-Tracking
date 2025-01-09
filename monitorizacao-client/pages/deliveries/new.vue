@@ -107,7 +107,10 @@ const addSensorToVolume = () => {
   newVolume.value.sensors.push({ code: "", type: "" });
 };
 
+const originalVolume = ref(null);
+
 const editExistingVolume = (volume) => {
+  originalVolume.value = JSON.parse(JSON.stringify(volume));
   editVolume.value = { ...volume };
   isEditDialog.value = true;
 };
@@ -154,8 +157,43 @@ const handleNewDialogCancel = () => {
 };
 
 const handleEditDialogCancel = () => {
+  const index = volumes.value.findIndex(
+    (v) => v.code === originalVolume.value.code
+  );
+  if (index !== -1) {
+    volumes.value[index] = originalVolume.value;
+  }
   resetEditVolume();
+  originalVolume.value = null;
   isEditDialog.value = false;
+};
+
+const isDetailsDialogVisible = ref(false);
+const selectedDetails = ref({
+  title: '',
+  items: []
+});
+
+const showProductDetails = (products) => {
+  selectedDetails.value = {
+    title: 'Products Details',
+    items: products.map(p => ({
+      code: p.code,
+      description: `Quantity: ${p.quantity}`
+    }))
+  };
+  isDetailsDialogVisible.value = true;
+};
+
+const showSensorDetails = (sensors) => {
+  selectedDetails.value = {
+    title: 'Sensors Details',
+    items: sensors.map(s => ({
+      code: s.code,
+      description: `Type: ${s.type}`
+    }))
+  };
+  isDetailsDialogVisible.value = true;
 };
 </script>
 <template>
@@ -204,12 +242,24 @@ const handleEditDialogCancel = () => {
             <Column field="packageType" header="Package Type" />
             <Column header="Products">
               <template #body="{ data }">
-                {{ data.products.length }} products
+                <Button
+                  link
+                  class="text-blue-600 hover:text-blue-800"
+                  @click="showProductDetails(data.products)"
+                >
+                  {{ data.products.length }} products
+                </Button>
               </template>
             </Column>
             <Column header="Sensors">
               <template #body="{ data }">
-                {{ data.sensors.length }} sensors
+                <Button
+                  link
+                  class="text-blue-600 hover:text-blue-800"
+                  @click="showSensorDetails(data.sensors)"
+                >
+                  {{ data.sensors.length }} sensors
+                </Button>
               </template>
             </Column>
             <Column header="Actions">
@@ -425,7 +475,7 @@ const handleEditDialogCancel = () => {
               icon="pi pi-plus"
               label="Add Sensor"
               text
-              @click="addSensorToVolume"
+              @click="addSensorToEditVolume"
             />
           </div>
           <div class="flex gap-2 mb-2 font-semibold text-sm">
@@ -433,7 +483,7 @@ const handleEditDialogCancel = () => {
             <span class="w-1/2 ml-5">Type</span>
           </div>
           <div
-            v-for="(sensor, index) in newVolume.sensors"
+            v-for="(sensor, index) in editVolume.sensors"
             :key="index"
             class="flex gap-2 mb-2"
           >
@@ -456,6 +506,22 @@ const handleEditDialogCancel = () => {
         <Button label="Cancel" text @click="handleEditDialogCancel" />
         <Button label="Save" @click="saveEditedVolume" />
       </template>
+    </Dialog>
+
+    <Dialog
+      v-model:visible="isDetailsDialogVisible"
+      :header="selectedDetails.title"
+      modal
+      :style="{ width: '450px' }"
+    >
+      <DataTable :value="selectedDetails.items" :rows="5">
+        <Column field="code" header="Code">
+          <template #body="{ data }">
+        <span>{{ data.code }}</span>
+          </template>
+        </Column>
+        <Column field="description" header="Description" />
+      </DataTable>
     </Dialog>
   </div>
 </template>
