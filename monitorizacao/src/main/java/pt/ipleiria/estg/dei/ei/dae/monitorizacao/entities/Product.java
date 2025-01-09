@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.CategoryType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -22,6 +24,9 @@ public class Product implements Serializable {
     private CategoryType category;
 
     private String description;
+
+    @OneToMany(mappedBy = "product")
+    private List<LinesOfSale> linesOfSales = new ArrayList<>();
 
     public Product(String code, CategoryType category, String description) {
         this.code = code;
@@ -56,11 +61,22 @@ public class Product implements Serializable {
         this.description = description;
     }
 
+    public List<LinesOfSale> getLineOfSales() {
+        return new ArrayList<>(linesOfSales);
+    }
+
+    public void addProduct(LinesOfSale linesOfSale) {
+        linesOfSales.add(linesOfSale);
+    }
+
+    public void removeProduct(LinesOfSale linesOfSale) {
+        linesOfSales.remove(linesOfSale);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product other = (Product) o;
-        return this.code == other.code;
+        return this.code.equals(other.code);
     }
 }

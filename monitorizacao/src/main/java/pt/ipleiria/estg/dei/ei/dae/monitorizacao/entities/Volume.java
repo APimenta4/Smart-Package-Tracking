@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.PackingType;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.VolumeStatus;
@@ -36,19 +35,19 @@ public class Volume extends Versionable implements Serializable {
     private Date deliveredDate;
 
     @OneToMany(mappedBy = "volume")
-    private List<Sensor> sensors;
+    private List<Sensor> sensors = new ArrayList<>();;
+
+    @OneToMany(mappedBy = "volume")
+    private List<LinesOfSale> linesOfSales = new ArrayList<>();
 
     public Volume(String code, Order order, VolumeStatus status, PackingType packingType) {
         this.code = code;
         this.order = order;
         this.status = status;
         this.packingType = packingType;
-        this.sensors = new ArrayList<>();
     }
 
-    public Volume() {
-        this.sensors = new ArrayList<>();
-    }
+    public Volume() {}
 
     public String getCode() {
         return code;
@@ -110,11 +109,23 @@ public class Volume extends Versionable implements Serializable {
         sensors.remove(sensor);
     }
 
+    public List<LinesOfSale> getLineOfSales() {
+        return new ArrayList<>(linesOfSales);
+    }
+
+    public void addProduct(LinesOfSale linesOfSale) {
+        linesOfSales.add(linesOfSale);
+    }
+
+    public void removeProduct(LinesOfSale linesOfSale) {
+        linesOfSales.remove(linesOfSale);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Volume other = (Volume) o;
-        return this.code == other.code;
+        return this.code.equals(other.code);
     }
 }

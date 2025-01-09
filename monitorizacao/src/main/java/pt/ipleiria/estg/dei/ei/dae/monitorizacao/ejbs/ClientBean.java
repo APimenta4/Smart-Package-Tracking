@@ -50,7 +50,7 @@ public class ClientBean {
         try {
             Client client = new Client(code, name, email, hasher.hash(password));
             em.persist(client);
-
+            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
@@ -65,10 +65,6 @@ public class ClientBean {
         return client;
     }
 
-    public List<Client> findAll() {
-        return em.createNamedQuery("getAllClients", Client.class).getResultList();
-    }
-
     public Client findWithOrders(String code)
             throws CustomEntityNotFoundException {
         Client client = find(code);
@@ -76,16 +72,19 @@ public class ClientBean {
         return client;
     }
 
-    public void update(String code, String email, String name, String password)
-            throws CustomEntityNotFoundException, IllegalArgumentException {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
-        }
+    // TODO: not used
+    public void update(String code, String name, String email)
+            throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Client client = find(code);
         em.lock(client, LockModeType.OPTIMISTIC);
         logger.info("Updating client '" + code + "'");
-        client.setEmail(email);
-        client.setName(name);
+        try{
+            client.setEmail(email);
+            client.setName(name);
+            em.flush();
+        }catch (ConstraintViolationException e){
+            throw new CustomConstraintViolationException(e);
+        }
     }
 
 

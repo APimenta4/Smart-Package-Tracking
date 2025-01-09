@@ -8,12 +8,6 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@NamedQueries({
-        @NamedQuery(
-                name = "getAllManagers",
-                query = "SELECT m FROM Manager m"
-        )
-})
 public class Manager extends User implements Serializable {
     public Manager() {
     }

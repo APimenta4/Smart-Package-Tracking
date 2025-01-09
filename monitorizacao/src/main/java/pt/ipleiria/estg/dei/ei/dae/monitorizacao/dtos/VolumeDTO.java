@@ -17,7 +17,7 @@ public class VolumeDTO {
     private Date shippedDate;
     private Date deliveredDate;
     private PackingType packingType;
-    private List<Product> products;
+    private List<ProductDTO> products;
     private List<SensorDTO> sensors;
 
     public VolumeDTO() {
@@ -84,11 +84,11 @@ public class VolumeDTO {
         this.packingType = packingType;
     }
 
-    public List<Product> getProducts() {
+    public List<ProductDTO> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(List<ProductDTO> products) {
         this.products = products;
     }
 

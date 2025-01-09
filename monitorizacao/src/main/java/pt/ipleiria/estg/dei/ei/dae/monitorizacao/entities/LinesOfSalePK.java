@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-public class LineOfSalePK implements Serializable {
+public class LinesOfSalePK implements Serializable {
     private Volume volume;
     private Product product;
 
-    public LineOfSalePK() {}
+    public LinesOfSalePK() {}
 
-    public LineOfSalePK(Volume volume, Product product) {
+    public LinesOfSalePK(Volume volume, Product product) {
         this.volume = volume;
         this.product = product;
     }
@@ -35,7 +35,7 @@ public class LineOfSalePK implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LineOfSalePK other = (LineOfSalePK) o;
+        LinesOfSalePK other = (LinesOfSalePK) o;
         return Objects.equals(this.volume, other.volume) && Objects.equals(this.product, other.product);
     }
 

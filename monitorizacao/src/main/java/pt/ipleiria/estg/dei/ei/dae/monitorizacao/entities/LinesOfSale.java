@@ -7,9 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table(name="lines_of_sale")
-@IdClass(LineOfSalePK.class)
-public class LineOfSale extends Versionable implements Serializable {
+@Table(name="linesofsale")
+@IdClass(LinesOfSalePK.class)
+public class LinesOfSale extends Versionable implements Serializable {
 
     @Id
     @ManyToOne
@@ -22,13 +22,13 @@ public class LineOfSale extends Versionable implements Serializable {
     @Min(value = 1, message = "Quantity must be at least 1")
     private long quantity;
 
-    public LineOfSale(Volume volume, Product product, long quantity) {
+    public LinesOfSale(Volume volume, Product product, long quantity) {
         this.volume = volume;
         this.product = product;
         this.quantity = quantity;
     }
 
-    public LineOfSale() {}
+    public LinesOfSale() {}
 
     public Volume getVolume() {
         return volume;

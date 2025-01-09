@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
@@ -15,14 +16,14 @@ public abstract class User extends Versionable implements Serializable {
     @Id
     private String code;
 
-    @NotNull
+    @NotEmpty
     private String name;
 
     @Email
     @NotNull
     private String email;
 
-    @NotNull
+    @NotEmpty
     private String password;
 
     public User() {
@@ -43,11 +44,11 @@ public abstract class User extends Versionable implements Serializable {
         this.code = code;
     }
 
-    public @NotNull String getName() {
+    public @NotEmpty String getName() {
         return name;
     }
 
-    public void setName(@NotNull String name) {
+    public void setName(@NotEmpty String name) {
         this.name = name;
     }
 
@@ -59,11 +60,11 @@ public abstract class User extends Versionable implements Serializable {
         this.email = email;
     }
 
-    public @NotNull String getPassword() {
+    public @NotEmpty String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotNull String password) {
+    public void setPassword(@NotEmpty String password) {
         this.password = password;
     }
 
@@ -72,6 +73,6 @@ public abstract class User extends Versionable implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User other = (User) o;
-        return this.code == other.code;
+        return this.code.equals(other.code);
     }
 }

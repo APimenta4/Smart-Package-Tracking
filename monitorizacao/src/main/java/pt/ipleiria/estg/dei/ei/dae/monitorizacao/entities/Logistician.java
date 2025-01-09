@@ -8,12 +8,6 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@NamedQueries({
-        @NamedQuery(
-                name = "getAllLogisticians",
-                query = "SELECT l FROM Logistician l"
-        )
-})
 public class Logistician extends User implements Serializable {
     public Logistician() {
     }

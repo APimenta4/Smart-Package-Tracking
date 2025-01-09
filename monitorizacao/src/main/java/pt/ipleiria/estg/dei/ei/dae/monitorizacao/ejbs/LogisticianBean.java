@@ -52,16 +52,19 @@ public class LogisticianBean {
         return logistician;
     }
 
-    public void update(String code, String email, String name)
-            throws CustomEntityNotFoundException, IllegalArgumentException {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
-        }
+    // TODO: not used
+    public void update(String code, String name, String email)
+            throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Logistician logistician = find(code);
         em.lock(logistician, LockModeType.OPTIMISTIC);
         logger.info("Updating logistician '" + code + "'");
-        logistician.setEmail(email);
-        logistician.setName(name);
+        try{
+            logistician.setEmail(email);
+            logistician.setName(name);
+            em.flush();
+        }catch (ConstraintViolationException e){
+            throw new CustomConstraintViolationException(e);
+        }
     }
 
 

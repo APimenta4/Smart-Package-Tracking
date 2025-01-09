@@ -52,4 +52,12 @@ public abstract class Reading implements Serializable {
     public void setTimestamp(@NotNull Instant timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reading other = (Reading) o;
+        return this.id == other.id;
+    }
 }
