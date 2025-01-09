@@ -65,10 +65,6 @@ public class ClientBean {
         return client;
     }
 
-    public List<Client> findAll() {
-        return em.createNamedQuery("getAllClients", Client.class).getResultList();
-    }
-
     public Client findWithOrders(String code)
             throws CustomEntityNotFoundException {
         Client client = find(code);
@@ -76,6 +72,7 @@ public class ClientBean {
         return client;
     }
 
+    // TODO: not used
     public void update(String code, String name, String email)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Client client = find(code);

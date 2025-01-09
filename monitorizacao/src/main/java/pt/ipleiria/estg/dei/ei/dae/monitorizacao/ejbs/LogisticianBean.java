@@ -52,6 +52,7 @@ public class LogisticianBean {
         return logistician;
     }
 
+    // TODO: not used
     public void update(String code, String name, String email)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Logistician logistician = find(code);

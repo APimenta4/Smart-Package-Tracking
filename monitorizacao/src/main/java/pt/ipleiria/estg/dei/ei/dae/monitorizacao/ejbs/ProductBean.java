@@ -1,53 +1,57 @@
 package pt.ipleiria.estg.dei.ei.dae.monitorizacao.ejbs;
 
-import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Product;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.CategoryType;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.PackingType;
-import pt.ipleiria.estg.dei.ei.dae.monitorizacao.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitorizacao.exceptions.CustomEntityNotFoundException;
 
-import java.util.List;
 import java.util.logging.Logger;
 
+@Stateless
 public class ProductBean {
 
-    @EJB
-    private  EntityManager entityManager;
+    @PersistenceContext
+    private  EntityManager em;
 
     private static final Logger logger = Logger.getLogger("ejbs.ProductBean");
 
-    public void create(String code, CategoryType category, String description) throws CustomEntityExistsException, CustomEntityNotFoundException, CustomConstraintViolationException {
-        logger.info("Creating new Product '" + code + "'");
+    public boolean exists(String code) {
+        Query query = em.createQuery(
+                "SELECT COUNT(p.code) FROM Product p WHERE p.code = :code",
+                Long.class
+        );
+        query.setParameter("code", code);
+        return (Long)query.getSingleResult() > 0L;
+    }
 
-        // Verifica se o produto já existe
-        if (entityManager.find(Product.class, code) != null) {
+    public void create(String code, CategoryType category, String description)
+            throws CustomEntityExistsException, CustomConstraintViolationException {
+        logger.info("Creating new Product '" + code + "'");
+        if (exists(code)) {
             throw new CustomEntityExistsException("Product",code);
         }
-
-
         try{
-
             Product product = new Product(code, category,description);
-
-            entityManager.persist(product);
-
-            entityManager.flush(); // when using Hibernate, to force it to throw a ConstraintViolationException, as in the JPA specification
-
+            em.persist(product);
+            em.flush();
         } catch (
                 ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
     }
 
-    // READ - Buscar todos os Produtos
-    public List<Product> findAll() {
-        return entityManager.createNamedQuery("getAllProducts", Product.class).getResultList();
+    public Product find(String code)
+            throws CustomEntityNotFoundException {
+        Product product = em.find(Product.class, code);
+        if (product == null) {
+            throw new CustomEntityNotFoundException("Product", code);
+        }
+        return product;
     }
 }

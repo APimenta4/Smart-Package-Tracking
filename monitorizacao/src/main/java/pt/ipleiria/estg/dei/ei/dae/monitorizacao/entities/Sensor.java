@@ -61,12 +61,11 @@ public class Sensor extends Versionable implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        Sensor sensor = (Sensor) obj;
-        return code == sensor.code;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sensor other = (Sensor) o;
+        return this.code.equals(other.code);
     }
 
     @Override

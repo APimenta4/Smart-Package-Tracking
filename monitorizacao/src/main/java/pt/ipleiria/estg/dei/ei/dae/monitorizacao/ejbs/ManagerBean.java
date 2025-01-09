@@ -53,6 +53,7 @@ public class ManagerBean {
         return manager;
     }
 
+    // TODO: not used
     public void update(String code, String name, String email)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Manager manager = find(code);
