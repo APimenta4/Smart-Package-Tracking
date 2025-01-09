@@ -112,11 +112,49 @@ const editExistingVolume = (volume) => {
   isEditDialog.value = true;
 };
 
+const addProductToEditVolume = () => {
+  editVolume.value.products.push({ code: "", quantity: 1 });
+};
+
+const addSensorToEditVolume = () => {
+  editVolume.value.sensors.push({ code: "", type: "" });
+};
+
 const saveEditedVolume = () => {
-  const index = volumes.value.findIndex(v => v.code === editVolume.value.code);
+  const index = volumes.value.findIndex(
+    (v) => v.code === editVolume.value.code
+  );
   if (index !== -1) {
     volumes.value[index] = { ...editVolume.value };
   }
+  isEditDialog.value = false;
+};
+
+const resetNewVolume = () => {
+  newVolume.value = {
+    code: "",
+    packageType: "",
+    products: [],
+    sensors: [],
+  };
+};
+
+const resetEditVolume = () => {
+  editVolume.value = {
+    code: "",
+    packageType: "",
+    products: [],
+    sensors: [],
+  };
+};
+
+const handleNewDialogCancel = () => {
+  resetNewVolume();
+  isOpenDialog.value = false;
+};
+
+const handleEditDialogCancel = () => {
+  resetEditVolume();
   isEditDialog.value = false;
 };
 </script>
@@ -124,7 +162,7 @@ const saveEditedVolume = () => {
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
     <Card class="mt-10">
       <template #title>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mb-2">
           <h2 class="text-2xl font-bold">New Delivery</h2>
         </div>
       </template>
@@ -133,14 +171,18 @@ const saveEditedVolume = () => {
         <div class="flex gap-4 mb-6">
           <div class="flex-1">
             <span class="p-float-label">
-              <InputText id="deliveryCode" v-model="deliveryCode" class="w-full" />
               <label for="deliveryCode">Delivery Code</label>
+              <InputText
+                id="deliveryCode"
+                v-model="deliveryCode"
+                class="w-full"
+              />
             </span>
           </div>
           <div class="flex-1">
             <span class="p-float-label">
-              <InputText id="clientCode" v-model="clientCode" class="w-full" />
               <label for="clientCode">Client Code</label>
+              <InputText id="clientCode" v-model="clientCode" class="w-full" />
             </span>
           </div>
         </div>
@@ -149,9 +191,9 @@ const saveEditedVolume = () => {
         <div class="mb-4">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-semibold">Volumes</h3>
-            <Button 
-              label="Add Volume" 
-              icon="pi pi-plus" 
+            <Button
+              label="Add Volume"
+              icon="pi pi-plus"
               @click="isOpenDialog = true"
             />
           </div>
@@ -160,7 +202,7 @@ const saveEditedVolume = () => {
           <DataTable :value="volumes" class="mb-4">
             <Column field="code" header="Code" />
             <Column field="packageType" header="Package Type" />
-            <Column header="Products" >
+            <Column header="Products">
               <template #body="{ data }">
                 {{ data.products.length }} products
               </template>
@@ -173,17 +215,17 @@ const saveEditedVolume = () => {
             <Column header="Actions">
               <template #body="{ data }">
                 <div class="flex gap-2">
-                  <Button 
-                    icon="pi pi-pencil" 
-                    text 
-                    rounded 
+                  <Button
+                    icon="pi pi-pencil"
+                    text
+                    rounded
                     severity="success"
                     @click="editExistingVolume(data)"
                   />
-                  <Button 
-                    icon="pi pi-trash" 
-                    text 
-                    rounded 
+                  <Button
+                    icon="pi pi-trash"
+                    text
+                    rounded
                     severity="danger"
                     @click="removeVolume(data)"
                   />
@@ -201,126 +243,217 @@ const saveEditedVolume = () => {
     </Card>
 
     <!-- Add Volume Dialog -->
-    <Dialog 
-      v-model:visible="isOpenDialog" 
-      modal 
+    <Dialog
+      v-model:visible="isOpenDialog"
+      modal
       header="Add New Volume"
-      :style="{ width: '50vw' }"
+      :style="{ width: '35vw', minWidth: '350px' }"
     >
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
-          <InputText id="volumeCode" v-model="newVolume.code" class="w-full" />
           <label for="volumeCode">Volume Code</label>
+          <InputText id="volumeCode" v-model="newVolume.code" class="w-full" />
         </span>
 
         <span class="p-float-label">
-          <Dropdown 
+          <label for="packageType">Package Type</label>
+          <Dropdown
             id="packageType"
-            v-model="newVolume.packageType" 
+            v-model="newVolume.packageType"
             :options="['FRAGILE', 'REGULAR']"
             class="w-full"
           />
-          <label for="packageType">Package Type</label>
         </span>
 
         <!-- Products Section -->
-        <div class="border p-4 rounded">
+        <div class="p-4 rounded">
           <div class="flex justify-between items-center mb-4">
             <h4 class="font-semibold">Products</h4>
-            <Button 
-              icon="pi pi-plus" 
-              text 
+            <Button
+              icon="pi pi-plus"
+              text
+              label="Add Product"
               @click="addProductToVolume"
             />
           </div>
-          <div v-for="(product, index) in newVolume.products" :key="index" class="flex gap-2 mb-2">
-            <InputText v-model="product.code" placeholder="Product Code" class="flex-1" />
-            <InputNumber v-model="product.quantity" placeholder="Qty" :min="1" class="w-24" />
+          <div class="flex gap-2 mb-2 font-semibold text-sm">
+            <span class="w-1/2 ml-1">Code</span>
+            <span class="w-1/2 ml-4">Quantity</span>
+          </div>
+          <div
+            v-for="(product, index) in newVolume.products"
+            :key="index"
+            class="flex gap-2 mb-2"
+          >
+            <InputText
+              v-model="product.code"
+              placeholder="Product Code"
+              class="w-1/2"
+            />
+            <InputNumber
+              v-model="product.quantity"
+              placeholder="Qty"
+              :min="1"
+              :max="999"
+              class="w-1/2"
+              showButtons
+              decrementButtonClass="p-button-secondary"
+              incrementButtonClass="p-button-secondary"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              suffix=" units"
+            />
           </div>
         </div>
 
         <!-- Sensors Section -->
-        <div class="border p-4 rounded">
+        <div class="p-4 rounded">
           <div class="flex justify-between items-center mb-4">
             <h4 class="font-semibold">Sensors</h4>
-            <Button 
-              icon="pi pi-plus" 
-              text 
+            <Button
+              icon="pi pi-plus"
+              label="Add Sensor"
+              text
               @click="addSensorToVolume"
             />
           </div>
-          <div v-for="(sensor, index) in newVolume.sensors" :key="index" class="flex gap-2 mb-2">
-            <InputText v-model="sensor.code" placeholder="Sensor Code" class="flex-1" />
-            <Dropdown 
-              v-model="sensor.type" 
-              :options="['TEMPERATURE', 'SPEED', 'GPS']" 
+          <div class="flex gap-2 mb-2 font-semibold text-sm">
+            <span class="w-1/2 ml-1">Code</span>
+            <span class="w-1/2 ml-5">Type</span>
+          </div>
+          <div
+            v-for="(sensor, index) in newVolume.sensors"
+            :key="index"
+            class="flex gap-2 mb-2"
+          >
+            <InputText
+              v-model="sensor.code"
+              placeholder="Sensor Code"
+              class="w-1/2"
+            />
+            <Dropdown
+              v-model="sensor.type"
+              :options="['TEMPERATURE', 'SPEED', 'GPS']"
               placeholder="Type"
-              class="w-40"
+              class="w-1/2"
             />
           </div>
         </div>
       </div>
 
       <template #footer>
-        <Button label="Cancel" text @click="isOpenDialog = false" />
+        <Button label="Cancel" text @click="handleNewDialogCancel" />
         <Button label="Add" @click="addVolume" />
       </template>
     </Dialog>
 
     <!-- Edit Volume Dialog -->
-    <Dialog 
-      v-model:visible="isEditDialog" 
-      modal 
+    <Dialog
+      v-model:visible="isEditDialog"
+      modal
       header="Edit Volume"
-      :style="{ width: '50vw' }"
+      :style="{ width: '35vw', minWidth: '350px' }"
     >
       <!-- Similar form as Add Volume Dialog but with editVolume.value -->
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
-          <InputText id="editVolumeCode" v-model="editVolume.code" class="w-full" disabled />
           <label for="editVolumeCode">Volume Code</label>
+          <InputText
+            id="editVolumeCode"
+            v-model="editVolume.code"
+            class="w-full"
+          />
         </span>
 
         <span class="p-float-label">
-          <Dropdown 
+          <label for="editPackageType">Package Type</label>
+          <Dropdown
             id="editPackageType"
-            v-model="editVolume.packageType" 
+            v-model="editVolume.packageType"
             :options="['FRAGILE', 'REGULAR']"
             class="w-full"
           />
-          <label for="editPackageType">Package Type</label>
         </span>
 
         <!-- Products Section -->
-        <div class="border p-4 rounded">
+
+        <div class="p-4 rounded">
           <div class="flex justify-between items-center mb-4">
             <h4 class="font-semibold">Products</h4>
+            <Button
+              icon="pi pi-plus"
+              text
+              label="Add Product"
+              @click="addProductToEditVolume"
+            />
           </div>
-          <div v-for="(product, index) in editVolume.products" :key="index" class="flex gap-2 mb-2">
-            <InputText v-model="product.code" placeholder="Product Code" class="flex-1" />
-            <InputNumber v-model="product.quantity" placeholder="Qty" :min="1" class="w-24" />
+          <div class="flex gap-2 mb-2 font-semibold text-sm">
+            <span class="w-1/2 ml-1">Code</span>
+            <span class="w-1/2 ml-4">Quantity</span>
+          </div>
+          <div
+            v-for="(product, index) in editVolume.products"
+            :key="index"
+            class="flex gap-2 mb-2"
+          >
+            <InputText
+              v-model="product.code"
+              placeholder="Product Code"
+              class="w-1/2"
+            />
+            <InputNumber
+              v-model="product.quantity"
+              placeholder="Qty"
+              :min="1"
+              :max="999"
+              class="w-1/2"
+              showButtons
+              decrementButtonClass="p-button-secondary"
+              incrementButtonClass="p-button-secondary"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              suffix=" units"
+            />
           </div>
         </div>
 
-        <!-- Sensors Section -->
-        <div class="border p-4 rounded">
+        <!-- Edit Volume Dialog Sensors Section -->
+        <div class="p-4 rounded">
           <div class="flex justify-between items-center mb-4">
             <h4 class="font-semibold">Sensors</h4>
+            <Button
+              icon="pi pi-plus"
+              label="Add Sensor"
+              text
+              @click="addSensorToVolume"
+            />
           </div>
-          <div v-for="(sensor, index) in editVolume.sensors" :key="index" class="flex gap-2 mb-2">
-            <InputText v-model="sensor.code" placeholder="Sensor Code" class="flex-1" />
-            <Dropdown 
-              v-model="sensor.type" 
-              :options="['TEMPERATURE', 'SPEED', 'GPS']" 
+          <div class="flex gap-2 mb-2 font-semibold text-sm">
+            <span class="w-1/2 ml-1">Code</span>
+            <span class="w-1/2 ml-5">Type</span>
+          </div>
+          <div
+            v-for="(sensor, index) in newVolume.sensors"
+            :key="index"
+            class="flex gap-2 mb-2"
+          >
+            <InputText
+              v-model="sensor.code"
+              placeholder="Sensor Code"
+              class="w-1/2"
+            />
+            <Dropdown
+              v-model="sensor.type"
+              :options="['TEMPERATURE', 'SPEED', 'GPS']"
               placeholder="Type"
-              class="w-40"
+              class="w-1/2"
             />
           </div>
         </div>
       </div>
 
       <template #footer>
-        <Button label="Cancel" text @click="isEditDialog = false" />
+        <Button label="Cancel" text @click="handleEditDialogCancel" />
         <Button label="Save" @click="saveEditedVolume" />
       </template>
     </Dialog>
