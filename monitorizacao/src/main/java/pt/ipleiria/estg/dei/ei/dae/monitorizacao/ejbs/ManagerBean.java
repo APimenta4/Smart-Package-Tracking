@@ -53,16 +53,18 @@ public class ManagerBean {
         return manager;
     }
 
-    public void update(String code, String email, String name)
-            throws CustomEntityNotFoundException, IllegalArgumentException {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name '"+name+"' cannot be null or blank.");
-        }
+    public void update(String code, String name, String email)
+            throws CustomEntityNotFoundException, CustomConstraintViolationException {
         Manager manager = find(code);
         em.lock(manager, LockModeType.OPTIMISTIC);
         logger.info("Updating manager '" + code + "'");
-        manager.setEmail(email);
-        manager.setName(name);
+        try{
+            manager.setEmail(email);
+            manager.setName(name);
+            em.flush();
+        }catch (ConstraintViolationException e){
+            throw new CustomConstraintViolationException(e);
+        }
     }
 
     public void delete(String code) throws CustomEntityNotFoundException {
