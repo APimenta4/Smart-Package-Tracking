@@ -41,7 +41,7 @@ public class VolumeBean {
         return (Long)query.getSingleResult() > 0L;
     }
 
-    public void create(String code, String orderCode, PackageType packingType)
+    public void create(String code, String orderCode, PackageType packageType)
             throws CustomEntityExistsException, CustomEntityNotFoundException, CustomConstraintViolationException {
         logger.info("Creating new Volume '" + code + "'");
         if (exists(code)) {
@@ -50,7 +50,7 @@ public class VolumeBean {
         Order order = orderBean.find(orderCode);
         try{
             // TODO: verify association in case of invalid volume
-            Volume volume = new Volume(code, order, VolumeStatus.READY_FOR_PICKUP, packingType);
+            Volume volume = new Volume(code, order, VolumeStatus.READY_FOR_PICKUP, packageType);
             order.addVolume(volume);
             em.persist(volume);
             em.flush();
