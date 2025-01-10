@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackingType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 
 import java.io.Serializable;
@@ -28,7 +28,7 @@ public class Volume extends Versionable implements Serializable {
 
     private VolumeStatus status;
 
-    private PackingType packingType;
+    private PackageType packingType;
 
     private Date shippedDate;
 
@@ -38,13 +38,13 @@ public class Volume extends Versionable implements Serializable {
     private List<Sensor> sensors = new ArrayList<>();;
 
     @OneToMany(mappedBy = "volume")
-    private List<LineOfSale> linesOfSales = new ArrayList<>();
+    private List<LineOfSale> lineOfSales = new ArrayList<>();
 
-    public Volume(String code, Order order, VolumeStatus status, PackingType packingType) {
+    public Volume(String code, Order order, VolumeStatus status, PackageType packageType) {
         this.code = code;
         this.order = order;
         this.status = status;
-        this.packingType = packingType;
+        this.packingType = packageType;
     }
 
     public Volume() {}
@@ -73,12 +73,12 @@ public class Volume extends Versionable implements Serializable {
         this.status = status;
     }
 
-    public PackingType getPackingType() {
+    public PackageType getPackingType() {
         return packingType;
     }
 
-    public void setPackingType(PackingType packingType) {
-        this.packingType = packingType;
+    public void setPackingType(PackageType packageType) {
+        this.packingType = packageType;
     }
 
     public Date getShippedDate() {
@@ -110,15 +110,15 @@ public class Volume extends Versionable implements Serializable {
     }
 
     public List<LineOfSale> getLineOfSales() {
-        return new ArrayList<>(linesOfSales);
+        return new ArrayList<>(lineOfSales);
     }
 
     public void addProduct(LineOfSale lineOfSale) {
-        linesOfSales.add(lineOfSale);
+        lineOfSales.add(lineOfSale);
     }
 
     public void removeProduct(LineOfSale lineOfSale) {
-        linesOfSales.remove(lineOfSale);
+        lineOfSales.remove(lineOfSale);
     }
 
     @Override

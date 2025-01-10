@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.CategoryType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,16 +21,16 @@ public class Product implements Serializable {
     private String code;
 
     @NotNull
-    private CategoryType category;
+    private PackageType packageType;
 
     private String description;
 
     @OneToMany(mappedBy = "product")
-    private List<LineOfSale> linesOfSales = new ArrayList<>();
+    private List<LineOfSale> lineOfSales = new ArrayList<>();
 
-    public Product(String code, CategoryType category, String description) {
+    public Product(String code, PackageType packageType, String description) {
         this.code = code;
-        this.category = category;
+        this.packageType = packageType;
         this.description = description;
     }
 
@@ -45,12 +45,12 @@ public class Product implements Serializable {
         this.code = code;
     }
 
-    public @NotNull CategoryType getCategory() {
-        return category;
+    public @NotNull PackageType getPackageType() {
+        return packageType;
     }
 
-    public void setCategory(@NotNull CategoryType category) {
-        this.category = category;
+    public void setPackageType(@NotNull PackageType packageType) {
+        this.packageType = packageType;
     }
 
     public String getDescription() {
@@ -62,15 +62,15 @@ public class Product implements Serializable {
     }
 
     public List<LineOfSale> getLineOfSales() {
-        return new ArrayList<>(linesOfSales);
+        return new ArrayList<>(lineOfSales);
     }
 
-    public void addProduct(LineOfSale linesOfSale) {
-        linesOfSales.add(linesOfSale);
+    public void addProduct(LineOfSale lineOfSale) {
+        lineOfSales.add(lineOfSale);
     }
 
-    public void removeProduct(LineOfSale linesOfSale) {
-        linesOfSales.remove(linesOfSale);
+    public void removeProduct(LineOfSale lineOfSale) {
+        lineOfSales.remove(lineOfSale);
     }
     @Override
     public boolean equals(Object o) {
