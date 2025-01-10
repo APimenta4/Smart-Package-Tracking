@@ -71,7 +71,7 @@ public class VolumeBean {
         return volume;
     }
 
-    public Volume findWithLists(String code)
+    public Volume findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Volume volume = find(code);
         Hibernate.initialize(volume.getLineOfSales());

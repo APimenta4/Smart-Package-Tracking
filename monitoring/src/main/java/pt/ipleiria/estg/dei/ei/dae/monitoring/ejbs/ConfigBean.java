@@ -61,6 +61,12 @@ public class ConfigBean {
             sensorBean.create("2s","1v",SensorType.ACCELERATION);
             lineOfSaleBean.create("1v","1p",10);
             lineOfSaleBean.create("1v","2p",20);
+
+            volumeBean.create("2v", "1o", PackingType.EXAMPLE);
+            sensorBean.create("3s","2v",SensorType.TEMPERATURE);
+            sensorBean.create("4s","2v",SensorType.ACCELERATION);
+            lineOfSaleBean.create("2v","1p",1);
+            lineOfSaleBean.create("2v","2p",2);
         } catch (Exception ignore) {}
         logger.info("Order created");
 

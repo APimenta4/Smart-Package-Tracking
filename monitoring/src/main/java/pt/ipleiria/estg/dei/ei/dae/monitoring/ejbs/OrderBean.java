@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
@@ -68,10 +69,14 @@ public class OrderBean {
         return order;
     }
 
-    public Order findWithVolumes(String code)
+    public Order findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Order order = find(code);
         Hibernate.initialize(order.getVolumes());
+        for (Volume volume : order.getVolumes()) {
+            Hibernate.initialize(volume.getLineOfSales());
+            Hibernate.initialize(volume.getSensors());
+        }
         return order;
     }
 
