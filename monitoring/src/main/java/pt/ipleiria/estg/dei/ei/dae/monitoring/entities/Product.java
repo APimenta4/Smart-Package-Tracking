@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 
@@ -23,6 +24,7 @@ public class Product implements Serializable {
     @NotNull
     private PackageType packageType;
 
+    @NotEmpty
     private String description;
 
     @OneToMany(mappedBy = "product")
@@ -53,11 +55,11 @@ public class Product implements Serializable {
         this.packageType = packageType;
     }
 
-    public String getDescription() {
+    public @NotEmpty String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@NotEmpty String description) {
         this.description = description;
     }
 

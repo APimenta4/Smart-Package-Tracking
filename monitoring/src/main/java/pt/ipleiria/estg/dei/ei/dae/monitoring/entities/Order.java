@@ -24,17 +24,14 @@ public class Order extends Versionable implements Serializable {
     private Client client;
 
     @OneToMany(mappedBy = "order")
-    private List<Volume> volumes;
+    private List<Volume> volumes = new ArrayList<>();
 
     public Order(String code, Client client) {
         this.code = code;
         this.client = client;
-        this.volumes = new ArrayList<>();
     }
 
-    public Order() {
-        this.volumes = new ArrayList<>();
-    }
+    public Order() {}
 
     public String getCode() {
         return code;

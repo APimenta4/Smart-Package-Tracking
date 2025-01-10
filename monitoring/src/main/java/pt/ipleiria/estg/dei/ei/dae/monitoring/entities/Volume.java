@@ -26,9 +26,11 @@ public class Volume extends Versionable implements Serializable {
     @NotNull
     private Order order;
 
+    @NotNull
     private VolumeStatus status;
 
-    private PackageType packingType;
+    @NotNull
+    private PackageType packageType;
 
     private Date shippedDate;
 
@@ -44,7 +46,7 @@ public class Volume extends Versionable implements Serializable {
         this.code = code;
         this.order = order;
         this.status = status;
-        this.packingType = packageType;
+        this.packageType = packageType;
     }
 
     public Volume() {}
@@ -65,20 +67,20 @@ public class Volume extends Versionable implements Serializable {
         this.order = order;
     }
 
-    public VolumeStatus getStatus() {
+    public @NotNull VolumeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(VolumeStatus status) {
+    public void setStatus(@NotNull VolumeStatus status) {
         this.status = status;
     }
 
-    public PackageType getPackingType() {
-        return packingType;
+    public @NotNull PackageType getPackageType() {
+        return packageType;
     }
 
-    public void setPackingType(PackageType packageType) {
-        this.packingType = packageType;
+    public void setPackageType(@NotNull PackageType packageType) {
+        this.packageType = packageType;
     }
 
     public Date getShippedDate() {

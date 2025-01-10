@@ -44,8 +44,7 @@ public abstract class Reading implements Serializable {
         this.sensor = sensor;
     }
 
-    @NotNull
-    public Instant getTimestamp() {
+    public @NotNull Instant getTimestamp() {
         return timestamp;
     }
 

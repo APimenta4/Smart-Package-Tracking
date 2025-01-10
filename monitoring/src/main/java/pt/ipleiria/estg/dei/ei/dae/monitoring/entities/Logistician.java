@@ -6,10 +6,9 @@ import java.io.Serializable;
 
 @Entity
 public class Logistician extends User implements Serializable {
-    public Logistician() {
-    }
-
     public Logistician(String code, String name, String email, String password) {
         super(code, name, email, password);
     }
+
+    public Logistician() {}
 }

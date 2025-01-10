@@ -6,10 +6,9 @@ import java.io.Serializable;
 
 @Entity
 public class Manager extends User implements Serializable {
-    public Manager() {
-    }
-
     public Manager(String code, String name, String email, String password) {
         super(code, name, email, password);
     }
+
+    public Manager() {}
 }
