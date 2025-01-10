@@ -8,7 +8,7 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import java.util.logging.Logger;
 
 public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenException> {
-    private static final Logger logger = Logger.getLogger(ForbiddenException.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger("exceptions.mappers.ForbiddenExceptionMapper");
 
     @Override
     public Response toResponse(ForbiddenException e) {

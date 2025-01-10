@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 @Provider
 public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
-     private static final Logger logger = Logger.getLogger(IllegalArgumentException.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger("exceptions.mappers.IllegalArgumentExceptionMapper");
 
      @Override
      public Response toResponse(IllegalArgumentException e) {

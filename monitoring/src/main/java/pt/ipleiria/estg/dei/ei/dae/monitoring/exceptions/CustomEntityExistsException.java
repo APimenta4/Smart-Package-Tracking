@@ -3,7 +3,6 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions;
 import java.util.logging.Logger;
 
 public class CustomEntityExistsException extends Exception{
-    // TODO: logger is also in the wrapper
     private static final Logger logger = Logger.getLogger("exceptions.CustomEntityExistsException");
 
     /**

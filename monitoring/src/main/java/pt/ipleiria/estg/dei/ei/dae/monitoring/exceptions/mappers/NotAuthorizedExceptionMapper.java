@@ -7,7 +7,7 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import java.util.logging.Logger;
 
 public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthorizedException> {
-    private static final Logger logger = Logger.getLogger(NotAuthorizedException.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger("exceptions.mappers.NotAuthorizedExceptionMapper");
 
     @Override
     public Response toResponse(NotAuthorizedException e) {

@@ -9,12 +9,9 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsExcep
 
 @Provider
 public class CustomEntityExistsExceptionMapper implements ExceptionMapper<CustomEntityExistsException> {
-     private static final Logger logger = Logger.getLogger(CustomEntityExistsException.class.getCanonicalName());
-
      @Override
      public Response toResponse(CustomEntityExistsException e) {
          String errorMsg = e.getMessage();
-         logger.warning("ERROR: " + errorMsg);
          return Response.status(Response.Status.CONFLICT)
          .entity(errorMsg)
          .build();

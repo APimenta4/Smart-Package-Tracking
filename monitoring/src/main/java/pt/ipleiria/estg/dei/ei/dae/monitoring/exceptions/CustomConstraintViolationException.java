@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import jakarta.validation.ConstraintViolationException;
 
 public class CustomConstraintViolationException extends Exception {
-    // TODO: logger is also in the wrapper
     private static final Logger logger = Logger.getLogger("exceptions.CustomConstraintViolationException");
 
     public CustomConstraintViolationException(ConstraintViolationException e) {
