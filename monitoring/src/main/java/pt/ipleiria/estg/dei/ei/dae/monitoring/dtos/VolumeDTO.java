@@ -15,19 +15,19 @@ public class VolumeDTO {
     private VolumeStatus status;
     private Date shippedDate;
     private Date deliveredDate;
-    private PackageType packingType;
+    private PackageType packageType;
     private List<ProductDTO> products = new ArrayList<>();
     private List<SensorDTO> sensors = new ArrayList<>();
 
 
 
-    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date shippedDate, Date deliveredDate, PackageType packingType) {
+    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date shippedDate, Date deliveredDate, PackageType packageType) {
         this.code = code;
         this.orderCode = orderCode;
         this.status = status;
         this.shippedDate = shippedDate;
         this.deliveredDate = deliveredDate;
-        this.packingType = packingType;
+        this.packageType = packageType;
     }
 
     public VolumeDTO() {
@@ -40,7 +40,7 @@ public class VolumeDTO {
                 volume.getStatus(),
                 volume.getShippedDate(),
                 volume.getDeliveredDate(),
-                volume.getPackingType()
+                volume.getPackageType()
         );
     }
 
@@ -88,12 +88,12 @@ public class VolumeDTO {
         this.deliveredDate = deliveredDate;
     }
 
-    public PackageType getPackingType() {
-        return packingType;
+    public PackageType getPackageType() {
+        return packageType;
     }
 
-    public void setPackingType(PackageType packingType) {
-        this.packingType = packingType;
+    public void setPackageType(PackageType packageType) {
+        this.packageType = packageType;
     }
 
     public List<ProductDTO> getProducts() {
