@@ -10,7 +10,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackingType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
@@ -41,7 +41,7 @@ public class VolumeBean {
         return (Long)query.getSingleResult() > 0L;
     }
 
-    public void create(String code, String orderCode, PackingType packingType)
+    public void create(String code, String orderCode, PackageType packingType)
             throws CustomEntityExistsException, CustomEntityNotFoundException, CustomConstraintViolationException {
         logger.info("Creating new Volume '" + code + "'");
         if (exists(code)) {
@@ -59,10 +59,6 @@ public class VolumeBean {
         }
     }
 
-    public List<Volume> findAll() {
-        return em.createNamedQuery("getAllVolumes", Volume.class).getResultList();
-    }
-
     public Volume find(String code) throws CustomEntityNotFoundException {
         var volume = em.find(Volume.class, code);
         if (volume == null) {
@@ -71,11 +67,21 @@ public class VolumeBean {
         return volume;
     }
 
+    public void initializeEntities(Volume volume) {
+        Hibernate.initialize(volume.getLineOfSales());
+        Hibernate.initialize(volume.getSensors());
+    }
+
+    public List<Volume> findAllWithAllDetails() {
+        List<Volume> volumes = em.createNamedQuery("getAllVolumes", Volume.class).getResultList();
+        volumes.forEach(this::initializeEntities);
+        return volumes;
+    }
+
     public Volume findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Volume volume = find(code);
-        Hibernate.initialize(volume.getLineOfSales());
-        Hibernate.initialize(volume.getSensors());
+        initializeEntities(volume);
         return volume;
     }
 

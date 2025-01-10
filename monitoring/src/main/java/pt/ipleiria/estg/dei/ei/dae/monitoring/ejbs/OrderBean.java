@@ -57,10 +57,6 @@ public class OrderBean {
         }
     }
 
-    public List<Order> findAll() {
-        return em.createNamedQuery("getAllOrders", Order.class).getResultList();
-    }
-
     public Order find(String code) throws CustomEntityNotFoundException {
         var order = em.find(Order.class, code);
         if (order == null) {
@@ -69,14 +65,22 @@ public class OrderBean {
         return order;
     }
 
+    public void initializeEntities(Order order) {
+        List<Volume> volumes = order.getVolumes();
+        Hibernate.initialize(volumes);
+        volumes.forEach(volumeBean::initializeEntities);
+    }
+
+    public List<Order> findAllWithAllDetails() {
+        List<Order> orders = em.createNamedQuery("getAllOrders", Order.class).getResultList();
+        orders.forEach(this::initializeEntities);
+        return orders;
+    }
+
     public Order findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Order order = find(code);
-        Hibernate.initialize(order.getVolumes());
-        for (Volume volume : order.getVolumes()) {
-            Hibernate.initialize(volume.getLineOfSales());
-            Hibernate.initialize(volume.getSensors());
-        }
+        initializeEntities(order);
         return order;
     }
 

@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Product;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.CategoryType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
@@ -30,7 +30,7 @@ public class ProductBean {
         return (Long)query.getSingleResult() > 0L;
     }
 
-    public void create(String code, CategoryType category, String description)
+    public void create(String code, PackageType category, String description)
             throws CustomEntityExistsException, CustomConstraintViolationException {
         logger.info("Creating new Product '" + code + "'");
         if (exists(code)) {
