@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs;
 
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -8,10 +9,12 @@ import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingAcceleration;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.logging.Logger;
 
 @Stateless
@@ -19,9 +22,12 @@ public class ReadingAccelerationBean {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB
+    private SensorBean sensorBean;
+
     private static final Logger logger = Logger.getLogger("ejbs.ReadingAccelerationBean");
 
-    public boolean exists(long id) {
+    public boolean exists(Long id) {
         Query query = em.createQuery(
                 "SELECT COUNT(ra.id) FROM ReadingAcceleration ra WHERE ra.id = :id",
                 Long.class
@@ -30,19 +36,25 @@ public class ReadingAccelerationBean {
         return (Long)query.getSingleResult() > 0L;
     }
 
-    public void create(Sensor sensor, double acceleration)
-            throws CustomConstraintViolationException {
-        logger.info("Creating new acceleration reading");
+    public ReadingAcceleration create(String sensorCode, Double acceleration)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException {
+        logger.info("Creating new acceleration reading, sensor '" + sensorCode+"'");
+        Sensor sensor = sensorBean.find(sensorCode);
+
         try {
+            VolumeStatus status = sensor.getVolume().getStatus();
+            if (EnumSet.of(VolumeStatus.CANCELLED, VolumeStatus.RETURNED, VolumeStatus.DELIVERED).contains(status)) {
+                throw new CustomConstraintViolationException("Volume associated with the sensor '"+ sensorCode +"' has status "+status);
+            }
             ReadingAcceleration readingAcceleration = new ReadingAcceleration(sensor, Instant.now(),acceleration);
             em.persist(readingAcceleration);
-
+            return readingAcceleration;
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
     }
 
-    public ReadingAcceleration find(long id)
+    public ReadingAcceleration find(Long id)
             throws CustomEntityNotFoundException {
         ReadingAcceleration readingAcceleration = em.find(ReadingAcceleration.class, id);
         if (readingAcceleration == null) {

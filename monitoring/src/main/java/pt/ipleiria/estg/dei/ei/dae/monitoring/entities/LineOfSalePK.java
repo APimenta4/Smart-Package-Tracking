@@ -36,7 +36,7 @@ public class LineOfSalePK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LineOfSalePK other = (LineOfSalePK) o;
-        return Objects.equals(this.volume, other.volume) && Objects.equals(this.product, other.product);
+        return this.volume.equals(other.volume) && this.product.equals(other.product);
     }
 
     @Override

@@ -60,5 +60,11 @@ public class Order extends Versionable implements Serializable {
     public void removeVolume(Volume volume) {
         volumes.remove(volume);
     }
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order other = (Order) o;
+        return this.code.equals(other.code);
+    }
 }

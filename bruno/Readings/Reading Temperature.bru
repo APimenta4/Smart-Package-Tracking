@@ -1,0 +1,18 @@
+meta {
+  name: Reading Temperature
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{api_url}}/readings/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sensorCode": "S1",
+    "temperature": 27
+  }
+}

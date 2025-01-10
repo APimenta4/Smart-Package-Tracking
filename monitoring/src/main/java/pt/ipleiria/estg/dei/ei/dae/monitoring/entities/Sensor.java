@@ -67,9 +67,4 @@ public class Sensor extends Versionable implements Serializable {
         Sensor other = (Sensor) o;
         return this.code.equals(other.code);
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(code);
-    }
 }

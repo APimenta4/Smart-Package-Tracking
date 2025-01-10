@@ -9,13 +9,14 @@ import java.util.stream.Collectors;
 
 public class ReadingDTO {
     private String sensorCode;
+    private String type;
     private String volumeCode;
-    private long id;
-    private long timestamp;
-    private double temperature;
-    private double acceleration;
-    private double latitude;
-    private double longitude;
+    private Long id;
+    private Long timestamp;
+    private Double temperature;
+    private Double acceleration;
+    private Double latitude;
+    private Double longitude;
 
 
     /**
@@ -27,9 +28,10 @@ public class ReadingDTO {
      * @param value the temperature (°C) or the acceleration (m/s²)
      * @param sensorType the type of the value to use
      */
-    public ReadingDTO(long id, String sensorCode, String volumeCode, Instant timestamp, double value, SensorType sensorType) {
+    public ReadingDTO(Long id, String sensorCode, String type, String volumeCode, Instant timestamp, Double value, SensorType sensorType) {
         this.id = id;
         this.sensorCode = sensorCode;
+        this.type = type;
         this.volumeCode = volumeCode;
         this.timestamp = timestamp.toEpochMilli();
         switch (sensorType) {
@@ -51,9 +53,10 @@ public class ReadingDTO {
      * @param latitude the latitude
      * @param longitude the longitude
      */
-    public ReadingDTO(long id, String sensorCode, String volumeCode, Instant timestamp, double latitude, double longitude) {
+    public ReadingDTO(Long id, String sensorCode, String type, String volumeCode, Instant timestamp, Double latitude, Double longitude) {
         this.id = id;
         this.sensorCode = sensorCode;
+        this.type = type;
         this.volumeCode = volumeCode;
         this.timestamp = timestamp.toEpochMilli();
         this.latitude = latitude;
@@ -71,6 +74,7 @@ public class ReadingDTO {
             return new ReadingDTO(
                     readingTemperature.getId(),
                     sensor.getCode(),
+                    String.valueOf(sensor.getType()),
                     volume.getCode(),
                     readingTemperature.getTimestamp(),
                     readingTemperature.getTemperature(),
@@ -81,6 +85,7 @@ public class ReadingDTO {
             return new ReadingDTO(
                     readingAcceleration.getId(),
                     sensor.getCode(),
+                    String.valueOf(sensor.getType()),
                     volume.getCode(),
                     readingAcceleration.getTimestamp(),
                     readingAcceleration.getAcceleration(),
@@ -91,6 +96,7 @@ public class ReadingDTO {
             return new ReadingDTO(
                     readingLocation.getId(),
                     sensor.getCode(),
+                    String.valueOf(sensor.getType()),
                     volume.getCode(),
                     readingLocation.getTimestamp(),
                     readingLocation.getLatitude(),
@@ -111,6 +117,14 @@ public class ReadingDTO {
         this.sensorCode = sensorCode;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getVolumeCode() {
         return volumeCode;
     }
@@ -119,34 +133,34 @@ public class ReadingDTO {
         this.volumeCode = volumeCode;
     }
 
-    public long getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public double getTemperature() {
+    public Double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 
-    public double getAcceleration() {
+    public Double getAcceleration() {
         return acceleration;
     }
 
-    public void setAcceleration(double acceleration) {
+    public void setAcceleration(Double acceleration) {
         this.acceleration = acceleration;
     }
-    public double getLatitude() {return latitude;}
+    public Double getLatitude() {return latitude;}
 
-    public void setLatitude(double latitude) {this.latitude = latitude;}
+    public void setLatitude(Double latitude) {this.latitude = latitude;}
 
-    public double getLongitude() {return longitude;}
+    public Double getLongitude() {return longitude;}
 
-    public void setLongitude(double longitude) {this.longitude = longitude;}
+    public void setLongitude(Double longitude) {this.longitude = longitude;}
 }

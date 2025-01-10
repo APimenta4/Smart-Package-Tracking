@@ -26,7 +26,7 @@ public class LineOfSaleBean {
 
     private static final Logger logger = Logger.getLogger("ejbs.LineOfSaleBean");
 
-    public void create(String volumeCode, String productCode, long quantity)
+    public void create(String volumeCode, String productCode, Long quantity)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
         logger.info("Creating new LineOfSale, volume '" + volumeCode + "', product '" + productCode + "'");
 

@@ -4,9 +4,13 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingAcceleration;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingTemperature;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 @Startup
@@ -28,6 +32,16 @@ public class ConfigBean {
     private SensorBean sensorBean;
     @EJB
     private LineOfSaleBean lineOfSaleBean;
+
+    @EJB
+    private ReadingAccelerationBean readingAccelerationBean;
+
+    @EJB
+    private ReadingTemperatureBean readingTemperatureBean;
+
+
+    @EJB
+    private ReadingLocationBean readingLocationBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
@@ -58,16 +72,26 @@ public class ConfigBean {
             volumeBean.create("V1", "O1", PackageType.ISOTERMIC_GEOLOCATION);
             sensorBean.create("S1","V1",SensorType.TEMPERATURE);
             sensorBean.create("S2","V1",SensorType.LOCATION);
-            lineOfSaleBean.create("V1","P01",10);
-            lineOfSaleBean.create("V1","P02",20);
+            lineOfSaleBean.create("V1","P01",10L);
+            lineOfSaleBean.create("V1","P02",20L);
             sensorBean.create("S3","V1",SensorType.ACCELERATION);
 
             volumeBean.create("V2", "O1", PackageType.ISOTERMIC_GEOLOCATION);
             sensorBean.create("S4","V2",SensorType.TEMPERATURE);
             sensorBean.create("S5","V2",SensorType.LOCATION);
-            lineOfSaleBean.create("V2","P01",1);
-            lineOfSaleBean.create("V2","P02",2);
+            lineOfSaleBean.create("V2","P01",1L);
+            lineOfSaleBean.create("V2","P02",2L);
             sensorBean.create("S6","V2",SensorType.ACCELERATION);
+
+            volumeBean.updateStatus("V2", VolumeStatus.CANCELLED);
+
+            readingTemperatureBean.create("S1",24D);
+            readingLocationBean.create("S2",-50.61D, 165.97D);
+            readingAccelerationBean.create("S3",1.5D);
+
+            readingTemperatureBean.create("S4",24.2D);
+            readingLocationBean.create("S5",-50.61D, 165.97D);
+            readingAccelerationBean.create("S6",1.5D);
         } catch (Exception ignore) {}
         logger.info("Order created");
 

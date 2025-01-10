@@ -7,12 +7,17 @@ import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
-@Table(name = "readings")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllReading",
+                query = "SELECT r FROM Reading r"
+        )
+})
 public abstract class Reading implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @NotNull
@@ -28,11 +33,11 @@ public abstract class Reading implements Serializable {
 
     public Reading() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,6 +62,6 @@ public abstract class Reading implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reading other = (Reading) o;
-        return this.id == other.id;
+        return this.id.equals(other.id);
     }
 }

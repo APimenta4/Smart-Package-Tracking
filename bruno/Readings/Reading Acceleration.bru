@@ -1,0 +1,18 @@
+meta {
+  name: Reading Acceleration
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/readings/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sensorCode": "S3",
+    "acceleration": 5
+  }
+}

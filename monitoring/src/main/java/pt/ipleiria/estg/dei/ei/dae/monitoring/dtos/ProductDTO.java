@@ -11,9 +11,9 @@ public class ProductDTO {
     private String code;
     private String description;
     private PackageType packageType;
-    private long quantity;
+    private Long quantity;
 
-    public ProductDTO(String productCode, String description, PackageType packageType, long quantity) {
+    public ProductDTO(String productCode, String description, PackageType packageType, Long quantity) {
         this.code = productCode;
         this.description = description;
         this.packageType = packageType;
@@ -61,11 +61,11 @@ public class ProductDTO {
         this.packageType = packageType;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(long quantity) {
+    public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 }

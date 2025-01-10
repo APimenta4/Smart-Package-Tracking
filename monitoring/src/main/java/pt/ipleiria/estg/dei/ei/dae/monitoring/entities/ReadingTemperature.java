@@ -11,9 +11,9 @@ import java.time.Instant;
 public class ReadingTemperature extends Reading implements Serializable {
 
     @NotNull
-    private double temperature;
+    private Double temperature;
 
-    public ReadingTemperature(Sensor sensor, Instant timestamp, double temperature) {
+    public ReadingTemperature(Sensor sensor, Instant timestamp, Double temperature) {
         super(sensor, timestamp);
         this.temperature = temperature;
     }
@@ -21,11 +21,11 @@ public class ReadingTemperature extends Reading implements Serializable {
     public ReadingTemperature() {}
 
     @NotNull
-    public double getTemperature() {
+    public Double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(@NotNull double temperature) {
+    public void setTemperature(@NotNull Double temperature) {
         this.temperature = temperature;
     }
 }

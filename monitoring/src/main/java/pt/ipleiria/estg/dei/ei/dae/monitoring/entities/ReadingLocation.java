@@ -12,10 +12,10 @@ import java.time.Instant;
 public class ReadingLocation extends Reading implements Serializable {
 
     @NotNull
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
-    public ReadingLocation(Sensor sensor, Instant timestamp, double latitude, double longitude) {
+    public ReadingLocation(Sensor sensor, Instant timestamp, Double latitude, Double longitude) {
         super(sensor, timestamp);
         this.latitude = latitude;
         this.longitude = longitude;
@@ -24,19 +24,19 @@ public class ReadingLocation extends Reading implements Serializable {
     public ReadingLocation() {}
 
     @NotNull
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(@NotNull double latitude) {
+    public void setLatitude(@NotNull Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 }

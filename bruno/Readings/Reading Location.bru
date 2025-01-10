@@ -1,0 +1,19 @@
+meta {
+  name: Reading Location
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/readings/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sensorCode": "S2",
+    "latitude": -50.61,
+    "longitude": 165.97
+  }
+}

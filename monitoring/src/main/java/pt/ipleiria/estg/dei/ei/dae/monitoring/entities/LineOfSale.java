@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Table(name="linesofsale")
 @IdClass(LineOfSalePK.class)
 public class LineOfSale extends Versionable implements Serializable {
-
     @Id
     @ManyToOne
     private Volume volume;
@@ -20,9 +19,9 @@ public class LineOfSale extends Versionable implements Serializable {
     private Product product;
 
     @Min(value = 1, message = "Quantity must be at least 1")
-    private long quantity;
+    private Long quantity;
 
-    public LineOfSale(Volume volume, Product product, long quantity) {
+    public LineOfSale(Volume volume, Product product, Long quantity) {
         this.volume = volume;
         this.product = product;
         this.quantity = quantity;
@@ -47,11 +46,19 @@ public class LineOfSale extends Versionable implements Serializable {
     }
 
     @NotNull
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(@NotNull long quantity) {
+    public void setQuantity(@NotNull Long quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LineOfSale other = (LineOfSale) o;
+        return this.volume.equals(other.volume) && this.product.equals(other.product);
     }
 }

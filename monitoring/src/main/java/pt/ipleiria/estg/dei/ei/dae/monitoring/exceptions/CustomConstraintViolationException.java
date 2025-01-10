@@ -12,6 +12,10 @@ public class CustomConstraintViolationException extends Exception {
         logger.warning("ERROR: " + getMessage());
     }
 
+    public CustomConstraintViolationException(String message) {
+        super(message);
+        logger.warning("ERROR: " + message);
+    }
     private static String getConstraintViolationMessages(ConstraintViolationException e) {
 //        return e.getConstraintViolations()
         return e.getConstraintViolations()
