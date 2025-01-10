@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 public class ReadingSimpleDTO {
     private long id;
     private long timestamp;
-
     private double temperature;
     private double acceleration;
     private double latitude;

@@ -9,16 +9,24 @@ import java.util.stream.Collectors;
 public class OrderDTO {
     private String code;
     private String clientCode;
-    private List<VolumeDTO> volumes;
-
-    public OrderDTO() {
-        this.volumes = new ArrayList<>();
-    }
+    private List<VolumeDTO> volumes = new ArrayList<>();
 
     public OrderDTO(String code, String clientCode) {
         this.code = code;
         this.clientCode = clientCode;
-        this.volumes = new ArrayList<>();
+    }
+
+    public OrderDTO() {}
+
+    public static OrderDTO from(Order order) {
+        return new OrderDTO(
+                order.getCode(),
+                order.getClient().getCode()
+        );
+    }
+
+    public static List<OrderDTO> from(List<Order> order) {
+        return order.stream().map(OrderDTO::from).collect(Collectors.toList());
     }
 
     public String getCode() {
@@ -43,16 +51,5 @@ public class OrderDTO {
 
     public void setVolumes(List<VolumeDTO> volumes) {
         this.volumes = volumes;
-    }
-
-    public static OrderDTO from(Order order) {
-        return new OrderDTO(
-                order.getCode(),
-                order.getClient().getCode()
-        );
-    }
-
-    public static List<OrderDTO> from(List<Order> order) {
-        return order.stream().map(OrderDTO::from).collect(Collectors.toList());
     }
 }

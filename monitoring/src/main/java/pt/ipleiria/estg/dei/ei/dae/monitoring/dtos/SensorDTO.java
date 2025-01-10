@@ -34,7 +34,6 @@ public class SensorDTO {
         return sensors.stream().map(SensorDTO::from).collect(Collectors.toList());
     }
 
-
     public String getCode() {
         return code;
     }

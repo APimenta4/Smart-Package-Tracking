@@ -11,9 +11,7 @@ public class ReadingDTO {
     private String sensorCode;
     private String volumeCode;
     private long id;
-
     private long timestamp;
-
     private double temperature;
     private double acceleration;
     private double latitude;

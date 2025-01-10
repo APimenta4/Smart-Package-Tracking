@@ -1,7 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.monitoring.dtos;
 
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackingType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 
 import java.util.ArrayList;
@@ -15,13 +15,13 @@ public class VolumeDTO {
     private VolumeStatus status;
     private Date shippedDate;
     private Date deliveredDate;
-    private PackingType packingType;
+    private PackageType packingType;
     private List<ProductDTO> products = new ArrayList<>();
     private List<SensorDTO> sensors = new ArrayList<>();
 
 
 
-    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date shippedDate, Date deliveredDate, PackingType packingType) {
+    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date shippedDate, Date deliveredDate, PackageType packingType) {
         this.code = code;
         this.orderCode = orderCode;
         this.status = status;
@@ -31,6 +31,21 @@ public class VolumeDTO {
     }
 
     public VolumeDTO() {
+    }
+
+    public static VolumeDTO from(Volume volume) {
+        return new VolumeDTO(
+                volume.getCode(),
+                volume.getOrder().getCode(),
+                volume.getStatus(),
+                volume.getShippedDate(),
+                volume.getDeliveredDate(),
+                volume.getPackingType()
+        );
+    }
+
+    public static List<VolumeDTO> from(List<Volume> volume) {
+        return volume.stream().map(VolumeDTO::from).collect(Collectors.toList());
     }
 
     public String getCode() {
@@ -73,11 +88,11 @@ public class VolumeDTO {
         this.deliveredDate = deliveredDate;
     }
 
-    public PackingType getPackingType() {
+    public PackageType getPackingType() {
         return packingType;
     }
 
-    public void setPackingType(PackingType packingType) {
+    public void setPackingType(PackageType packingType) {
         this.packingType = packingType;
     }
 
@@ -95,21 +110,5 @@ public class VolumeDTO {
 
     public void setSensors(List<SensorDTO> sensors) {
         this.sensors = sensors;
-    }
-
-    // Converts an entity Volume to a DTO Volume class
-    public static VolumeDTO from(Volume volume) {
-        return new VolumeDTO(
-                volume.getCode(),
-                volume.getOrder().getCode(),
-                volume.getStatus(),
-                volume.getShippedDate(),
-                volume.getDeliveredDate(),
-                volume.getPackingType()
-        );
-    }
-    // converts an entire list of entities into a list of DTOs
-    public static List<VolumeDTO> from(List<Volume> volume) {
-        return volume.stream().map(VolumeDTO::from).collect(Collectors.toList());
     }
 }

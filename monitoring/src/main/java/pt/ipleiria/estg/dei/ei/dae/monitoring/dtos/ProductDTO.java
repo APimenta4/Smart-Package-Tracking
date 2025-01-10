@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.dtos;
 
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.LineOfSale;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Product;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.CategoryType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 public class ProductDTO {
     private String code;
     private String description;
-    private CategoryType category;
+    private PackageType packageType;
     private long quantity;
 
-    public ProductDTO(String productCode, String description, CategoryType category, long quantity) {
+    public ProductDTO(String productCode, String description, PackageType packageType, long quantity) {
         this.code = productCode;
         this.description = description;
-        this.category = category;
+        this.packageType = packageType;
         this.quantity = quantity;
     }
 
@@ -28,7 +28,7 @@ public class ProductDTO {
         return new ProductDTO(
                 product.getCode(),
                 product.getDescription(),
-                product.getCategory(),
+                product.getPackageType(),
                 lineOfSale.getQuantity()
         );
     }
@@ -53,12 +53,12 @@ public class ProductDTO {
         this.description = description;
     }
 
-    public CategoryType getCategory() {
-        return category;
+    public PackageType getPackageType() {
+        return packageType;
     }
 
-    public void setCategory(CategoryType category) {
-        this.category = category;
+    public void setPackageType(PackageType packageType) {
+        this.packageType = packageType;
     }
 
     public long getQuantity() {
