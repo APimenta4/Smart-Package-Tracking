@@ -49,7 +49,6 @@ public class VolumeBean {
         }
         Order order = orderBean.find(orderCode);
         try{
-            // TODO: verify association in case of invalid volume
             Volume volume = new Volume(code, order, VolumeStatus.READY_FOR_PICKUP, packageType);
             order.addVolume(volume);
             em.persist(volume);

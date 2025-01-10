@@ -47,7 +47,6 @@ public class OrderBean {
         }
         Client client = clientBean.find(clientCode);
         try{
-            // TODO: verify association in case of invalid volume
             Order order = new Order(code, client);
             client.addOrder(order);
             em.persist(order);
