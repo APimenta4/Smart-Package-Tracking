@@ -11,6 +11,8 @@ Entrega Intermédia
 
 ## TODOS
 
+- colocar nos get um exemplo com o volume entrege.
+
 - Codigos das relações não devem parecer nos json.
   
   Não me faz sentido mas o stor disse, vou so deixar aqui a nota.
@@ -250,40 +252,38 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 [
-  {        
-    "codigo": 2,
-    "codigoCliente": 65,
+  {
+    "clientCode": "C1",
+    "code": "O1",
     "volumes": [
       {
-        "codigo": 42,
-        "codigoEncomenda": 2,
-        "estado": "ENTREGUE",
-        "dataEnvio": "28/12/2024",
-        "dataEntrega": "08/01/2024",
-        "tipoEmbalagem": "FRAGIL",
-        "produtos": [
+        "code": "V1",
+        "orderCode": "O1",
+        "packageType": "ISOTERMIC_GEOLOCATION",
+        "products": [
           {
-            "codigo":1256,
-            "codigoVolume": 42, //TODO chave composta?
-            "descricao": "LG Smart TV LED UHD 4K",
-            "categoria": "ELETRODOMESTICOS",
-            "unidades": 5
-          },
-          ...
+            "code": "P01",
+            "description": "Banana",
+            "packageType": "NONE",
+            "quantity": 100
+          }
         ],
-        "sensores": [
+        "sensors": [
           {
-            "codigo": 345,
-            "codigoVolume": 42,
-            "tipo": "ACELERACAO"
+            "code": "S1",
+            "type": "TEMPERATURE",
+            "volumeCode": "V1"
           },
-          ...
+          {
+            "code": "S2",
+            "type": "LOCATION",
+            "volumeCode": "V1"
+          }
         ],
-      },
-      ...
+        "status": "READY_FOR_PICKUP"
+      }
     ]
-  },
-  ...
+  }
 ]
 ```
 
@@ -302,37 +302,36 @@ Um utilizador, autenticado como gestor, consulta detalhes de uma encomenda espec
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{        
-  "codigo": 2,
-  "codigoCliente": 65,
+{
+  "clientCode": "C1",
+  "code": "O1",
   "volumes": [
     {
-      "codigo": 42,
-      "codigoEncomenda": 2,
-      "estado": "ENTREGUE",
-      "dataEnvio": "28/12/2024",
-      "dataEntrega": "08/01/2024",
-      "tipoEmbalagem": "FRAGIL",
-      "produtos": [
+      "code": "V1",
+      "orderCode": "O1",
+      "packageType": "ISOTERMIC_GEOLOCATION",
+      "products": [
         {
-          "codigo":1256,
-          "codigoVolume": 42,//TODO chave composta?
-          "descricao": "LG Smart TV LED UHD 4K",
-          "categoria": "ELETRODOMESTICOS",
-          "unidades": 5
-        },
-        ...
+          "code": "P01",
+          "description": "Banana",
+          "packageType": "NONE",
+          "quantity": 100
+        }
       ],
-      "sensores": [
+      "sensors": [
         {
-          "codigo": 345,
-          "codigoVolume": 42,
-          "tipo": "ACELERACAO"
+          "code": "S1",
+          "type": "TEMPERATURE",
+          "volumeCode": "V1"
         },
-        ...
+        {
+          "code": "S2",
+          "type": "LOCATION",
+          "volumeCode": "V1"
+        }
       ],
-    },
-    ...
+      "status": "READY_FOR_PICKUP"
+    }
   ]
 }
 ```
@@ -352,37 +351,36 @@ Um utilizador, autenticado como cliente, consulta detalhes de uma das suas encom
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
-{        
-  "codigo": 2,
-  "codigoCliente": 65,
+{
+  "clientCode": "C1",
+  "code": "O1",
   "volumes": [
     {
-      "codigo": 42,
-      "codigoEncomenda": 2,
-      "estado": "ENTREGUE",
-      "dataEnvio": "28/12/2024",
-      "dataEntrega": "08/01/2024",
-      "tipoEmbalagem": "FRAGIL",
-      "produtos": [
+      "code": "V1",
+      "orderCode": "O1",
+      "packageType": "ISOTERMIC_GEOLOCATION",
+      "products": [
         {
-          "codigo":1256,
-          "codigoVolume": 42,//TODO chave composta?
-          "descricao": "LG Smart TV LED UHD 4K",
-          "categoria": "ELETRODOMESTICOS",
-          "unidades": 5
-        },
-        ...
+          "code": "P01",
+          "description": "Banana",
+          "packageType": "NONE",
+          "quantity": 100
+        }
       ],
-      "sensores": [
+      "sensors": [
         {
-          "codigo": 345,
-          "codigoVolume": 42,
-          "tipo": "ACELERACAO"
+          "code": "S1",
+          "type": "TEMPERATURE",
+          "volumeCode": "V1"
         },
-        ...
+        {
+          "code": "S2",
+          "type": "LOCATION",
+          "volumeCode": "V1"
+        }
       ],
-    },
-    ...
+      "status": "READY_FOR_PICKUP"
+    }
   ]
 }
 ```
@@ -404,32 +402,31 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 42,
-    "codigoEncomenda": 2,
-    "estado": "ENTREGUE",
-    "dataEnvio": "28/12/2024",
-    "dataEntrega": "08/01/2024",
-    "tipoEmbalagem": "FRAGIL",
-    "produtos": [
+    "code": "V1",
+    "orderCode": "O1",
+    "packageType": "ISOTERMIC_GEOLOCATION",
+    "products": [
       {
-        "codigo":1256,
-        "codigoVolume": 42,//TODO chave composta?
-        "descricao": "LG Smart TV LED UHD 4K",
-        "categoria": "ELETRODOMESTICOS",
-        "unidades": 5
-      },
-      ...
+        "code": "P01",
+        "description": "Banana",
+        "packageType": "NONE",
+        "quantity": 100
+      }
     ],
-    "sensores": [
+    "sensors": [
       {
-        "codigo": 345,
-        "codigoVolume": 42,
-        "tipo": "ACELERACAO"
+        "code": "S1",
+        "type": "TEMPERATURE",
+        "volumeCode": "V1"
       },
-      ...
+      {
+        "code": "S2",
+        "type": "LOCATION",
+        "volumeCode": "V1"
+      }
     ],
-  },
-  ...
+    "status": "READY_FOR_PICKUP"
+  }
 ]
 ```
 
@@ -450,30 +447,31 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 42,
-    "codigoEncomenda": 2,//? neste n é preciso mas no api/volumes é
-    "estado": "ENTREGUE",
-    "dataEnvio": "28/12/2024",
-    "dataEntrega": "08/01/2024",
-    "tipoEmbalagem": "FRAGIL",
-    "produtos": [
+    "code": "V1",
+    "orderCode": "O1",
+    "packageType": "ISOTERMIC_GEOLOCATION",
+    "products": [
       {
-        "codigo": 1256,
-        "descricao": "LG Smart TV LED UHD 4K",
-        "categoria": "ELETRODOMESTICOS",
-        "unidades": 5
-      },
-      ...
+        "code": "P01",
+        "description": "Banana",
+        "packageType": "NONE",
+        "quantity": 100
+      }
     ],
-    "sensores": [
+    "sensors": [
       {
-        "codigo": 345,
-        "tipo": "ACELERACAO"
+        "code": "S1",
+        "type": "TEMPERATURE",
+        "volumeCode": "V1"
       },
-      ...
-    ]
-  },
-  ...
+      {
+        "code": "S2",
+        "type": "LOCATION",
+        "volumeCode": "V1"
+      }
+    ],
+    "status": "READY_FOR_PICKUP"
+  }
 ]
 ```
 
