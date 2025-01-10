@@ -6,6 +6,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
+import org.hibernate.Hibernate;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
@@ -59,6 +61,13 @@ public class SensorBean {
         if (sensor == null) {
             throw new CustomEntityNotFoundException("Sensor", code);
         }
+        return sensor;
+    }
+
+    public Sensor findWithReadings(String code)
+            throws CustomEntityNotFoundException {
+        Sensor sensor = find(code);
+        Hibernate.initialize(sensor.getReadings());
         return sensor;
     }
 }

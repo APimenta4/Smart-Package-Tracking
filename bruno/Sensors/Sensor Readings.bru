@@ -1,0 +1,15 @@
+meta {
+  name: Sensor Readings
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/sensores//:code/readings
+  body: none
+  auth: none
+}
+
+params:path {
+  code: S1
+}
