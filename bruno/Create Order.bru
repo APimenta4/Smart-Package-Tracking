@@ -1,0 +1,48 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{api_url}}/orders/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "clientCode": "C1",
+    "code": "O2",
+    "volumes": [
+      {
+        "code": "V3",
+        "packingType": "ISOTERMIC_GEOLOCATION",
+        "products": [
+          {
+            "code": "P01",
+            "quantity": 100
+          },
+          {
+            "code": "P02",
+            "quantity": 200
+          }
+        ],
+        "sensors": [
+          {
+            "code": "S7",
+            "type": "TEMPERATURE"
+          },
+          {
+            "code": "S8",
+            "type": "LOCATION"
+          },
+          {
+            "code": "S9",
+            "type": "ACCELERATION"
+          }
+        ]
+      }
+    ]
+  }
+}
