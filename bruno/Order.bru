@@ -1,0 +1,15 @@
+meta {
+  name: Order
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_url}}/orders/:code
+  body: none
+  auth: none
+}
+
+params:path {
+  code: 1o
+}
