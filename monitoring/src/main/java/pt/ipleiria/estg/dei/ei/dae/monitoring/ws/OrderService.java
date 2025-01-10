@@ -24,18 +24,7 @@ public class OrderService {
     @EJB
     private OrderBean orderBean;
 
-    @GET
-    @Path("/")
-    public List<OrderDTO> getAllOrders() {
-        return OrderDTO.from(orderBean.findAll());
-    }
-
-    @GET
-    @Path("{code}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response getOrder(@PathParam("code") String code)
-            throws CustomEntityNotFoundException {
-        Order order = orderBean.findWithAllDetails(code);
+    private OrderDTO loadOrderDTO(Order order) {
         OrderDTO orderDTO = OrderDTO.from(order);
         List<VolumeDTO> volumeDTOs = new ArrayList<>();
         for(Volume volume : order.getVolumes()){
@@ -45,6 +34,24 @@ public class OrderService {
             volumeDTOs.add(volumeDTO);
         }
         orderDTO.setVolumes(volumeDTOs);
+        return orderDTO;
+    }
+
+    @GET
+    @Path("/")
+    public List<OrderDTO> getAllOrders() {
+        return orderBean.findAllWithAllDetails().stream()
+                .map(this::loadOrderDTO)
+                .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("{code}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getOrder(@PathParam("code") String code)
+            throws CustomEntityNotFoundException {
+        Order order = orderBean.findWithAllDetails(code);
+        OrderDTO orderDTO = loadOrderDTO(order);
         return Response.ok(orderDTO).build();
     }
 }
