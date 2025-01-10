@@ -1,7 +1,0 @@
-### GET all orders
-GET http://localhost:8080/monitoring/api/orders/
-###
-
-### GET order o1
-GET http://localhost:8080/monitoring/api/orders/1o
-###
