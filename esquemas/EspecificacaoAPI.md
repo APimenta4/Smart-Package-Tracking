@@ -112,7 +112,7 @@ Um utilizador, autenticado como funcionário de logística, adiciona uma nova en
 **HTTP POST** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas
+/monitoring/api/orders
 ```
 
 O pedido enviado a este recurso segue o formato JSON:
@@ -151,7 +151,7 @@ Um utilizador, autenticado como gestor, consulta todas as encomendas.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas
+/monitoring/api/orders
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -204,7 +204,7 @@ Um utilizador, autenticado como cliente, consulta as suas encomendas.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas
+/monitoring/api/orders
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -257,7 +257,7 @@ Um utilizador, autenticado como gestor, consulta detalhes de uma encomenda espec
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}
+/monitoring/api/orders/{codigoEncomenda}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -307,7 +307,7 @@ Um utilizador, autenticado como cliente, consulta detalhes de uma das suas encom
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}
+/monitoring/api/orders/{codigoEncomenda}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -357,7 +357,7 @@ Um utilizador, autenticado como gestor, consulta todos os volumes de uma encomen
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}/volumes
+/monitoring/api/orders/{codigoEncomenda}/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -403,7 +403,7 @@ Um utilizador, autenticado como cliente, consulta todos os volumes de uma das su
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}/volumes
+/monitoring/api/orders/{codigoEncomenda}/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -447,7 +447,7 @@ Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores 
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}/leituras
+/monitoring/api/orders/{codigoEncomenda}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -489,7 +489,7 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/encomendas/{codigoEncomenda}/leituras
+/monitoring/api/orders/{codigoEncomenda}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -533,7 +533,7 @@ Um utilizador, autenticado como funcionário de logística, adiciona um novo vol
 **HTTP POST** para o sítio:
 
 ```text
-/monitorizacao/api/volumes
+/monitoring/api/volumes
 ```
 
 O pedido enviado a este recurso segue o formato JSON:
@@ -569,7 +569,7 @@ Um utilizador, autenticado como funcionário de logística, atualiza o estado de
 **HTTP PATCH** para o sítio:
 
 ```text
-/monitorizacao/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{codigoVolume}
 ```
 
 O pedido enviado a este recurso segue o formato JSON:
@@ -589,7 +589,7 @@ Um utilizador, autenticado como gestor, consulta todos os volumes.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes
+/monitoring/api/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -635,7 +635,7 @@ Um utilizador, autenticado como cliente, consulta todos os seus volumes.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes
+/monitoring/api/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -681,7 +681,7 @@ Um utilizador, autenticado como gestor, consulta os detalhes de um volume.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{codigoVolume}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -724,7 +724,7 @@ Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus vol
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{codigoVolume}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -767,7 +767,7 @@ Um utilizador, autenticado como gestor, consulta as leituras dos sensores de um 
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes/{codigoVolume}/leituras
+/monitoring/api/volumes/{codigoVolume}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -809,7 +809,7 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/volumes/{codigoVolume}/leituras
+/monitoring/api/volumes/{codigoVolume}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -853,7 +853,7 @@ Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor 
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/sensores/{codigoSensor}/leituras
+/monitoring/api/sensors/{codigoSensor}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -895,7 +895,7 @@ Um sensor envia uma nova leitura para o sistema de monitorização.
 **HTTP POST** para o sítio:
 
 ```text
-/monitorizacao/api/leituras
+/monitoring/api/readings
 ```
 
 O pedido enviado a este recurso segue o formato JSON:
@@ -929,7 +929,7 @@ Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/leituras
+/monitoring/api/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -969,7 +969,7 @@ Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores
 **HTTP GET** para o sítio:
 
 ```text
-/monitorizacao/api/leituras
+/monitoring/api/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
