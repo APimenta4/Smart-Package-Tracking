@@ -119,26 +119,67 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ```json
 {
-  "codigo": 441,
-  "codigoCliente":65,
-  "volume": {
-    "codigo": 23,
-    "tipoEmbalagem": "FRAGIL",
-    "produtos": [
-      {
-        "codigo": 82737,
-        "unidades": 5
-      },
-      ...
-    ], 
-    "sensores": [
-      {
-        "codigo": 432,
-        "tipo": "ACELERACAO"
-      },
-      ...
-    ], 
-  }
+  "clientCode": "C1",
+  "code": "O1",
+  "volumes": [
+    {
+      "code": "V1",
+      "packageType": "ISOTERMIC_GEOLOCATION",
+      "products": [
+        {
+          "code": "P01",
+          "quantity": 100
+        }
+      ],
+      "sensors": [
+        {
+          "code": "S1",
+          "type": "TEMPERATURE"
+        },
+        {
+          "code": "S2",
+          "type": "LOCATION"
+        }
+      ]
+    }
+  ]
+}
+```
+
+A resposta deste recurso segue o formato JSON:
+
+```json
+{
+  "clientCode": "C1",
+  "code": "O1",
+  "volumes": [
+    {
+      "code": "V1",
+      "orderCode": "O1",
+      "packageType": "ISOTERMIC_GEOLOCATION",
+      "products": [
+        {
+          "code": "P01",
+          "description": "Banana",
+          "packageType": "NONE",
+          "quantity": 100
+        }
+      ],
+      "sensors": [
+        {
+          "code": "S1",
+          "type": "TEMPERATURE",
+          "volumeCode": "V1"
+        },
+        {
+          "code": "S2",
+          "type": "LOCATION",
+          "volumeCode": "V1"
+        }
+      ],
+      "status": "READY_FOR_PICKUP"
+    }
+  ]
 }
 ```
 
