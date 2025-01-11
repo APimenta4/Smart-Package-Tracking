@@ -1,11 +1,16 @@
 <script setup>
 import { ref } from "vue";
 
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
 const isOpenDialog = ref(false);
 const isEditDialog = ref(false);
 
 const deliveryCode = ref("");
 const clientCode = ref("");
+
+const router = useRouter();
 
 const newVolume = ref({
   code: "",
@@ -22,70 +27,6 @@ const editVolume = ref({
 });
 
 const volumes = ref([
-  {
-    code: 132,
-    packageType: "FRAGILE",
-    products: [
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 575,
-        quantity: 4,
-      },
-    ],
-    sensors: [
-      {
-        code: 23,
-        type: "TEMPERATURE",
-      },
-      {
-        code: 11,
-        type: "SPEED",
-      },
-    ],
-  },
-  {
-    code: 13,
-    packageType: "FRAGILE",
-    products: [
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 575,
-        quantity: 4,
-      },
-    ],
-    sensors: [
-      {
-        code: 23,
-        type: "TEMPERATURE",
-      },
-      {
-        code: 11,
-        type: "SPEED",
-      },
-    ],
-  },
 ]);
 
 const addVolume = () => {
@@ -195,6 +136,28 @@ const showSensorDetails = (sensors) => {
   };
   isDetailsDialogVisible.value = true;
 };
+
+async function createDelivery() {
+  try {
+    const response = await fetch(`${api}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        clientCode: clientCode.value,
+        code: deliveryCode.value,
+        volumes: volumes.value,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create new delivery");
+    }
+    router.push('/deliveries');
+  } catch (error) {
+    console.error("Failed to create new delivery:", error);
+  }
+}
 </script>
 <template>
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
@@ -287,7 +250,7 @@ const showSensorDetails = (sensors) => {
 
         <!-- Submit Button -->
         <div class="flex justify-end">
-          <Button label="Create Delivery" severity="success" />
+          <Button label="Create Delivery" severity="success" @click.prevent="createDelivery"/>
         </div>
       </template>
     </Card>
@@ -383,7 +346,7 @@ const showSensorDetails = (sensors) => {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['TEMPERATURE', 'SPEED', 'GPS']"
+              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
               placeholder="Type"
               class="w-1/2"
             />
@@ -494,7 +457,7 @@ const showSensorDetails = (sensors) => {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['TEMPERATURE', 'SPEED', 'GPS']"
+              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
               placeholder="Type"
               class="w-1/2"
             />

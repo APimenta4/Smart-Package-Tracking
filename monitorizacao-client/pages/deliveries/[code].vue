@@ -34,7 +34,7 @@ const statusSeverity = {
   DELIVERED: 'success'
 };
 
-onMounted(async () => {
+onMounted(() => {
   // TODO: Fetch delivery data using route.params.code
   console.log('Delivery code:', route.params.code);
 });
