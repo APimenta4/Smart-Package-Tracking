@@ -10,6 +10,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.Response;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
@@ -79,6 +80,16 @@ public class VolumeBean {
         List<Volume> volumes = em.createNamedQuery("getAllVolumes", Volume.class).getResultList();
         volumes.forEach(this::initializeEntities);
         return volumes;
+    }
+
+    public Volume findWithReadings(String code) throws CustomEntityNotFoundException {
+        Volume volume = find(code);
+        List<Sensor> sensors = volume.getSensors();
+        Hibernate.initialize(sensors);
+        for (Sensor sensor :sensors){
+            Hibernate.initialize(sensor.getReadings());
+        }
+        return volume;
     }
 
     public Volume findWithAllDetails(String code)
@@ -181,4 +192,6 @@ public class VolumeBean {
         logger.info("Deleting volume '" + code + "'");
         em.remove(volume);
     }
+
+
 }

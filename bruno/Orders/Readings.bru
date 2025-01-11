@@ -1,0 +1,15 @@
+meta {
+  name: Readings
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/orders/:code/readings
+  body: none
+  auth: none
+}
+
+params:path {
+  code: O1
+}

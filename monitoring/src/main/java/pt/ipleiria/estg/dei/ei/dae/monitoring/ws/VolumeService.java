@@ -5,15 +5,13 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.OrderDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.LineOfSaleBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.OrderBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.SensorBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.VolumeBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
@@ -102,7 +100,14 @@ public class VolumeService {
         return Response.ok(volumeDTO).build();
     }
 
-
-    //TODO: endpoint 16 consultar leituras
-
+    @GET
+    @Path("{volumeCode}/readings")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getVolumeReadings(@PathParam("volumeCode") String volumeCode)
+            throws CustomEntityNotFoundException {
+        logger.info("Get readings of volume '"+volumeCode+"'");
+        Volume volume = volumeBean.findWithReadings(volumeCode);
+        List<SensorReadingsDTO> sensorReadingsDTOs = SensorReadingsDTO.from(volume.getSensors());
+        return Response.ok(sensorReadingsDTOs).build();
+    }
 }
