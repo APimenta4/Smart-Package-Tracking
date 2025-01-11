@@ -26,8 +26,7 @@ const editVolume = ref({
   sensors: [],
 });
 
-const volumes = ref([
-]);
+const volumes = ref([]);
 
 const addVolume = () => {
   volumes.value.push({ ...newVolume.value });
@@ -109,30 +108,46 @@ const handleEditDialogCancel = () => {
   isEditDialog.value = false;
 };
 
+const removeProductFromVolume = (index) => {
+  newVolume.value.products.splice(index, 1);
+};
+
+const removeSensorFromVolume = (index) => {
+  newVolume.value.sensors.splice(index, 1);
+};
+
+const removeProductFromEditVolume = (index) => {
+  editVolume.value.products.splice(index, 1);
+};
+
+const removeSensorFromEditVolume = (index) => {
+  editVolume.value.sensors.splice(index, 1);
+};
+
 const isDetailsDialogVisible = ref(false);
 const selectedDetails = ref({
-  title: '',
-  items: []
+  title: "",
+  items: [],
 });
 
 const showProductDetails = (products) => {
   selectedDetails.value = {
-    title: 'Products Details',
-    items: products.map(p => ({
+    title: "Products Details",
+    items: products.map((p) => ({
       code: p.code,
-      description: `Quantity: ${p.quantity}`
-    }))
+      description: `Quantity: ${p.quantity}`,
+    })),
   };
   isDetailsDialogVisible.value = true;
 };
 
 const showSensorDetails = (sensors) => {
   selectedDetails.value = {
-    title: 'Sensors Details',
-    items: sensors.map(s => ({
+    title: "Sensors Details",
+    items: sensors.map((s) => ({
       code: s.code,
-      description: `Type: ${s.type}`
-    }))
+      description: `Type: ${s.type}`,
+    })),
   };
   isDetailsDialogVisible.value = true;
 };
@@ -153,7 +168,7 @@ async function createDelivery() {
     if (!response.ok) {
       throw new Error("Failed to create new delivery");
     }
-    router.push('/deliveries');
+    router.push("/deliveries");
   } catch (error) {
     console.error("Failed to create new delivery:", error);
   }
@@ -250,7 +265,11 @@ async function createDelivery() {
 
         <!-- Submit Button -->
         <div class="flex justify-end">
-          <Button label="Create Delivery" severity="success" @click.prevent="createDelivery"/>
+          <Button
+            label="Create Delivery"
+            severity="success"
+            @click.prevent="createDelivery"
+          />
         </div>
       </template>
     </Card>
@@ -316,6 +335,13 @@ async function createDelivery() {
               decrementButtonIcon="pi pi-minus"
               suffix=" units"
             />
+            <Button
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="removeProductFromVolume(index)"
+            />
           </div>
         </div>
 
@@ -346,9 +372,16 @@ async function createDelivery() {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
+              :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
               placeholder="Type"
               class="w-1/2"
+            />
+            <Button
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="removeSensorFromVolume(index)"
             />
           </div>
         </div>
@@ -427,6 +460,13 @@ async function createDelivery() {
               decrementButtonIcon="pi pi-minus"
               suffix=" units"
             />
+            <Button
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="removeProductFromEditVolume(index)"
+            />
           </div>
         </div>
 
@@ -457,9 +497,16 @@ async function createDelivery() {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
+              :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
               placeholder="Type"
               class="w-1/2"
+            />
+            <Button
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="removeSensorFromEditVolume(index)"
             />
           </div>
         </div>
@@ -480,7 +527,7 @@ async function createDelivery() {
       <DataTable :value="selectedDetails.items" :rows="5">
         <Column field="code" header="Code">
           <template #body="{ data }">
-        <span>{{ data.code }}</span>
+            <span>{{ data.code }}</span>
           </template>
         </Column>
         <Column field="description" header="Description" />
