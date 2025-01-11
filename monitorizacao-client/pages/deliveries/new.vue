@@ -10,6 +10,8 @@ const isEditDialog = ref(false);
 const deliveryCode = ref("");
 const clientCode = ref("");
 
+const router = useRouter();
+
 const newVolume = ref({
   code: "",
   packageType: "",
@@ -25,70 +27,6 @@ const editVolume = ref({
 });
 
 const volumes = ref([
-  {
-    code: 132,
-    packageType: "FRAGILE",
-    products: [
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 575,
-        quantity: 4,
-      },
-    ],
-    sensors: [
-      {
-        code: 23,
-        type: "TEMPERATURE",
-      },
-      {
-        code: 11,
-        type: "SPEED",
-      },
-    ],
-  },
-  {
-    code: 13,
-    packageType: "FRAGILE",
-    products: [
-      {
-        code: 550,
-        quantity: 1,
-      },
-      {
-        code: 575,
-        quantity: 4,
-      },
-    ],
-    sensors: [
-      {
-        code: 23,
-        type: "TEMPERATURE",
-      },
-      {
-        code: 11,
-        type: "SPEED",
-      },
-    ],
-  },
 ]);
 
 const addVolume = () => {
@@ -212,6 +150,10 @@ async function createDelivery() {
         volumes: volumes.value,
       }),
     });
+    if (!response.ok) {
+      throw new Error("Failed to create new delivery");
+    }
+    router.push('/deliveries');
   } catch (error) {
     console.error("Failed to create new delivery:", error);
   }
@@ -404,7 +346,7 @@ async function createDelivery() {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['TEMPERATURE', 'SPEED', 'GPS']"
+              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
               placeholder="Type"
               class="w-1/2"
             />
@@ -515,7 +457,7 @@ async function createDelivery() {
             />
             <Dropdown
               v-model="sensor.type"
-              :options="['TEMPERATURE', 'SPEED', 'GPS']"
+              :options="['ACCELERATION','TEMPERATURE','LOCATION']"
               placeholder="Type"
               class="w-1/2"
             />
