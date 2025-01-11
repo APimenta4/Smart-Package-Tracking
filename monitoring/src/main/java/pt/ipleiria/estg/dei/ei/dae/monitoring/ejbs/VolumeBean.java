@@ -53,7 +53,7 @@ public class VolumeBean {
         }
         Order order = orderBean.find(orderCode);
         try{
-            Volume volume = new Volume(code, order, VolumeStatus.READY_FOR_PICKUP, packageType);
+            Volume volume = new Volume(code, order, packageType);
             order.addVolume(volume);
             em.persist(volume);
             em.flush();
