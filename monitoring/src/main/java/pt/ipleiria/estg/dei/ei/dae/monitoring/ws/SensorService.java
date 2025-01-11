@@ -10,6 +10,9 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
 import java.util.logging.Logger;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 
 @Path("sensors")
 @Produces({MediaType.APPLICATION_JSON})

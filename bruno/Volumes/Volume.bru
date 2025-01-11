@@ -1,0 +1,43 @@
+meta {
+  name: Volume
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{api_url}}/volumes/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code": "V1",
+    "orderCode": "O2",
+    "packageType": "ISOTERMIC_GEOLOCATION",
+    "products": [
+      {
+        "code": "P01",
+        "quantity": 100
+      },
+      {
+        "code": "P02",
+        "quantity": 200
+      }
+    ],
+    "sensors": [
+      {
+        "code": "S10",
+        "type": "TEMPERATURE"
+      },
+      {
+        "code": "S11",
+        "type": "LOCATION"
+      },
+      {
+        "code": "S12",
+        "type": "ACCELERATION"
+      }
+    ]
+  }
+}
