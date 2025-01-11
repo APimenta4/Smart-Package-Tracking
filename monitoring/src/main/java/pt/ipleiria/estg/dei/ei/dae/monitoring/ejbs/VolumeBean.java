@@ -82,7 +82,7 @@ public class VolumeBean {
         return volumes;
     }
 
-    public Volume findWithSensorsReadings(String code) throws CustomEntityNotFoundException {
+    public Volume findWithReadings(String code) throws CustomEntityNotFoundException {
         Volume volume = find(code);
         List<Sensor> sensors = volume.getSensors();
         Hibernate.initialize(sensors);
