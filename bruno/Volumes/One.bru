@@ -1,0 +1,15 @@
+meta {
+  name: One
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/volumes/:code
+  body: none
+  auth: none
+}
+
+params:path {
+  code: 1
+}

@@ -32,7 +32,13 @@ public class Volume extends Versionable implements Serializable {
     @NotNull
     private PackageType packageType;
 
+    private Date readyDate;
+
     private Date shippedDate;
+
+    private Date cancelledDate;
+
+    private Date returnedDate;
 
     private Date deliveredDate;
 
@@ -42,10 +48,11 @@ public class Volume extends Versionable implements Serializable {
     @OneToMany(mappedBy = "volume")
     private List<LineOfSale> lineOfSales = new ArrayList<>();
 
-    public Volume(String code, Order order, VolumeStatus status, PackageType packageType) {
+    public Volume(String code, Order order, PackageType packageType) {
         this.code = code;
         this.order = order;
-        this.status = status;
+        this.status = VolumeStatus.READY_FOR_PICKUP;
+        this.readyDate = new Date();
         this.packageType = packageType;
     }
 
@@ -83,12 +90,36 @@ public class Volume extends Versionable implements Serializable {
         this.packageType = packageType;
     }
 
+    public Date getReadyDate() {
+        return readyDate;
+    }
+
+    public void setReadyDate(Date readyDate) {
+        this.readyDate = readyDate;
+    }
+
     public Date getShippedDate() {
         return shippedDate;
     }
 
     public void setShippedDate(Date shippedDate) {
         this.shippedDate = shippedDate;
+    }
+
+    public Date getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(Date cancelledDate) {
+        this.cancelledDate = cancelledDate;
+    }
+
+    public Date getReturnedDate() {
+        return returnedDate;
+    }
+
+    public void setReturnedDate(Date returnedDate) {
+        this.returnedDate = returnedDate;
     }
 
     public Date getDeliveredDate() {

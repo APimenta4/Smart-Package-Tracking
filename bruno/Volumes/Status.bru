@@ -1,0 +1,21 @@
+meta {
+  name: Status
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{api_url}}/volumes/:code
+  body: json
+  auth: none
+}
+
+params:path {
+  code: 1
+}
+
+body:json {
+  {
+    "status": "RETURNED"
+  }
+}
