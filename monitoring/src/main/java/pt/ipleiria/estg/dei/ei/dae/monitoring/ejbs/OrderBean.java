@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
@@ -76,6 +77,19 @@ public class OrderBean {
         return orders;
     }
 
+    public Order findWithReadings(String code) throws CustomEntityNotFoundException {
+        Order order = find(code);
+        List<Volume> volumes = order.getVolumes();
+        Hibernate.initialize(volumes);
+        for (Volume volume : volumes) {
+            List<Sensor> sensors = volume.getSensors();
+            Hibernate.initialize(sensors);
+            for(Sensor sensor : sensors) {
+                Hibernate.initialize(sensor.getReadings());
+            }
+        }
+        return order;
+    }
     public Order findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Order order = find(code);
@@ -90,4 +104,5 @@ public class OrderBean {
         logger.info("Deleting order '" + code + "'");
         em.remove(order);
     }
+
 }

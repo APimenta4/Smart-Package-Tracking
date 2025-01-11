@@ -1,0 +1,15 @@
+meta {
+  name: Readings
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/volumes/:code/readings
+  body: none
+  auth: none
+}
+
+params:path {
+  code: V1
+}

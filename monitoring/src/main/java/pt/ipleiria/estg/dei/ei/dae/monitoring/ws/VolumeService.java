@@ -100,8 +100,6 @@ public class VolumeService {
         return Response.ok(volumeDTO).build();
     }
 
-
-    //TODO: endpoint 16 consultar leituras
     @GET
     @Path("{volumeCode}/readings")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
