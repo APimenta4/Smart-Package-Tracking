@@ -1,55 +1,58 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 const route = useRoute();
 
-const delivery = ref({
-  code: 'DEL001',
-  clientCode: 'CLIENT1',
-  status: 'IN_TRANSIT',
-  createdAt: '2024-03-15',
-  volumes: [
-    {
-      code: 132,
-      packageType: 'FRAGILE',
-      products: [
-        {
-          code: 550,
-          description: 'Smart TV',
-          quantity: 1
-        }
-      ],
-      sensors: [
-        {
-          code: 23,
-          type: 'TEMPERATURE'
-        }
-      ]
-    }
-  ]
-});
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
 
-const statusSeverity = {
-  PENDING: 'warning',
-  IN_TRANSIT: 'info',
-  DELIVERED: 'success'
+const delivery = ref({});
+
+async function fetchDelivery() {
+  try {
+    const response = await fetch(`${api}/orders/${route.params.code}`);
+    const data = await response.json();
+    delivery.value = data;
+  } catch (error) {
+    console.error("Failed to fetch delivery:", error);
+  }
+}
+
+const getPackageTypeSeverity = (type) => {
+  const severityMap = {
+    FRAGILE: "danger",
+    ISOTERMIC: "warning",
+    GEOLOCATION: "info",
+    NONE: "secondary",
+  };
+  return severityMap[type] || "secondary";
+};
+
+const getStatusSeverity = (status) => {
+  const severityMap = {
+    READY_FOR_PICKUP: "info",
+    IN_TRANSIT: "info",
+    DELIVERED: "success",
+    RETURNED: "warning",
+    CANCELLED: "danger",
+  };
+  return severityMap[status] || "secondary";
 };
 
 onMounted(() => {
-  // TODO: Fetch delivery data using route.params.code
-  console.log('Delivery code:', route.params.code);
+  fetchDelivery();
+  console.log("delivery", delivery);
 });
 </script>
-
 <template>
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
           <h2 class="text-2xl font-bold">Delivery Details</h2>
-          <Button 
-            icon="pi pi-arrow-left" 
-            label="Back to Deliveries" 
-            text 
+          <Button
+            icon="pi pi-arrow-left"
+            label="Back to Deliveries"
+            text
             @click="navigateTo('/deliveries')"
           />
         </div>
@@ -65,18 +68,6 @@ onMounted(() => {
             <span class="text-sm font-medium">Client Code</span>
             <span class="text-xl">{{ delivery.clientCode }}</span>
           </div>
-          <div class="flex flex-col">
-            <span class="text-sm font-medium">Created At</span>
-            <span class="text-xl">{{ delivery.createdAt }}</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-sm font-medium">Status</span>
-            <Tag
-              :value="delivery.status"
-              :severity="statusSeverity[delivery.status]"
-              class="text-lg"
-            />
-          </div>
         </div>
 
         <!-- Volumes Section -->
@@ -84,7 +75,26 @@ onMounted(() => {
           <h3 class="text-xl font-semibold mb-4">Volumes</h3>
           <DataTable :value="delivery.volumes">
             <Column field="code" header="Code" />
-            <Column field="packageType" header="Package Type" />
+            <Column field="packageType" header="Package Type">
+              <template #body="{ data }">
+                <div class="flex flex-wrap gap-1">
+                  <template
+                    v-for="type in data.packageType.split('_')"
+                    :key="type"
+                  >
+                    <Tag
+                      :value="type"
+                      :severity="getPackageTypeSeverity(type)"
+                    />
+                  </template>
+                </div>
+              </template>
+            </Column>
+            <Column field="status" header="Status">
+              <template #body="{ data }">
+                <Tag :value="data.status.replace(/_/g, ' ')" :severity="getStatusSeverity(data.status)" />
+              </template>
+            </Column>
             <Column header="Products">
               <template #body="{ data }">
                 {{ data.products.length }} products

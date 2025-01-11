@@ -16,7 +16,7 @@ async function fetchDeliveries() {
     const data = await response.json()
     deliveries.value = data   
   } catch (error) {
-    console.error("Failed fetch deliveries:", error);
+    console.error("Failed to fetch deliveries:", error);
   }
 }
 
