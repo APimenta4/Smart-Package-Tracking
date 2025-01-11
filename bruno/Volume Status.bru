@@ -1,0 +1,21 @@
+meta {
+  name: Volume Status
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{api_url}}/volumes/:code
+  body: json
+  auth: none
+}
+
+params:path {
+  code: V1
+}
+
+body:json {
+  {
+    "status": "IN_TRANSIT"
+  }
+}

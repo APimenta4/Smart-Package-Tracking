@@ -32,9 +32,9 @@ public class Volume extends Versionable implements Serializable {
     @NotNull
     private PackageType packageType;
 
-    private Date shippedDate;
+    private Date shippedDate = null;
 
-    private Date deliveredDate;
+    private Date deliveredDate = null;
 
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors = new ArrayList<>();;

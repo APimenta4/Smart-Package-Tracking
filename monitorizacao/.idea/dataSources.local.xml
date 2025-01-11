@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-231.9423.9">
+    <data-source name="PostgresDB" uuid="faa67f77-ddf1-4b77-a13c-8612bc7ca4c7">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="POSTGRES" exact-version="0" />
+      <secret-storage>forget</secret-storage>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>

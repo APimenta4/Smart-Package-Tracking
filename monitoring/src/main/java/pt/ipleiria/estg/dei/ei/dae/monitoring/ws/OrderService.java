@@ -97,4 +97,38 @@ public class OrderService {
         Order order = orderBean.findWithAllDetails(orderCode);
         return Response.status(Response.Status.CREATED).entity(loadOrderDTO(order)).build();
     }
+
+    @GET
+    @Path("{code}/volumes")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getVolumes(@PathParam("code") String code)
+            throws CustomEntityNotFoundException {
+        logger.info("Get volumes from order '"+code+"'");
+        Order order = orderBean.findWithAllDetails(code);
+        OrderDTO orderDTO = loadOrderDTO(order);
+        return Response.ok(orderDTO.getVolumes()).build();
+    }
+
+/*
+    @GET
+    @Path("{code}/readings")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getReadings(@PathParam("code") String code)
+            throws CustomEntityNotFoundException {
+        logger.info("Get readings from order '"+code+"'");
+        Order order = orderBean.findWithAllDetails(code);
+
+
+        List<VolumeDTO> volumesDTO = orderDTO.getVolumes();
+
+        for (VolumeDTO volumeDTO: volumesDTO) {
+            volumeDTO.getSenres
+        }
+
+
+        return Response.ok(orderDTO.).build();
+    }
+
+*/
+
 }
