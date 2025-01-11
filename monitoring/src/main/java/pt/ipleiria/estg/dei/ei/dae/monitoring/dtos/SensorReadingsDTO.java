@@ -6,6 +6,11 @@ public class SensorReadingsDTO {
     private SensorDTO sensor;
     private List<ReadingSimpleDTO> readings;
 
+    public SensorReadingsDTO(SensorDTO sensor, List<ReadingSimpleDTO> readings) {
+        this.sensor = sensor;
+        this.readings = readings;
+    }
+
     public SensorReadingsDTO() {}
 
     public SensorDTO getSensor() {

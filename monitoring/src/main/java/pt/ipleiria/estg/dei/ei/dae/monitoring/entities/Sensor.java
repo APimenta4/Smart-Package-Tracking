@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +28,8 @@ public class Sensor extends Versionable implements Serializable {
     @NotNull
     private SensorType type;
 
+    @OneToMany(mappedBy = "sensor")
+    List<Reading> readings = new ArrayList<>();
 
     public Sensor(String code, Volume volume, SensorType type) {
         this.code = code;
@@ -58,6 +62,18 @@ public class Sensor extends Versionable implements Serializable {
 
     public void setType(@NotNull SensorType type) {
         this.type = type;
+    }
+
+    public List<Reading> getReadings() {
+        return new ArrayList<>(readings);
+    }
+
+    public void addReading(Reading reading) {
+        readings.add(reading);
+    }
+
+    public void removeReading(Reading reading) {
+        readings.remove(reading);
     }
 
     @Override
