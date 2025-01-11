@@ -1,15 +1,15 @@
 meta {
-  name: Order
+  name: One
   type: http
-  seq: 3
+  seq: 2
 }
 
 get {
-  url: {{api_url}}/orders/:code
+  url: {{api_url}}/volumes/:code
   body: none
   auth: none
 }
 
 params:path {
-  code: O2
+  code: 1
 }

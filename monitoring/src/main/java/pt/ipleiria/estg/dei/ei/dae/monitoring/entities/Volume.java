@@ -32,9 +32,15 @@ public class Volume extends Versionable implements Serializable {
     @NotNull
     private PackageType packageType;
 
-    private Date shippedDate = null;
+    private Date readyDate;
 
-    private Date deliveredDate = null;
+    private Date shippedDate;
+
+    private Date cancelledDate;
+
+    private Date returnedDate;
+
+    private Date deliveredDate;
 
     @OneToMany(mappedBy = "volume")
     private List<Sensor> sensors = new ArrayList<>();;
@@ -83,12 +89,36 @@ public class Volume extends Versionable implements Serializable {
         this.packageType = packageType;
     }
 
+    public Date getReadyDate() {
+        return readyDate;
+    }
+
+    public void setReadyDate(Date readyDate) {
+        this.readyDate = readyDate;
+    }
+
     public Date getShippedDate() {
         return shippedDate;
     }
 
     public void setShippedDate(Date shippedDate) {
         this.shippedDate = shippedDate;
+    }
+
+    public Date getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(Date cancelledDate) {
+        this.cancelledDate = cancelledDate;
+    }
+
+    public Date getReturnedDate() {
+        return returnedDate;
+    }
+
+    public void setReturnedDate(Date returnedDate) {
+        this.returnedDate = returnedDate;
     }
 
     public Date getDeliveredDate() {

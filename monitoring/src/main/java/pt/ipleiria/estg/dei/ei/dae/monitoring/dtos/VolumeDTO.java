@@ -13,7 +13,10 @@ public class VolumeDTO {
     private String code;
     private String orderCode;
     private VolumeStatus status;
+    private Date readyDate;
     private Date shippedDate;
+    private Date cancelledDate;
+    private Date returnedDate;
     private Date deliveredDate;
     private PackageType packageType;
     private List<ProductDTO> products = new ArrayList<>();
@@ -21,11 +24,14 @@ public class VolumeDTO {
 
 
 
-    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date shippedDate, Date deliveredDate, PackageType packageType) {
+    public VolumeDTO(String code, String orderCode, VolumeStatus status, Date readyDate, Date shippedDate, Date cancelledDate, Date returnedDate, Date deliveredDate, PackageType packageType) {
         this.code = code;
         this.orderCode = orderCode;
         this.status = status;
+        this.readyDate = readyDate;
         this.shippedDate = shippedDate;
+        this.cancelledDate = cancelledDate;
+        this.returnedDate = returnedDate;
         this.deliveredDate = deliveredDate;
         this.packageType = packageType;
     }
@@ -38,7 +44,10 @@ public class VolumeDTO {
                 volume.getCode(),
                 volume.getOrder().getCode(),
                 volume.getStatus(),
+                volume.getReadyDate(),
                 volume.getShippedDate(),
+                volume.getCancelledDate(),
+                volume.getReturnedDate(),
                 volume.getDeliveredDate(),
                 volume.getPackageType()
         );
@@ -72,12 +81,34 @@ public class VolumeDTO {
         this.status = status;
     }
 
+    public Date getReadyDate() {
+        return readyDate;
+    }
+
+    public void setReadyDate(Date readyDate) {this.readyDate = readyDate;}
+
     public Date getShippedDate() {
         return shippedDate;
     }
 
     public void setShippedDate(Date shippedDate) {
         this.shippedDate = shippedDate;
+    }
+
+    public Date getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(Date cancelledDate) {
+        this.cancelledDate = cancelledDate;
+    }
+
+    public Date getReturnedDate() {
+        return returnedDate;
+    }
+
+    public void setReturnedDate(Date returnedDate) {
+        this.returnedDate = returnedDate;
     }
 
     public Date getDeliveredDate() {

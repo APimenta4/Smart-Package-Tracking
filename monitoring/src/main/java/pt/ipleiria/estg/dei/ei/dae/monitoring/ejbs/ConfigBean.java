@@ -9,6 +9,9 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingTemperature;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -82,8 +85,12 @@ public class ConfigBean {
             lineOfSaleBean.create("V2","P01",1L);
             lineOfSaleBean.create("V2","P02",2L);
             sensorBean.create("S6","V2",SensorType.ACCELERATION);
-
-            volumeBean.updateStatus("V2", VolumeStatus.CANCELLED);
+            int i = 7;
+            i = createVolume("1",i);
+            i = createVolume("2",i);
+            i = createVolume("3",i);
+            i = createVolume("4",i);
+            i = createVolume("5",i);
 
             readingTemperatureBean.create("S1",24D);
             readingLocationBean.create("S2",-50.61D, 165.97D);
@@ -96,6 +103,19 @@ public class ConfigBean {
         logger.info("Order created");
 
         logger.info("DB populated");
+    }
+
+    private int createVolume(String volumeCode, int i)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        volumeBean.create(volumeCode, "O1", PackageType.ISOTERMIC_GEOLOCATION);
+        sensorBean.create("S"+i,volumeCode,SensorType.TEMPERATURE);
+        sensorBean.create("S"+(i+1),volumeCode,SensorType.LOCATION);
+        lineOfSaleBean.create(volumeCode,"P01",1L);
+        lineOfSaleBean.create(volumeCode,"P02",2L);
+        sensorBean.create("S"+(i+2),volumeCode,SensorType.ACCELERATION);
+
+        volumeBean.updateStatus(volumeCode, VolumeStatus.IN_TRANSIT);
+        return i+3;
     }
 }
 

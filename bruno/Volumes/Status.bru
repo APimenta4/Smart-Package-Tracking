@@ -1,7 +1,7 @@
 meta {
-  name: Volume Status
+  name: Status
   type: http
-  seq: 7
+  seq: 3
 }
 
 patch {
@@ -11,11 +11,11 @@ patch {
 }
 
 params:path {
-  code: V1
+  code: 1
 }
 
 body:json {
   {
-    "status": "IN_TRANSIT"
+    "status": "RETURNED"
   }
 }

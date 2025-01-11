@@ -78,48 +78,8 @@ public class VolumeService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response patchVolumeStatus(@PathParam("volumeCode") String volumeCode, VolumeDTO volumeDTO) throws CustomEntityNotFoundException, CustomConstraintViolationException{
         logger.info("Patching volume '"+volumeCode+"'");
-
-        Volume volume = volumeBean.find(volumeCode);
-        VolumeStatus newStatus = volumeDTO.getStatus();
-
-
-        VolumeStatus status = volume.getStatus();
-        if (EnumSet.of(VolumeStatus.CANCELLED, VolumeStatus.RETURNED, VolumeStatus.DELIVERED).contains(status)) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE)
-                    .entity("Can not change the status of a volume with " + status + " status.")
-                    .build();
-        }
-
-        if(newStatus == volume.getStatus()){
-            return Response.status(Response.Status.NOT_ACCEPTABLE)
-                    .entity("The volume already has " + status + " status.")
-                    .build();
-        }
-
-
-        if(newStatus == VolumeStatus.READY_FOR_PICKUP){
-            return Response.status(Response.Status.NOT_ACCEPTABLE)
-                    .entity("Cannot change status to READY_FOR_PICKUP.")
-                    .build();
-        }
-
-        if (newStatus == VolumeStatus.IN_TRANSIT) {
-            volume.setShippedDate(new Date());
-        }
-
-        if((newStatus == VolumeStatus.RETURNED  || newStatus == VolumeStatus.DELIVERED) && volume.getStatus() != VolumeStatus.IN_TRANSIT){
-            return Response.status(Response.Status.NOT_ACCEPTABLE)
-                    .entity("Cannot change status to " + newStatus +" when volume status isn't IN_TRANSIT.")
-                    .build();
-        }
-
-        if (newStatus == VolumeStatus.DELIVERED) {
-            volume.setDeliveredDate(new Date());
-        }
-
         volumeBean.updateStatus(volumeCode,volumeDTO.getStatus());
-        Volume volumeUpdated = volumeBean.find(volumeCode);
-        return Response.ok(VolumeDTO.from(volumeUpdated)).build();
+        return Response.ok().build();
     }
 
     @GET
