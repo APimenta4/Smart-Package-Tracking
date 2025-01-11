@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from "vue";
 
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
 const isOpenDialog = ref(false);
 const isEditDialog = ref(false);
 
@@ -195,6 +198,24 @@ const showSensorDetails = (sensors) => {
   };
   isDetailsDialogVisible.value = true;
 };
+
+async function createDelivery() {
+  try {
+    const response = await fetch(`${api}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        clientCode: clientCode.value,
+        code: deliveryCode.value,
+        volumes: volumes.value,
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to create new delivery:", error);
+  }
+}
 </script>
 <template>
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
@@ -287,7 +308,7 @@ const showSensorDetails = (sensors) => {
 
         <!-- Submit Button -->
         <div class="flex justify-end">
-          <Button label="Create Delivery" severity="success" />
+          <Button label="Create Delivery" severity="success" @click.prevent="createDelivery"/>
         </div>
       </template>
     </Card>

@@ -11,6 +11,11 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  runtimeConfig: {
+    public: {
+    API_URL: process.env.API_URL || 'http://localhost:8080/monitoring/api'
+    }
+  },
   modules: ["@primevue/nuxt-module"],
   primevue: {
     options: {
