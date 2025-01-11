@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
 const volumes = ref([])
 const filters = ref({
   global: { value: null, matchMode: 'contains' }
@@ -12,36 +15,19 @@ const statusSeverity = {
   DELIVERED: 'success'
 }
 
-const mockVolumes = [
-  {
-    code: 42,
-    deliveryCode: 2,
-    status: 'DELIVERED',
-    sentDate: '2024-12-28',
-    deliveryDate: '2024-01-08',
-    packageType: 'FRAGILE',
-    products: [
-      {
-        code: 1256,
-        description: 'LG Smart TV LED UHD 4K',
-        category: 'ELETRODOMESTICOS',
-        quantity: 5
-      }
-    ],
-    sensors: [
-      {
-        code: 345,
-        type: 'ACELERACAO'
-      }
-    ]
+async function fetchVolumes() {
+  try {
+    const response = await fetch(`${api}/volumes`)
+    const data = await response.json()
+    volumes.value = data   
+  } catch (error) {
+    console.error("Failed to fetch volumes:", error);
   }
-]
+}
 
-
-onMounted(async () => {
-  // TODO: call api
-  volumes.value = mockVolumes
-})
+onMounted(() => {
+  fetchVolumes()
+});
 </script>
 
 <template>

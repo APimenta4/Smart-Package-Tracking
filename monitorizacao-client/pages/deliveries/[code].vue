@@ -14,6 +14,7 @@ async function fetchDelivery() {
     delivery.value = data;
   } catch (error) {
     console.error("Failed to fetch delivery:", error);
+
   }
 }
 
@@ -40,7 +41,6 @@ const getStatusSeverity = (status) => {
 
 onMounted(() => {
   fetchDelivery();
-  console.log("delivery", delivery);
 });
 </script>
 <template>
@@ -131,5 +131,6 @@ onMounted(() => {
         </div>
       </template>
     </Card>
+    <Toast />
   </div>
 </template>

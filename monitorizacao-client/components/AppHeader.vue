@@ -141,7 +141,7 @@ onMounted(() => {
     </template>
     <template v-slot:end>
       <div class="flex items-center gap-4">
-        <span>John Doe</span>
+        <span>Catarina Fernandes</span>
         <Avatar icon="pi pi-user" />
         <Button icon="pi pi-sign-out" label="Logout" class="p-button-sm" />
         <span
