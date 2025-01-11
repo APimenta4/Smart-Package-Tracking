@@ -5,12 +5,10 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.OrderDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
@@ -70,6 +68,20 @@ public class OrderService {
         Order order = orderBean.findWithAllDetails(code);
         OrderDTO orderDTO = loadOrderDTO(order);
         return Response.ok(orderDTO).build();
+    }
+
+    @GET
+    @Path("{code}/readings")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getVolumeReadings(@PathParam("code") String code)
+            throws CustomEntityNotFoundException {
+        logger.info("Get readings of order '"+code+"'");
+        Order order = orderBean.findWithReadings(code);
+        List<SensorReadingsDTO> sensorReadingsDTOs = new ArrayList<>();
+        for (Volume volume: order.getVolumes()){
+            sensorReadingsDTOs.addAll(SensorReadingsDTO.from(volume.getSensors()));
+        }
+        return Response.ok(sensorReadingsDTOs).build();
     }
 
     @POST

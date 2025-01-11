@@ -7,7 +7,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
@@ -15,6 +14,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolati
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless
