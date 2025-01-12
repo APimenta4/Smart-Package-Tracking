@@ -71,17 +71,6 @@ public class VolumeBean {
         return volume;
     }
 
-    public void initializeEntities(Volume volume) {
-        Hibernate.initialize(volume.getLineOfSales());
-        Hibernate.initialize(volume.getSensors());
-    }
-
-    public List<Volume> findAllWithAllDetails() {
-        List<Volume> volumes = em.createNamedQuery("getAllVolumes", Volume.class).getResultList();
-        volumes.forEach(this::initializeEntities);
-        return volumes;
-    }
-
     public Volume findWithReadings(String code) throws CustomEntityNotFoundException {
         Volume volume = find(code);
         List<Sensor> sensors = volume.getSensors();
@@ -95,58 +84,76 @@ public class VolumeBean {
     public Volume findWithAllDetails(String code)
             throws CustomEntityNotFoundException {
         Volume volume = find(code);
-        initializeEntities(volume);
+        Hibernate.initialize(volume.getLineOfSales());
+        Hibernate.initialize(volume.getSensors());
         return volume;
+    }
+
+    public List<Volume> findAllWithAllDetails() {
+        List<Volume> volumes = em.createNamedQuery("getAllVolumes", Volume.class).getResultList();
+        for(Volume volume : volumes) {
+            Hibernate.initialize(volume.getLineOfSales());
+            Hibernate.initialize(volume.getSensors());
+        }
+        return volumes;
     }
 
     public void updateStatus(String code, VolumeStatus newStatus)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
+
         Volume volume = find(code);
-        VolumeStatus status = volume.getStatus();
+        VolumeStatus currentStatus = volume.getStatus();
 
-        if(status == newStatus){
-            throw new CustomConstraintViolationException("Volume '" + code + "' already has '" + status + "' status.");
-        }
-        if (newStatus == VolumeStatus.READY_FOR_PICKUP) {
-            throw new CustomConstraintViolationException(
-                    statusErrorMessage(volume.getCode(), volume.getStatus(),newStatus)
-            );
-        }
-
+        validateStatusChange(volume, currentStatus, newStatus);
 
         em.lock(volume, LockModeType.OPTIMISTIC);
-        logger.info("Updating volume '" + code + "' to status '" + status + "'");
-        try{
-            updateValidStatus(volume, status, newStatus);
+        logger.info("Updating volume '" + code + "' from status '" + currentStatus + "' to '" + newStatus + "'");
+        try {
+            updateVolumeStatus(volume, currentStatus, newStatus);
             em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
     }
 
-    private void updateValidStatus(Volume volume, VolumeStatus status, VolumeStatus newStatus)
+    private void validateStatusChange(Volume volume, VolumeStatus currentStatus, VolumeStatus newStatus)
             throws CustomConstraintViolationException {
-        switch (status) {
-            case CANCELLED:
-            case RETURNED:
-            case DELIVERED:
-                throw new CustomConstraintViolationException(
-                        statusErrorMessage(volume.getCode(), volume.getStatus(),newStatus)
-                );
+        if (currentStatus == newStatus) {
+            throw new CustomConstraintViolationException(
+                    "Volume '" + volume.getCode() + "' already has status '" + currentStatus + "'");
+        }
+
+        if (newStatus == VolumeStatus.READY_FOR_PICKUP) {
+            throw new CustomConstraintViolationException(
+                    generateStatusErrorMessage(volume, currentStatus, newStatus));
+        }
+
+        if (EnumSet.of(VolumeStatus.CANCELLED, VolumeStatus.RETURNED, VolumeStatus.DELIVERED).contains(currentStatus)) {
+            throw new CustomConstraintViolationException(
+                    generateStatusErrorMessage(volume, currentStatus, newStatus));
+        }
+    }
+
+    private void updateVolumeStatus(Volume volume, VolumeStatus currentStatus, VolumeStatus newStatus)
+            throws CustomConstraintViolationException {
+
+        switch (currentStatus) {
             case READY_FOR_PICKUP:
-                handleReadyForPickup(volume, newStatus);
+                handleReadyForPickupTransition(volume, newStatus);
                 break;
             case IN_TRANSIT:
-                handleInTransit(volume, newStatus);
+                handleInTransitTransition(volume, newStatus);
                 break;
             default:
-                throw new CustomConstraintViolationException("Unknown status " + status);
+                throw new CustomConstraintViolationException("Unknown status " + currentStatus);
         }
+
         volume.setStatus(newStatus);
     }
 
-    private void handleReadyForPickup(Volume volume, VolumeStatus newStatus)
+    private void handleReadyForPickupTransition(Volume volume, VolumeStatus newStatus)
             throws CustomConstraintViolationException {
+
         switch (newStatus) {
             case IN_TRANSIT:
                 volume.setShippedDate(new Date());
@@ -156,13 +163,14 @@ public class VolumeBean {
                 break;
             default:
                 throw new CustomConstraintViolationException(
-                        statusErrorMessage(volume.getCode(), volume.getStatus(),newStatus)
+                    generateStatusErrorMessage(volume, volume.getStatus(), newStatus)
                 );
         }
     }
 
-    private void handleInTransit(Volume volume, VolumeStatus newStatus)
+    private void handleInTransitTransition(Volume volume, VolumeStatus newStatus)
             throws CustomConstraintViolationException {
+
         switch (newStatus) {
             case DELIVERED:
                 volume.setDeliveredDate(new Date());
@@ -175,14 +183,14 @@ public class VolumeBean {
                 break;
             default:
                 throw new CustomConstraintViolationException(
-                        statusErrorMessage(volume.getCode(), volume.getStatus(),newStatus)
+                    generateStatusErrorMessage(volume, volume.getStatus(), newStatus)
                 );
         }
     }
 
-    public String statusErrorMessage(String code, VolumeStatus status, VolumeStatus newStatus){
-        return "Cannot change status to '" + newStatus + "' when volume '" + code +
-                "' status is '" + status + "'";
+    private String generateStatusErrorMessage(Volume volume, VolumeStatus currentStatus, VolumeStatus newStatus) {
+        return "Cannot change status to '" + newStatus + "' when volume '" + volume.getCode() +
+                "' status is '" + currentStatus + "'";
     }
 
     public void delete(String code) throws CustomEntityNotFoundException {

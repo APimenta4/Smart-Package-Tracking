@@ -64,8 +64,10 @@ public class OrderService {
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response getOrder(@PathParam("code") String code)
             throws CustomEntityNotFoundException {
+
         logger.info("Get order '"+code+"'");
         Order order = orderBean.findWithAllDetails(code);
+
         OrderDTO orderDTO = loadOrderDTO(order);
         return Response.ok(orderDTO).build();
     }
@@ -75,12 +77,15 @@ public class OrderService {
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response getVolumeReadings(@PathParam("code") String code)
             throws CustomEntityNotFoundException {
+
         logger.info("Get readings of order '"+code+"'");
         Order order = orderBean.findWithReadings(code);
+
         List<SensorReadingsDTO> sensorReadingsDTOs = new ArrayList<>();
         for (Volume volume: order.getVolumes()){
             sensorReadingsDTOs.addAll(SensorReadingsDTO.from(volume.getSensors()));
         }
+
         return Response.ok(sensorReadingsDTOs).build();
     }
 
@@ -120,27 +125,4 @@ public class OrderService {
         OrderDTO orderDTO = loadOrderDTO(order);
         return Response.ok(orderDTO.getVolumes()).build();
     }
-
-/*
-    @GET
-    @Path("{code}/readings")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response getReadings(@PathParam("code") String code)
-            throws CustomEntityNotFoundException {
-        logger.info("Get readings from order '"+code+"'");
-        Order order = orderBean.findWithAllDetails(code);
-
-
-        List<VolumeDTO> volumesDTO = orderDTO.getVolumes();
-
-        for (VolumeDTO volumeDTO: volumesDTO) {
-            volumeDTO.getSenres
-        }
-
-
-        return Response.ok(orderDTO.).build();
-    }
-
-*/
-
 }
