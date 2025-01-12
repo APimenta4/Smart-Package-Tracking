@@ -145,7 +145,7 @@ onMounted(() => {
     </template>
     <template v-slot:end>
       <div class="flex items-center gap-4">
-        <span v-if="auth.isAuthenticated">{{ auth.user.name }}</span>
+        <span v-if="auth.isAuthenticated">{{ auth.user?.name }}</span>
         <Avatar v-if="auth.isAuthenticated" icon="pi pi-user" />
         <Button
           v-if="auth.isAuthenticated"
