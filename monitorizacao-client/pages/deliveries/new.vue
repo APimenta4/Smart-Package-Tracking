@@ -80,7 +80,7 @@ const addSensorToEditVolume = () => {
 const saveEditedVolume = () => {
   if (isEditVolumeValid.value) {
     const index = volumes.value.findIndex(
-      (v) => v.code === editVolume.value.code
+      (v) => v.code === originalVolume.value.code
     );
     if (index !== -1) {
       volumes.value[index] = { ...editVolume.value };
@@ -89,6 +89,7 @@ const saveEditedVolume = () => {
   } else {
     console.error("Invalid edited volume data");
   }
+  originalVolume.value = null; // Reset originalVolume after saving
 };
 
 const resetNewVolume = () => {
@@ -543,7 +544,6 @@ const getPackageTypeSeverity = (type) => {
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(product.code) }"
             />
-            <small v-if="!validateString(product.code)" class="p-error">Product Code is required.</small>
             <InputNumber
               v-model="product.quantity"
               placeholder="Qty"
@@ -593,7 +593,6 @@ const getPackageTypeSeverity = (type) => {
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(sensor.code) }"
             />
-            <small v-if="!validateString(sensor.code)" class="p-error">Sensor Code is required.</small>
             <Dropdown
               v-model="sensor.type"
               :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
@@ -601,7 +600,6 @@ const getPackageTypeSeverity = (type) => {
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(sensor.type) }"
             />
-            <small v-if="!validateString(sensor.type)" class="p-error">Sensor Type is required.</small>
             <Button
               icon="pi pi-trash"
               text
