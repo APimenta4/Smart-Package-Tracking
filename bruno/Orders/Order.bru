@@ -10,13 +10,17 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{bearer_token}}
+}
+
 body:json {
   {
-    "clientCode": "C1",
+    "clientCode": "client",
     "code": "O2",
     "volumes": [
       {
-        "code": "V3",
+        "code": "asdgasdfas",
         "packageType": "ISOTERMIC_GEOLOCATION",
         "products": [
           {
@@ -30,15 +34,43 @@ body:json {
         ],
         "sensors": [
           {
-            "code": "S7",
+            "code": "asdg",
             "type": "TEMPERATURE"
           },
           {
-            "code": "S8",
+            "code": "dfgjdf",
             "type": "LOCATION"
           },
           {
-            "code": "S9",
+            "code": "xcvbxcvb",
+            "type": "ACCELERATION"
+          }
+        ]
+      },
+      {
+        "code": "ltrrtyxcvbsdf",
+        "packageType": "ISOTERMIC_GEOLOCATION",
+        "products": [
+          {
+            "code": "P01",
+            "quantity": 100
+          },
+          {
+            "code": "P02",
+            "quantity": 200
+          }
+        ],
+        "sensors": [
+          {
+            "code": "xcvbsdfgwert",
+            "type": "TEMPERATURE"
+          },
+          {
+            "code": "xcvsdfgqwe",
+            "type": "LOCATION"
+          },
+          {
+            "code": "Szxasdfqr9",
             "type": "ACCELERATION"
           }
         ]

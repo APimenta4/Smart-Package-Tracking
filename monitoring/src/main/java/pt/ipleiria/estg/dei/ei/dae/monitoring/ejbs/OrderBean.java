@@ -5,8 +5,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Hibernate;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.OrderDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
@@ -29,6 +34,12 @@ public class OrderBean {
     @EJB
     private VolumeBean volumeBean;
 
+    @EJB
+    private LineOfSaleBean lineOfSaleBean;
+
+    @EJB
+    private SensorBean sensorBean;
+
     private static final Logger logger = Logger.getLogger("ejbs.OrderBean");
 
     public boolean exists(String code) {
@@ -38,6 +49,16 @@ public class OrderBean {
         );
         query.setParameter("code", code);
         return (Long)query.getSingleResult() > 0L;
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public void createWithDetails(OrderDTO orderDTO)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        String orderCode = orderDTO.getCode();
+        create(orderCode ,orderDTO.getClientCode());
+        for(VolumeDTO volumeDTO : orderDTO.getVolumes()) {
+            volumeBean.createWithDetails(volumeDTO, orderCode);
+        }
     }
 
     public void create(String code, String clientCode)
@@ -64,19 +85,6 @@ public class OrderBean {
         return order;
     }
 
-    public List<Order> findAllWithAllDetails() {
-        List<Order> orders = em.createNamedQuery("getAllOrders", Order.class).getResultList();
-        for(Order order:orders){
-            List<Volume> volumes = order.getVolumes();
-            Hibernate.initialize(volumes);
-            for(Volume volume : volumes) {
-                Hibernate.initialize(volume.getLineOfSales());
-                Hibernate.initialize(volume.getSensors());
-            }
-        }
-        return orders;
-    }
-
     public Order findWithReadings(String code) throws CustomEntityNotFoundException {
         Order order = find(code);
         List<Volume> volumes = order.getVolumes();
@@ -91,16 +99,37 @@ public class OrderBean {
         return order;
     }
 
-    public Order findWithAllDetails(String code)
-            throws CustomEntityNotFoundException {
-        Order order = find(code);
+    private void initializeVolumes(Order order) {
         List<Volume> volumes = order.getVolumes();
         Hibernate.initialize(volumes);
         for(Volume volume : volumes) {
             Hibernate.initialize(volume.getLineOfSales());
             Hibernate.initialize(volume.getSensors());
         }
+    }
+
+    public Order findWithAllDetails(String code)
+            throws CustomEntityNotFoundException {
+        Order order = find(code);
+        initializeVolumes(order);
         return order;
+    }
+
+    public List<Order> findAllWithAllDetails() {
+        List<Order> orders = em.createNamedQuery("getAllOrders", Order.class).getResultList();
+        for(Order order:orders){
+            initializeVolumes(order);
+        }
+        return orders;
+    }
+
+    public List<Order> findAllWithAllDetails(String clientCode) throws CustomEntityNotFoundException {
+        Client client = clientBean.find(clientCode);
+        List<Order> orders = client.getOrders();
+        for(Order order: orders) {
+            initializeVolumes(order);
+        }
+        return orders;
     }
 
     public void delete(String code) throws CustomEntityNotFoundException {
@@ -110,5 +139,4 @@ public class OrderBean {
         logger.info("Deleting order '" + code + "'");
         em.remove(order);
     }
-
 }

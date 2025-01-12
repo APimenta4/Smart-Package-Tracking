@@ -2,8 +2,6 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.ws;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -24,31 +22,23 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("volumes")
-@Produces({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @Consumes({MediaType.APPLICATION_JSON})
 @Authenticated
 public class VolumeService {
+    @Context
+    private SecurityContext securityContext;
+
     @EJB
     private UserBean userBean;
 
     @EJB
-    private OrderBean orderBean;
-
-    @EJB
     private VolumeBean volumeBean;
-
-    @EJB
-    private LineOfSaleBean lineOfSaleBean;
-
-    @EJB
-    private SensorBean sensorBean;
-
-    @Context
-    private SecurityContext securityContext;
 
     private static final Logger logger = Logger.getLogger("ws.VolumeService");
 
-    private VolumeDTO loadVolumeDTO(Volume volume) {
+
+    public static VolumeDTO loadVolumeDTO(Volume volume) {
         VolumeDTO volumeDTO = VolumeDTO.from(volume);
         volumeDTO.setProducts(ProductDTO.from(volume.getLineOfSales()));
         volumeDTO.setSensors(SensorDTO.from(volume.getSensors()));
@@ -63,6 +53,7 @@ public class VolumeService {
         }
         return !securityContext.isUserInRole("Manager");
     }
+
 
     @GET
     @Path("/")
@@ -82,11 +73,12 @@ public class VolumeService {
         }
 
         List<VolumeDTO> volumeDTOs = volumes.stream()
-                                            .map(this::loadVolumeDTO)
+                                            .map(VolumeService::loadVolumeDTO)
                                             .collect(Collectors.toList());
 
         return Response.ok(volumeDTOs).build();
     }
+
 
     @GET
     @Path("{volumeCode}")
@@ -108,6 +100,7 @@ public class VolumeService {
         return Response.ok(volumeDTO).build();
     }
 
+
     @GET
     @Path("{volumeCode}/readings")
     @RolesAllowed({"Manager","Client"})
@@ -117,7 +110,7 @@ public class VolumeService {
         String userCode = principal.getName();
         logger.info(
             "User '" + userCode +
-            "' requesting readings for volume: " + volumeCode
+            "' requesting readings for volume '" + volumeCode + "'"
         );
 
         Volume volume = volumeBean.findWithReadings(volumeCode);
@@ -131,6 +124,7 @@ public class VolumeService {
         return Response.ok(sensorReadingsDTOs).build();
     }
 
+
     @POST
     @Path("/")
     @RolesAllowed({"Logistician"})
@@ -141,10 +135,11 @@ public class VolumeService {
             "Logistician '" + securityContext.getUserPrincipal().getName() +
             "' requesting creation of volume '" + volumeCode + "'"
         );
-        volumeBean.buildVolume(volumeDTO);
+        volumeBean.createWithDetails(volumeDTO, volumeDTO.getOrderCode());
         Volume volume = volumeBean.findWithAllDetails(volumeCode);
         return Response.status(Response.Status.CREATED).entity(VolumeDTO.from(volume)).build();
     }
+
 
     @PATCH
     @Path("{volumeCode}")

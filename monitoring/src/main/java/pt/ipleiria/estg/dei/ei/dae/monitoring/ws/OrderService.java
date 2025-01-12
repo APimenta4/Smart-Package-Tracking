@@ -1,41 +1,44 @@
 package pt.ipleiria.estg.dei.ei.dae.monitoring.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.User;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.security.Authenticated;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("orders")
-@Produces({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @Consumes({MediaType.APPLICATION_JSON})
+@Authenticated
 public class OrderService {
+    @Context
+    private SecurityContext securityContext;
+
+    @EJB
+    private UserBean userBean;
+
     @EJB
     private OrderBean orderBean;
 
-    @EJB
-    private VolumeBean volumeBean;
-
-    @EJB
-    private LineOfSaleBean lineOfSaleBean;
-
-    @EJB
-    private SensorBean sensorBean;
-
     private static final Logger logger = Logger.getLogger("ws.OrderService");
+
 
     private OrderDTO loadOrderDTO(Order order) {
         OrderDTO orderDTO = OrderDTO.from(order);
@@ -50,79 +53,128 @@ public class OrderService {
         return orderDTO;
     }
 
-    @GET
-    @Path("/")
-    public List<OrderDTO> getAllOrders() {
-        logger.info("Get all orders");
-        return orderBean.findAllWithAllDetails().stream()
-                .map(this::loadOrderDTO)
-                .collect(Collectors.toList());
+    private boolean isUserForbiddenToAccessOrder(String userCode,Order order) {
+        if (securityContext.isUserInRole("Client")) {
+            User user = userBean.findOrFail(userCode);
+            String orderUserCode = order.getClient().getCode();
+            return !user.getCode().equals(orderUserCode);
+        }
+        return !securityContext.isUserInRole("Manager");
     }
 
-    @GET
-    @Path("{code}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response getOrder(@PathParam("code") String code)
-            throws CustomEntityNotFoundException {
 
-        logger.info("Get order '"+code+"'");
-        Order order = orderBean.findWithAllDetails(code);
+    @GET
+    @Path("/")
+    @RolesAllowed({"Manager","Client"})
+    public Response getAllOrders() throws CustomEntityNotFoundException {
+        List<Order> orders = new ArrayList<>();
+        Principal principal = securityContext.getUserPrincipal();
+        String userCode = principal.getName();
+
+        if (securityContext.isUserInRole("Manager")) {
+            logger.info("Manager '" + userCode + "' requesting all orders.");
+            orders = orderBean.findAllWithAllDetails();
+
+        } else if (securityContext.isUserInRole("Client")) {
+            logger.info("Client '" + userCode + "' requesting their orders.");
+            orders = orderBean.findAllWithAllDetails(userCode);
+        }
+
+        List<OrderDTO> orderDTOs = orders.stream()
+                                          .map(this::loadOrderDTO)
+                                          .collect(Collectors.toList());
+
+        return Response.ok(orderDTOs).build();
+    }
+
+
+    @GET
+    @Path("{orderCode}")
+    @RolesAllowed({"Manager","Client"})
+    public Response getOrder(@PathParam("orderCode") String orderCode)
+            throws CustomEntityNotFoundException {
+        Principal principal = securityContext.getUserPrincipal();
+        String userCode = principal.getName();
+        logger.info("User '" +userCode + "' requesting order '" + orderCode + "'");
+
+        Order order = orderBean.findWithAllDetails(orderCode);
+        if(isUserForbiddenToAccessOrder(userCode,order)) {
+            logger.warning("Unauthorized access attempt by user '" + userCode + "'");
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("Access denied for this order.")
+                    .build();
+        }
 
         OrderDTO orderDTO = loadOrderDTO(order);
         return Response.ok(orderDTO).build();
     }
 
+
     @GET
-    @Path("{code}/readings")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response getVolumeReadings(@PathParam("code") String code)
+    @Path("{orderCode}/volumes")
+    @RolesAllowed({"Manager","Client"})
+    public Response getVolumes(@PathParam("orderCode") String orderCode)
+            throws CustomEntityNotFoundException {
+        Principal principal = securityContext.getUserPrincipal();
+        String userCode = principal.getName();
+
+        Order order = orderBean.findWithAllDetails(orderCode);
+        if(isUserForbiddenToAccessOrder(userCode,order)) {
+            logger.warning("Unauthorized access attempt by user '" + userCode + "'");
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("Access denied for this order.")
+                    .build();
+        }
+
+        List<VolumeDTO> volumeDTOs = order.getVolumes()
+                                          .stream()
+                                          .map(VolumeService::loadVolumeDTO)
+                                          .collect(Collectors.toList());
+
+        return Response.ok(volumeDTOs).build();
+    }
+
+
+    @GET
+    @Path("{orderCode}/readings")
+    @RolesAllowed({"Manager","Client"})
+    public Response getOrderReadings(@PathParam("orderCode") String orderCode)
             throws CustomEntityNotFoundException {
 
-        logger.info("Get readings of order '"+code+"'");
-        Order order = orderBean.findWithReadings(code);
+        Principal principal = securityContext.getUserPrincipal();
+        String userCode = principal.getName();
+        logger.info(
+                "User '" + userCode +
+                        "' requesting readings for order: " + orderCode + "'"
+        );
 
+        Order order = orderBean.findWithReadings(orderCode);
+        if(isUserForbiddenToAccessOrder(userCode,order)) {
+            logger.warning("Unauthorized access attempt by user '" + userCode + "'");
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("Access denied for this order.")
+                    .build();
+        }
         List<SensorReadingsDTO> sensorReadingsDTOs = new ArrayList<>();
         for (Volume volume: order.getVolumes()){
             sensorReadingsDTOs.addAll(SensorReadingsDTO.from(volume.getSensors()));
         }
-
         return Response.ok(sensorReadingsDTOs).build();
     }
 
+
     @POST
     @Path("/")
-    @Transactional
+    @RolesAllowed({"Logistician"})
     public Response createOrder(OrderDTO orderDTO)
             throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
         String orderCode = orderDTO.getCode();
-        logger.info("Creating order '"+orderCode+"'");
-        orderBean.create(orderCode, orderDTO.getClientCode());
-
-        for (VolumeDTO volumeDTO : orderDTO.getVolumes()) {
-            String volumeCode = volumeDTO.getCode();
-            volumeBean.create(volumeCode, orderCode,volumeDTO.getPackageType());
-
-            for (ProductDTO productDTO : volumeDTO.getProducts()) {
-                lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
-            }
-
-            for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
-                sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
-            }
-        }
-
+        logger.info(
+                "Logistician '" + securityContext.getUserPrincipal().getName() +
+                        "' requesting creation of volume '" + orderCode + "'"
+        );
+        orderBean.createWithDetails(orderDTO);
         Order order = orderBean.findWithAllDetails(orderCode);
         return Response.status(Response.Status.CREATED).entity(loadOrderDTO(order)).build();
-    }
-
-    @GET
-    @Path("{code}/volumes")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response getVolumes(@PathParam("code") String code)
-            throws CustomEntityNotFoundException {
-        logger.info("Get volumes from order '"+code+"'");
-        Order order = orderBean.findWithAllDetails(code);
-        OrderDTO orderDTO = loadOrderDTO(order);
-        return Response.ok(orderDTO.getVolumes()).build();
     }
 }

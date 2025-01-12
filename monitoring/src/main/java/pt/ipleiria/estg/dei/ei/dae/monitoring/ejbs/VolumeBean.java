@@ -54,10 +54,10 @@ public class VolumeBean {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void buildVolume(VolumeDTO volumeDTO)
+    public void createWithDetails(VolumeDTO volumeDTO, String orderCode)
             throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
         String volumeCode = volumeDTO.getCode();
-        create(volumeCode ,volumeDTO.getOrderCode(),volumeDTO.getPackageType());
+        create(volumeCode, orderCode, volumeDTO.getPackageType());
 
         for (ProductDTO productDTO : volumeDTO.getProducts()) {
             lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
