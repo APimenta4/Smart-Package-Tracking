@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -14,23 +14,24 @@ const router = useRouter();
 
 const newVolume = ref({
   code: "",
-  packageType: "",
+  packageType: "NONE",
   products: [],
   sensors: [],
 });
 
 const editVolume = ref({
   code: "",
-  packageType: "",
+  packageType: "NONE",
   products: [],
   sensors: [],
 });
+
 
 const volumes = ref([]);
 
 const addVolume = () => {
   volumes.value.push({ ...newVolume.value });
-  newVolume.value = { code: "", packageType: "", products: [], sensors: [] };
+  resetNewVolume();
   isOpenDialog.value = false;
 };
 
@@ -52,6 +53,7 @@ const originalVolume = ref(null);
 const editExistingVolume = (volume) => {
   originalVolume.value = JSON.parse(JSON.stringify(volume));
   editVolume.value = { ...volume };
+  editSelectedPackageTypes.value = parsePackageType(volume.packageType);
   isEditDialog.value = true;
 };
 
@@ -76,19 +78,21 @@ const saveEditedVolume = () => {
 const resetNewVolume = () => {
   newVolume.value = {
     code: "",
-    packageType: "",
+    packageType: "NONE",
     products: [],
     sensors: [],
   };
+  selectedPackageTypes.value = []; // Make sure this is explicitly reset
 };
 
 const resetEditVolume = () => {
   editVolume.value = {
     code: "",
-    packageType: "",
+    packageType: "NONE",
     products: [],
     sensors: [],
   };
+  editSelectedPackageTypes.value = [];
 };
 
 const handleNewDialogCancel = () => {
@@ -173,6 +177,59 @@ async function createDelivery() {
     console.error("Failed to create new delivery:", error);
   }
 }
+
+const packageTypeOptions = [
+  { label: 'Fragile', value: 'FRAGILE' },
+  { label: 'Isotermic', value: 'ISOTERMIC' },
+  { label: 'Geolocation', value: 'GEOLOCATION' }
+];
+
+const selectedPackageTypes = ref([]);
+const editSelectedPackageTypes = ref([]);
+
+const combinePackageTypes = (types) => {
+  if (!types || types.length === 0) return 'NONE';
+  
+  // Define the desired order
+  const orderMap = {
+    FRAGILE: 1,
+    ISOTERMIC: 2,
+    GEOLOCATION: 3
+  };
+  
+  // Sort based on the predefined order
+  return types
+    .sort((a, b) => orderMap[a] - orderMap[b])
+    .join('_');
+};
+
+const parsePackageType = (packageType) => {
+  if (!packageType || packageType === 'NONE') return [];
+  return packageType.split('_');
+};
+
+// Add this watch to update the volume's package type when selections change
+watch(selectedPackageTypes, (newTypes) => {
+  newVolume.value.packageType = combinePackageTypes(newTypes);
+});
+
+watch(editSelectedPackageTypes, (newTypes) => {
+  editVolume.value.packageType = combinePackageTypes(newTypes);
+});
+
+const getPackageTypeSeverity = (type) => {
+  const severityMap = {
+    FRAGILE: "danger",
+    ISOTERMIC: "warning",
+    GEOLOCATION: "info",
+    NONE: "secondary",
+  };
+  return severityMap[type] || "secondary";
+};
+
+const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
+
+const isFormValid = computed(() => validateString(deliveryCode.value) && validateString(clientCode.value));
 </script>
 <template>
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
@@ -192,13 +249,16 @@ async function createDelivery() {
                 id="deliveryCode"
                 v-model="deliveryCode"
                 class="w-full"
+                :class="{ 'p-invalid': !validateString(deliveryCode) }"
               />
+              <small v-if="!validateString(deliveryCode)" class="p-error">Delivery Code is required.</small>
             </span>
           </div>
           <div class="flex-1">
             <span class="p-float-label">
               <label for="clientCode">Client Code</label>
-              <InputText id="clientCode" v-model="clientCode" class="w-full" />
+              <InputText id="clientCode" v-model="clientCode" class="w-full" :class="{ 'p-invalid': !validateString(clientCode) }" />
+              <small v-if="!validateString(clientCode)" class="p-error">Client Code is required.</small>
             </span>
           </div>
         </div>
@@ -217,7 +277,15 @@ async function createDelivery() {
           <!-- Volumes Table -->
           <DataTable :value="volumes" class="mb-4">
             <Column field="code" header="Code" />
-            <Column field="packageType" header="Package Type" />
+            <Column field="packageType" header="Package Type">
+              <template #body="{ data }">
+                <div class="flex flex-wrap gap-1">
+                  <template v-for="type in data.packageType.split('_')" :key="type">
+                    <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
+                  </template>
+                </div>
+              </template>
+            </Column>
             <Column header="Products">
               <template #body="{ data }">
                 <Button
@@ -268,6 +336,7 @@ async function createDelivery() {
           <Button
             label="Create Delivery"
             severity="success"
+            :disabled="!isFormValid"
             @click.prevent="createDelivery"
           />
         </div>
@@ -284,18 +353,23 @@ async function createDelivery() {
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
           <label for="volumeCode">Volume Code</label>
-          <InputText id="volumeCode" v-model="newVolume.code" class="w-full" />
+          <InputText id="volumeCode" v-model="newVolume.code" class="w-full" :class="{ 'p-invalid': !validateString(newVolume.code) }" />
+          <small v-if="!validateString(newVolume.code)" class="p-error">Volume Code is required.</small>
         </span>
 
-        <span class="p-float-label">
-          <label for="packageType">Package Type</label>
-          <Dropdown
-            id="packageType"
-            v-model="newVolume.packageType"
-            :options="['FRAGILE', 'REGULAR']"
-            class="w-full"
-          />
-        </span>
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold">Package Types (Optional)</label>
+          <div class="flex justify-center">
+            <SelectButton
+              v-model="selectedPackageTypes"
+              :options="packageTypeOptions"
+              :multiple="true"
+              optionLabel="label"
+              optionValue="value"
+              class="flex-wrap"
+            />
+          </div>
+        </div>
 
         <!-- Products Section -->
         <div class="p-4 rounded">
@@ -321,6 +395,7 @@ async function createDelivery() {
               v-model="product.code"
               placeholder="Product Code"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(product.code) }"
             />
             <InputNumber
               v-model="product.quantity"
@@ -369,12 +444,14 @@ async function createDelivery() {
               v-model="sensor.code"
               placeholder="Sensor Code"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(sensor.code) }"
             />
             <Dropdown
               v-model="sensor.type"
               :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
               placeholder="Type"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(sensor.type) }"
             />
             <Button
               icon="pi pi-trash"
@@ -408,18 +485,24 @@ async function createDelivery() {
             id="editVolumeCode"
             v-model="editVolume.code"
             class="w-full"
+            :class="{ 'p-invalid': !validateString(editVolume.code) }"
           />
+          <small v-if="!validateString(editVolume.code)" class="p-error">Volume Code is required.</small>
         </span>
 
-        <span class="p-float-label">
-          <label for="editPackageType">Package Type</label>
-          <Dropdown
-            id="editPackageType"
-            v-model="editVolume.packageType"
-            :options="['FRAGILE', 'REGULAR']"
-            class="w-full"
-          />
-        </span>
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold">Package Types</label>
+          <div class="flex justify-center">
+            <SelectButton
+              v-model="editSelectedPackageTypes"
+              :options="packageTypeOptions"
+              :multiple="true"
+              optionLabel="label"
+              optionValue="value"
+              class="flex-wrap"
+            />
+          </div>
+        </div>
 
         <!-- Products Section -->
 
@@ -446,6 +529,7 @@ async function createDelivery() {
               v-model="product.code"
               placeholder="Product Code"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(product.code) }"
             />
             <InputNumber
               v-model="product.quantity"
@@ -494,12 +578,14 @@ async function createDelivery() {
               v-model="sensor.code"
               placeholder="Sensor Code"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(sensor.code) }"
             />
             <Dropdown
               v-model="sensor.type"
               :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
               placeholder="Type"
               class="w-1/2"
+              :class="{ 'p-invalid': !validateString(sensor.type) }"
             />
             <Button
               icon="pi pi-trash"
@@ -535,3 +621,16 @@ async function createDelivery() {
     </Dialog>
   </div>
 </template>
+
+<style scoped>
+:deep(.p-selectbutton) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+:deep(.p-selectbutton .p-button) {
+  margin: 0;
+}
+</style>
