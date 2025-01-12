@@ -14,7 +14,6 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolati
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless

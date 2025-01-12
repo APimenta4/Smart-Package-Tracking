@@ -4,8 +4,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingAcceleration;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingTemperature;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
@@ -13,7 +11,6 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolati
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 @Startup
@@ -56,6 +53,7 @@ public class ConfigBean {
         logger.info("Creating users");
         try {
             clientBean.create("client","client", "client@mail.pt","123");
+            clientBean.create("client2","client2", "client2@mail.pt","123");
             logisticianBean.create("logistician","logistician", "logistician@mail.pt","123");
             managerBean.create("manager","manager", "manager@mail.pt","123");
         } catch (Exception ignore) {}

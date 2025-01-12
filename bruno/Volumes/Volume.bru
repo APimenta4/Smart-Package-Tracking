@@ -10,10 +10,14 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{bearer_token}}
+}
+
 body:json {
   {
-    "code": "V1",
-    "orderCode": "O2",
+    "code": "V3",
+    "orderCode": "O1",
     "packageType": "ISOTERMIC_GEOLOCATION",
     "products": [
       {
@@ -27,15 +31,15 @@ body:json {
     ],
     "sensors": [
       {
-        "code": "S10",
+        "code": "Sne0",
         "type": "TEMPERATURE"
       },
       {
-        "code": "S11",
+        "code": "Sne1",
         "type": "LOCATION"
       },
       {
-        "code": "S12",
+        "code": "Sne2",
         "type": "ACCELERATION"
       }
     ]

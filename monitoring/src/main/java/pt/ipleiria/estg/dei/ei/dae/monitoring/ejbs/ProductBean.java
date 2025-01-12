@@ -14,7 +14,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundExc
 import java.util.logging.Logger;
 
 @Stateless
-public class ProductBean {
+public class ProductBean{
 
     @PersistenceContext
     private  EntityManager em;
@@ -39,7 +39,6 @@ public class ProductBean {
         try{
             Product product = new Product(code, category,description);
             em.persist(product);
-            em.flush();
         } catch (
                 ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);

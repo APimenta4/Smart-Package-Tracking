@@ -51,7 +51,6 @@ public class OrderBean {
             Order order = new Order(code, client);
             client.addOrder(order);
             em.persist(order);
-            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Client extends User implements Serializable {
@@ -15,6 +16,13 @@ public class Client extends User implements Serializable {
     }
 
     public Client() {}
+
+    @Transient
+    public List<Volume> getVolumes() {
+        return orders.stream()
+                .flatMap(order -> order.getVolumes().stream())
+                .collect(Collectors.toList());
+    }
 
     public List<Order> getOrders() {
         return new ArrayList<>(orders);
