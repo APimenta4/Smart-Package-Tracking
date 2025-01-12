@@ -35,7 +35,6 @@ public class LineOfSaleBean {
         try{
             LineOfSale lineOfSale = new LineOfSale(volume, product, quantity);
             em.persist(lineOfSale);
-            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }

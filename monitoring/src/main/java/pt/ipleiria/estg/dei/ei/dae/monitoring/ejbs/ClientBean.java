@@ -49,7 +49,6 @@ public class ClientBean {
         try {
             Client client = new Client(code, name, email, hasher.hash(password));
             em.persist(client);
-            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }

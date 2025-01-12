@@ -2,13 +2,14 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.core.Response;
 import org.hibernate.Hibernate;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
@@ -18,10 +19,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolati
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Stateless
@@ -30,7 +28,16 @@ public class VolumeBean {
     private EntityManager em;
 
     @EJB
+    private ClientBean clientBean;
+
+    @EJB
     private OrderBean orderBean;
+
+    @EJB
+    private LineOfSaleBean lineOfSaleBean;
+
+    @EJB
+    private SensorBean sensorBean;
 
     @EJB
     private ProductBean productBean;
@@ -46,6 +53,20 @@ public class VolumeBean {
         return (Long)query.getSingleResult() > 0L;
     }
 
+    @Transactional(rollbackOn = Exception.class)
+    public void createWithDetails(VolumeDTO volumeDTO, String orderCode)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        String volumeCode = volumeDTO.getCode();
+        create(volumeCode, orderCode, volumeDTO.getPackageType());
+
+        for (ProductDTO productDTO : volumeDTO.getProducts()) {
+            lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
+        }
+        for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
+            sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
+        }
+    }
+
     public void create(String code, String orderCode, PackageType packageType)
             throws CustomEntityExistsException, CustomEntityNotFoundException, CustomConstraintViolationException {
         logger.info("Creating new Volume '" + code + "'");
@@ -57,7 +78,6 @@ public class VolumeBean {
             Volume volume = new Volume(code, order, packageType);
             order.addVolume(volume);
             em.persist(volume);
-            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
@@ -98,6 +118,16 @@ public class VolumeBean {
         return volumes;
     }
 
+    public List<Volume> findAllWithAllDetails(String clientCode) throws CustomEntityNotFoundException {
+        Client client = clientBean.find(clientCode);
+        List<Volume> volumes = client.getVolumes();
+        for(Volume volume : volumes) {
+            Hibernate.initialize(volume.getLineOfSales());
+            Hibernate.initialize(volume.getSensors());
+        }
+        return volumes;
+    }
+
     public void updateStatus(String code, VolumeStatus newStatus)
             throws CustomEntityNotFoundException, CustomConstraintViolationException {
 
@@ -110,7 +140,6 @@ public class VolumeBean {
         logger.info("Updating volume '" + code + "' from status '" + currentStatus + "' to '" + newStatus + "'");
         try {
             updateVolumeStatus(volume, currentStatus, newStatus);
-            em.flush();
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
@@ -200,6 +229,4 @@ public class VolumeBean {
         logger.info("Deleting volume '" + code + "'");
         em.remove(volume);
     }
-
-
 }

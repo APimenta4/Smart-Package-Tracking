@@ -3,8 +3,10 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.ws;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorReadingsDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.SensorBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
@@ -17,24 +19,28 @@ import jakarta.ws.rs.Produces;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.security.Authenticated;
 
 @Path("sensors")
-@Produces({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @Consumes({MediaType.APPLICATION_JSON})
 @Authenticated
-@RolesAllowed({"Manager"})
 public class SensorService {
+    @Context
+    private SecurityContext securityContext;
+
     @EJB
     private SensorBean sensorBean;
 
-    private static final Logger logger = Logger.getLogger("ws.ReadingService");
+    private static final Logger logger = Logger.getLogger("ws.SensorService");
+
 
     @GET
-    @Path("{code}/readings")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-
-    public Response getSensorReadings(@PathParam("code") String code)
+    @Path("{sensorCode}/readings")
+    @RolesAllowed({"Manager"})
+    public Response getSensorReadings(@PathParam("sensorCode") String sensorCode)
             throws CustomEntityNotFoundException {
-        logger.info("Get sensor '"+code+"' readings");
-        Sensor sensor = sensorBean.findWithReadings(code);
+        logger.info(
+        "   Manager '" + securityContext.getUserPrincipal().getName() + "' requesting sensor '"+sensorCode+"'"
+        );
+        Sensor sensor = sensorBean.findWithReadings(sensorCode);
         return Response.ok(SensorReadingsDTO.from(sensor)).build();
     }
 }

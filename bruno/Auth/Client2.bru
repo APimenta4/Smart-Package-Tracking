@@ -1,0 +1,22 @@
+meta {
+  name: Client2
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code":"client2",
+    "password":"123"
+  }
+}
+
+vars:post-response {
+  bearer_token: res.body
+}
