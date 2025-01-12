@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     API_URL: process.env.API_URL || 'http://localhost:8080/monitoring/api'
     }
   },
-  modules: ["@primevue/nuxt-module"],
+  modules: ['@pinia/nuxt',"@primevue/nuxt-module"],
   primevue: {
     options: {
       theme: {
