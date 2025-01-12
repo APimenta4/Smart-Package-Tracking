@@ -55,9 +55,9 @@ public class ConfigBean {
 
         logger.info("Creating users");
         try {
-            clientBean.create("C1","client", "client@mail.pt","123");
-            logisticianBean.create("M2","logistician", "logistician@mail.pt","123");
-            managerBean.create("L3","manager", "manager@mail.pt","123");
+            clientBean.create("client","client", "client@mail.pt","123");
+            logisticianBean.create("logistician","logistician", "logistician@mail.pt","123");
+            managerBean.create("manager","manager", "manager@mail.pt","123");
         } catch (Exception ignore) {}
         logger.info("Users created");
 
@@ -71,7 +71,7 @@ public class ConfigBean {
 
         logger.info("Creating order");
         try {
-            orderBean.create("O1","C1");
+            orderBean.create("O1","client");
             volumeBean.create("V1", "O1", PackageType.ISOTERMIC_GEOLOCATION);
             sensorBean.create("S1","V1",SensorType.TEMPERATURE);
             sensorBean.create("S2","V1",SensorType.LOCATION);

@@ -1,7 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.monitoring.security;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.User;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -24,7 +24,7 @@ public class Hasher {
                     mdEnc.digest()).toString(16).toCharArray();
             return new String(encoded);
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Client.class.getName()).severe(ex.getMessage());
+            Logger.getLogger(User.class.getName()).severe(ex.getMessage());
             return "";
         }
     }

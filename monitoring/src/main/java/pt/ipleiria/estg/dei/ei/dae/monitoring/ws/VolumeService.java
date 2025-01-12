@@ -50,7 +50,7 @@ public class VolumeService {
 
     @POST
     @Path("/")
-    @Transactional // TODO: ver se isto influencia
+    @Transactional
     public Response createVolume(VolumeDTO volumeDTO)
             throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
         String volumeCode = volumeDTO.getCode();

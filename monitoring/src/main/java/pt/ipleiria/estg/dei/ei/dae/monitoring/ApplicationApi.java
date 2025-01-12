@@ -5,5 +5,7 @@ import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("/api")
 public class ApplicationApi extends Application {
-
+    public ApplicationApi() {
+        System.setProperty("resteasy.preferJacksonOverJsonB", "false");
+    }
 }

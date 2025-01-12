@@ -1,0 +1,19 @@
+meta {
+  name: User
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/auth/user
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{bearer_token}}
+}
+
+auth:bearer {
+  token: 
+}
