@@ -29,10 +29,22 @@ const editVolume = ref({
 
 const volumes = ref([]);
 
+const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
+
+const isFormValid = computed(() => validateString(deliveryCode.value) && validateString(clientCode.value));
+
+const isVolumeValid = computed(() => validateString(newVolume.value.code) && newVolume.value.products.every(p => validateString(p.code)) && newVolume.value.sensors.every(s => validateString(s.code) && validateString(s.type)));
+
+const isEditVolumeValid = computed(() => validateString(editVolume.value.code) && editVolume.value.products.every(p => validateString(p.code)) && editVolume.value.sensors.every(s => validateString(s.code) && validateString(s.type)));
+
 const addVolume = () => {
-  volumes.value.push({ ...newVolume.value });
-  resetNewVolume();
-  isOpenDialog.value = false;
+  if (isVolumeValid.value) {
+    volumes.value.push({ ...newVolume.value });
+    resetNewVolume();
+    isOpenDialog.value = false;
+  } else {
+    console.error("Invalid volume data");
+  }
 };
 
 const removeVolume = (volume) => {
@@ -66,13 +78,17 @@ const addSensorToEditVolume = () => {
 };
 
 const saveEditedVolume = () => {
-  const index = volumes.value.findIndex(
-    (v) => v.code === editVolume.value.code
-  );
-  if (index !== -1) {
-    volumes.value[index] = { ...editVolume.value };
+  if (isEditVolumeValid.value) {
+    const index = volumes.value.findIndex(
+      (v) => v.code === editVolume.value.code
+    );
+    if (index !== -1) {
+      volumes.value[index] = { ...editVolume.value };
+    }
+    isEditDialog.value = false;
+  } else {
+    console.error("Invalid edited volume data");
   }
-  isEditDialog.value = false;
 };
 
 const resetNewVolume = () => {
@@ -226,10 +242,6 @@ const getPackageTypeSeverity = (type) => {
   };
   return severityMap[type] || "secondary";
 };
-
-const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
-
-const isFormValid = computed(() => validateString(deliveryCode.value) && validateString(clientCode.value));
 </script>
 <template>
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
@@ -531,6 +543,7 @@ const isFormValid = computed(() => validateString(deliveryCode.value) && validat
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(product.code) }"
             />
+            <small v-if="!validateString(product.code)" class="p-error">Product Code is required.</small>
             <InputNumber
               v-model="product.quantity"
               placeholder="Qty"
@@ -580,6 +593,7 @@ const isFormValid = computed(() => validateString(deliveryCode.value) && validat
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(sensor.code) }"
             />
+            <small v-if="!validateString(sensor.code)" class="p-error">Sensor Code is required.</small>
             <Dropdown
               v-model="sensor.type"
               :options="['ACCELERATION', 'TEMPERATURE', 'LOCATION']"
@@ -587,6 +601,7 @@ const isFormValid = computed(() => validateString(deliveryCode.value) && validat
               class="w-1/2"
               :class="{ 'p-invalid': !validateString(sensor.type) }"
             />
+            <small v-if="!validateString(sensor.type)" class="p-error">Sensor Type is required.</small>
             <Button
               icon="pi pi-trash"
               text
