@@ -64,6 +64,9 @@ public class ConfigBean {
             productBean.create("P01", PackageType.NONE,"Banana");
             productBean.create("P02", PackageType.FRAGILE,"TV");
             productBean.create("P03", PackageType.ISOTERMIC,"product three");
+            productBean.create("P04", PackageType.GEOLOCATION,"Arduino");
+            productBean.create("P05", PackageType.FRAGILE_ISOTERMIC,"Chemical equipment");
+            productBean.create("P06", PackageType.FRAGILE_ISOTERMIC_GEOLOCATION,"Palm tree");
         } catch (Exception ignore) {}
         logger.info("Products created");
 
