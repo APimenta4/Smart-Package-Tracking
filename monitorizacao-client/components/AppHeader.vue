@@ -71,6 +71,11 @@ const items = ref([
     icon: "pi pi-box",
     items: [
       {
+        label: "Add Volume to Delivery",
+        icon: "pi pi-plus",
+        route: "/volumes/new",
+      },
+      {
         label: "All Volumes",
         icon: "pi pi-list",
         route: "/volumes",
