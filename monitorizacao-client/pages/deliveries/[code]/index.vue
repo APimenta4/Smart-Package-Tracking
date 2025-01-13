@@ -28,6 +28,33 @@ const getStatusSeverity = (status) => {
   return severityMap[status] || "secondary";
 };
 
+const isDetailsDialogVisible = ref(false);
+const selectedDetails = ref({
+  title: "",
+  items: [],
+});
+
+const showProductDetails = (products) => {
+  selectedDetails.value = {
+    title: "Products Details",
+    items: products.map((p) => ({
+      code: p.code,
+      description: `Quantity: ${p.quantity}`,
+    })),
+  };
+  isDetailsDialogVisible.value = true;
+};
+
+const showSensorDetails = (sensors) => {
+  selectedDetails.value = {
+    title: "Sensors Details",
+    items: sensors.map((s) => ({
+      code: s.code,
+      description: `Type: ${s.type}`,
+    })),
+  };
+  isDetailsDialogVisible.value = true;
+};
 </script>
 
 <template>
@@ -85,12 +112,24 @@ const getStatusSeverity = (status) => {
             </Column>
             <Column header="Products">
               <template #body="{ data }">
-                {{ data.products.length }} products
+                <Button
+                  link
+                  class="text-blue-600 hover:text-blue-800 p-0"
+                  @click="showProductDetails(data.products)"
+                >
+                  {{ data.products.length }} products
+                </Button>
               </template>
             </Column>
             <Column header="Sensors">
               <template #body="{ data }">
-                {{ data.sensors.length }} sensors
+                <Button
+                  link
+                  class="text-blue-600 hover:text-blue-800 p-0"
+                  @click="showSensorDetails(data.sensors)"
+                >
+                  {{ data.sensors.length }} sensors
+                </Button>
               </template>
             </Column>
             <Column header="Actions">
@@ -120,4 +159,20 @@ const getStatusSeverity = (status) => {
       </template>
     </Card>
   </div>
+
+  <Dialog
+    v-model:visible="isDetailsDialogVisible"
+    :header="selectedDetails.title"
+    modal
+    :style="{ width: '450px' }"
+  >
+    <DataTable :value="selectedDetails.items" :rows="5">
+      <Column field="code" header="Code">
+        <template #body="{ data }">
+          <span>{{ data.code }}</span>
+        </template>
+      </Column>
+      <Column field="description" header="Description" />
+    </DataTable>
+  </Dialog>
 </template>

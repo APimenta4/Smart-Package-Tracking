@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRuntimeConfig } from '#imports'
 
 const readings = ref([])
 const filters = ref({
@@ -7,38 +8,25 @@ const filters = ref({
 })
 
 const sensorTypeBadge = {
-  GPS: 'info',
-  TEMPERATURA: 'success', 
-  ACELERACAO: 'warning'
+  LOCATION: 'info',
+  TEMPERATURE: 'success', 
+  ACCELERATION: 'warning'
 }
 
-const mockReadings = [
-  {
-    codigoSensor: 3453,
-    codigoVolume: 42,
-    tipo: 'GPS',
-    coordenadas: [-50.61, 165.97],
-    timestamp: '2024-12-28 19:30:23'
-  },
-  {
-    codigoSensor: 3454,
-    codigoVolume: 42, 
-    tipo: 'TEMPERATURA',
-    temperatura: 15,
-    timestamp: '2024-12-28 19:25:20'
-  },
-  {
-    codigoSensor: 3455,
-    codigoVolume: 42,
-    tipo: 'ACELERACAO', 
-    aceleracao: 6,
-    timestamp: '2024-12-27 19:18:41'
-  }
-]
+const config = useRuntimeConfig()
+const api = config.public.API_URL
 
 onMounted(async () => {
-  // TODO: replace with api call
-  readings.value = mockReadings
+  try {
+    const response = await fetch(`${api}/readings`)
+    const data = await response.json()
+    readings.value = data.map(reading => ({
+      ...reading,
+      timestamp: new Date(reading.timestamp).toLocaleString()
+    }))
+  } catch (error) {
+    console.error('Error fetching readings:', error)
+  }
 })
 </script>
 
@@ -72,13 +60,13 @@ onMounted(async () => {
             </div>
           </template>
 
-          <Column field="codigoSensor" header="Sensor" sortable />
-          <Column field="codigoVolume" header="Volume" sortable />
-          <Column field="tipo" header="Type" sortable>
+          <Column field="sensorCode" header="Sensor" sortable />
+          <Column field="volumeCode" header="Volume" sortable />
+          <Column field="type" header="Type" sortable>
             <template #body="{ data }">
               <Tag
-                :value="data.tipo"
-                :severity="sensorTypeBadge[data.tipo]"
+                :value="data.type"
+                :severity="sensorTypeBadge[data.type]"
               />
             </template>
           </Column>
@@ -86,14 +74,14 @@ onMounted(async () => {
           <Column header="Value" :exportable="false">
             <template #body="{ data }">
               <div>
-                <template v-if="data.tipo === 'GPS'">
-                  {{ data.coordenadas.join(', ') }}
+                <template v-if="data.type === 'LOCATION'">
+                  {{ data.latitude }}, {{ data.longitude }}
                 </template>
-                <template v-else-if="data.tipo === 'TEMPERATURA'">
-                  {{ data.temperatura }}°C
+                <template v-else-if="data.type === 'TEMPERATURE'">
+                  {{ data.temperature }}°C
                 </template>
-                <template v-else-if="data.tipo === 'ACELERACAO'">
-                  {{ data.aceleracao }} m/s²
+                <template v-else-if="data.type === 'ACCELERATION'">
+                  {{ data.acceleration }} m/s²
                 </template>
               </div>
             </template>
@@ -102,20 +90,11 @@ onMounted(async () => {
             <template #body="slotProps">
               <div class="flex gap-2">
                 <Button
-                  icon="pi pi-eye"
-                  rounded
-                  text
-                  severity="info"
-                  @click="navigateTo(`/volumes/${slotProps.data.codigoVolume}`)"
-                  tooltip="View Volume"
-                  tooltipOptions="top"
-                />
-                <Button
                   icon="pi pi-box"
                   rounded
                   text
                   severity="success" 
-                  @click="navigateTo(`/sensors/${slotProps.data.codigoSensor}`)"
+                  @click="navigateTo(`/volumes/${slotProps.data.volumeCode}`)"
                   tooltip="View Sensor"
                   tooltipOptions="top"
                 />

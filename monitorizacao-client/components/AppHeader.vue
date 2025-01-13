@@ -50,7 +50,7 @@ const items = ref([
     icon: "pi pi-truck",
     items: [
       {
-        label: "New Delivery (Logistica)",
+        label: "New Delivery",
         icon: "pi pi-plus",
         route: "/deliveries/new",
       },

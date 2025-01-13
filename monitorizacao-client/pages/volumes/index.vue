@@ -1,32 +1,48 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
-const volumes = ref([])
+const volumes = ref([]);
 const filters = ref({
   global: { value: null, matchMode: 'contains' }
-})
+});
 
 const statusSeverity = {
-  PENDING: 'warning',
+  READY_FOR_PICKUP: 'info',
   IN_TRANSIT: 'info',
-  DELIVERED: 'success'
-}
+  DELIVERED: 'success',
+  RETURNED: 'warning',
+  CANCELLED: 'danger'
+};
+
+const getPackageTypeSeverity = (type) => {
+  const severityMap = {
+    FRAGILE: "danger",
+    ISOTERMIC: "warning",
+    GEOLOCATION: "info",
+    NONE: "secondary",
+  };
+  return severityMap[type] || "secondary";
+};
+
+const getStatusSeverity = (status) => {
+  return statusSeverity[status] || "secondary";
+};
 
 async function fetchVolumes() {
   try {
-    const response = await fetch(`${api}/volumes`)
-    const data = await response.json()
-    volumes.value = data   
+    const response = await fetch(`${api}/volumes`);
+    const data = await response.json();
+    volumes.value = data;
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
   }
 }
 
 onMounted(() => {
-  fetchVolumes()
+  fetchVolumes();
 });
 </script>
 
@@ -61,18 +77,24 @@ onMounted(() => {
           </template>
 
           <Column field="code" header="Volume Code" sortable />
-          <Column field="deliveryCode" header="Delivery" sortable />
-          <Column field="packageType" header="Package Type" sortable />
+          <Column field="orderCode" header="Delivery" sortable />
+          <Column field="packageType" header="Package Type" sortable>
+            <template #body="{ data }">
+              <div class="flex flex-wrap gap-1">
+                <template v-for="type in data.packageType.split('_')" :key="type">
+                  <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
+                </template>
+              </div>
+            </template>
+          </Column>
           <Column field="status" header="Status" sortable>
             <template #body="{ data }">
               <Tag
-                :value="data.status"
-                :severity="statusSeverity[data.status]"
+                :value="data.status.replace(/_/g, ' ')" 
+                :severity="getStatusSeverity(data.status)"
               />
             </template>
           </Column>
-          <Column field="sentDate" header="Sent Date" sortable />
-          <Column field="deliveryDate" header="Delivery Date" sortable />
           <Column header="Actions" :exportable="false">
             <template #body="slotProps">
               <div class="flex gap-2">
