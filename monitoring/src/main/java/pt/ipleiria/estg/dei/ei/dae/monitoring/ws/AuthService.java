@@ -53,8 +53,6 @@ public class AuthService {
     @Authenticated
     @Path("/set-password")
     public Response setPassword(@Valid PasswordDTO passwordDTO) {
-
-        logger.info("set new password");
         Principal principal = securityContext.getUserPrincipal();
 
         if (!userBean.canLogin(principal.getName(), passwordDTO.getOldPassword())) {
@@ -62,7 +60,9 @@ public class AuthService {
         }
 
         if (!passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("New password and confirm password do not match")
+                           .build();
         }
         userBean.updatePassword(principal.getName(), passwordDTO.getNewPassword());
 
@@ -74,8 +74,8 @@ public class AuthService {
     @Authenticated
     @Path("/user")
     public Response getAuthenticatedUser() {
-        logger.info("get authenticated user");
         String code = securityContext.getUserPrincipal().getName();
+        logger.info("User '" + code + "' request for information");
         User user = userBean.findOrFail(code);
         return Response.ok(UserDTO.from(user)).build();
     }
