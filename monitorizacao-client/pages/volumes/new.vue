@@ -148,7 +148,7 @@ watch(selectedPackageTypes, (newTypes) => {
           </div>
           <div class="flex gap-2 mb-2 font-semibold text-sm">
             <span class="w-1/2 ml-1">Code</span>
-            <span class="w-1/2 ml-4">Quantity</span>
+            <span class="w-1/2">Quantity</span>
           </div>
           <div
             v-for="(product, index) in products"
@@ -197,7 +197,7 @@ watch(selectedPackageTypes, (newTypes) => {
           </div>
           <div class="flex gap-2 mb-2 font-semibold text-sm">
             <span class="w-1/2 ml-1">Code</span>
-            <span class="w-1/2 ml-5">Type</span>
+            <span class="w-1/2">Type</span>
           </div>
           <div
             v-for="(sensor, index) in sensors"
