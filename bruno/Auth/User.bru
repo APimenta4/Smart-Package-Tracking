@@ -1,19 +1,15 @@
 meta {
   name: User
   type: http
-  seq: 5
+  seq: 6
 }
 
 get {
   url: {{api_url}}/auth/user
   body: none
-  auth: bearer
+  auth: none
 }
 
 headers {
   Authorization: Bearer {{bearer_token}}
-}
-
-auth:bearer {
-  token: 
 }

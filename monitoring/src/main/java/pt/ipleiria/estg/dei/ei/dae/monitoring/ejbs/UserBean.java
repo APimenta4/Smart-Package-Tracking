@@ -43,6 +43,7 @@ public class UserBean {
         Hibernate.initialize(user);
         return user;
     }
+
     public boolean canLogin(String code, String password) {
         User user = em.find(User.class, code);
         return user != null && user.getPassword().equals(hasher.hash(password));
