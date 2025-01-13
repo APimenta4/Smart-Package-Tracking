@@ -9,10 +9,7 @@ import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
@@ -59,12 +56,61 @@ public class VolumeBean {
         String volumeCode = volumeDTO.getCode();
         create(volumeCode, orderCode, volumeDTO.getPackageType());
 
+        long countAcc = 0;
+        long countLoc = 0;
+        long countTemp = 0;
+
         for (ProductDTO productDTO : volumeDTO.getProducts()) {
+            Product product = productBean.find(productDTO.getCode());
+
             lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
+
+
+            //updateCounter(product.getPackageType(),productDTO.getQuantity());
+
+
+            switch (product.getPackageType()) {
+                case FRAGILE:
+                    countAcc = productDTO.getQuantity();
+                    break;
+                case ISOTERMIC:
+                    countLoc = productDTO.getQuantity();
+                    break;
+                case GEOLOCATION:
+                    countTemp = productDTO.getQuantity();
+                    break;
+                default:
+                    throw new CustomConstraintViolationException("Unknown status " + product.getPackageType());
+            }
+
+
         }
         for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
+
+            Sensor sensor = sensorBean.find(sensorDTO.getCode());
+
             sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
+
+            switch (sensor.getType()) {
+                case ACCELERATION:
+                    countAcc -= 1;
+                    break;
+                case TEMPERATURE:
+                    countLoc -= 1;
+                    break;
+                case LOCATION:
+                    countTemp -= 1;
+                    break;
+                default:
+                    throw new CustomConstraintViolationException("Unknown status " + sensor.getType());
+            }
         }
+
+        //verify
+        if( countAcc != 0 || countTemp != 0 || countLoc != 0){
+            throw new CustomConstraintViolationException("Sensores and Products Quantity and/or PackageTypes doesn't correspond");
+        }
+
     }
 
     public void create(String code, String orderCode, PackageType packageType)
