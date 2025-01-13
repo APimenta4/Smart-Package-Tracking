@@ -1,42 +1,52 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
+
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
 
 const route = useRoute();
 const volume = ref(null);
 
-// Mock volume data - replace with API call
-const mockVolume = {
-  codigo: 42,
-  codigoEncomenda: 2,
-  estado: 'ENTREGUE',
-  dataEnvio: '2024-12-28',
-  dataEntrega: '2024-01-08',
-  tipoEmbalagem: 'FRAGIL',
-  produtos: [
-    {
-      codigo: 1256,
-      descricao: 'LG Smart TV LED UHD 4K',
-      categoria: 'ELETRODOMESTICOS',
-      unidades: 5
-    }
-  ],
-  sensores: [
-    {
-      codigo: 345,
-      tipo: 'ACELERACAO'
-    }
-  ]
-};
-
 const statusSeverity = {
-  PENDENTE: 'warning',
-  EM_TRANSITO: 'info',
-  ENTREGUE: 'success'
+  READY_FOR_PICKUP: "info",
+  IN_TRANSIT: "info",
+  DELIVERED: "success",
+  RETURNED: "warning",
+  CANCELLED: "danger",
 };
 
-onMounted(async () => {
-  // TODO: Replace with API call using route.params.code
-  volume.value = mockVolume;
+const getPackageTypeSeverity = (type) => {
+  const severityMap = {
+    FRAGILE: "danger",
+    ISOTERMIC: "warning",
+    GEOLOCATION: "info",
+    NONE: "secondary",
+  };
+  return severityMap[type] || "secondary";
+};
+
+const getSensorTypeSeverity = (type) => {
+  const severityMap = {
+    TEMPERATURE: "warning",
+    LOCATION: "info",
+    ACCELERATION: "danger",
+    NONE: "secondary",
+  };
+  return severityMap[type] || "secondary";
+};
+
+async function fetchVolume() {
+  try {
+    const response = await fetch(`${api}/volumes/${route.params.code}`);
+    const data = await response.json();
+    volume.value = data;
+  } catch (error) {
+    console.error("Failed to fetch volume:", error);
+  }
+}
+
+onMounted(() => {
+  fetchVolume();
 });
 </script>
 
@@ -46,10 +56,10 @@ onMounted(async () => {
       <template #title>
         <div class="flex justify-between items-center">
           <h2 class="text-2xl font-bold">Volume Details</h2>
-          <Button 
-            icon="pi pi-arrow-left" 
-            label="Back to Volumes" 
-            text 
+          <Button
+            icon="pi pi-arrow-left"
+            label="Back to Volumes"
+            text
             @click="navigateTo('/volumes')"
           />
         </div>
@@ -59,23 +69,21 @@ onMounted(async () => {
           <!-- Basic Volume Info -->
           <div class="grid grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <div>
+                <div>
                 <span class="text-sm font-medium">Volume Code</span>
-                <div class="text-xl">{{ volume.codigo }}</div>
-              </div>
-              <div>
+                <div class="text-xl">{{ volume.code }}</div>
+                </div>
+                <div>
                 <span class="text-sm font-medium">Delivery Code</span>
                 <div class="text-xl">
                   <Button
-                    :label="volume.codigoEncomenda.toString()"
-                    link
-                    @click="navigateTo(`/deliveries/${volume.codigoEncomenda}`)"
-                  />
+                  link
+                  class="text-blue-600 hover:text-blue-800 p-0 text-xl"
+                  @click="navigateTo(`/deliveries/${volume.orderCode}`)"
+                  >
+                  {{ volume.orderCode }}
+                  </Button>
                 </div>
-              </div>
-              <div>
-                <span class="text-sm font-medium">Package Type</span>
-                <div class="text-xl">{{ volume.tipoEmbalagem }}</div>
               </div>
             </div>
 
@@ -84,19 +92,25 @@ onMounted(async () => {
                 <span class="text-sm font-medium">Status</span>
                 <div>
                   <Tag
-                    :value="volume.estado"
-                    :severity="statusSeverity[volume.estado]"
+                    :value="volume.status.replace(/_/g, ' ')"
+                    :severity="statusSeverity[volume.status]"
                     class="text-lg"
                   />
                 </div>
               </div>
               <div>
-                <span class="text-sm font-medium">Sent Date</span>
-                <div class="text-xl">{{ volume.dataEnvio }}</div>
-              </div>
-              <div>
-                <span class="text-sm font-medium">Delivery Date</span>
-                <div class="text-xl">{{ volume.dataEntrega }}</div>
+                <span class="text-sm font-medium">Package Type</span>
+                <div class="flex flex-wrap gap-1">
+                  <template
+                    v-for="type in volume.packageType.split('_')"
+                    :key="type"
+                  >
+                    <Tag
+                      :value="type"
+                      :severity="getPackageTypeSeverity(type)"
+                    />
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -104,20 +118,32 @@ onMounted(async () => {
           <!-- Products Section -->
           <div>
             <h3 class="text-xl font-semibold mb-4">Products</h3>
-            <DataTable :value="volume.produtos">
-              <Column field="codigo" header="Code" />
-              <Column field="descricao" header="Description" />
-              <Column field="categoria" header="Category" />
-              <Column field="unidades" header="Quantity" />
+            <DataTable :value="volume.products">
+              <Column field="code" header="Code" />
+              <Column field="description" header="Description" />
+              <Column field="packageType" header="Package Type">
+                <template #body="{ data }">
+                  <div class="flex flex-wrap gap-1">
+                    <template v-for="type in data.packageType.split('_')" :key="type">
+                      <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
+                    </template>
+                  </div>
+                </template>
+              </Column>
+              <Column field="quantity" header="Quantity" />
             </DataTable>
           </div>
 
           <!-- Sensors Section -->
           <div>
             <h3 class="text-xl font-semibold mb-4">Sensors</h3>
-            <DataTable :value="volume.sensores">
-              <Column field="codigo" header="Code" />
-              <Column field="tipo" header="Type" />
+            <DataTable :value="volume.sensors">
+              <Column field="code" header="Code" />
+              <Column field="type" header="Type">
+                <template #body="{ data }">
+                  <Tag :value="data.type" :severity="getSensorTypeSeverity(data.type)" />
+                </template>
+              </Column>
               <Column header="Actions">
                 <template #body="{ data }">
                   <div class="flex gap-2">
@@ -126,7 +152,7 @@ onMounted(async () => {
                       text
                       rounded
                       severity="info"
-                      @click="navigateTo(`/readings?sensor=${data.codigo}`)"
+                      @click="navigateTo(`/readings?sensor=${data.code}`)"
                       tooltip="View Readings"
                     />
                   </div>

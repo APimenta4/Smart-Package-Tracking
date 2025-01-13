@@ -78,6 +78,12 @@ onMounted(() => {
       <template #title>
         <div class="flex justify-between items-center">
           <h2 class="text-2xl font-bold">Delivery {{ deliveryCode }} Volumes</h2>
+          <Button
+            icon="pi pi-arrow-left"
+            label="Back to Deliveries"
+            text
+            @click="navigateTo('/deliveries')"
+          />       
         </div>
       </template>
       <template #content>
