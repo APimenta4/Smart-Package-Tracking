@@ -23,10 +23,15 @@ async function fetchReadings() {
   try {
     const response = await fetch(`${api}/orders/${deliveryCode}/readings`);
     const data = await response.json();
-    readings.value = data.map(reading => ({
-      ...reading,
-      timestamp: new Date(reading.timestamp).toLocaleString()
-    }));
+    readings.value = data
+      .filter(item => item.readings.length > 0)
+      .flatMap(item => item.readings.map(reading => ({
+        ...reading,
+        sensorCode: item.sensor.code,
+        type: item.sensor.type,
+        volumeCode: item.sensor.volumeCode,
+        timestamp: new Date(reading.timestamp).toLocaleString()
+      })));
   } catch (error) {
     console.error('Error fetching readings:', error);
   }

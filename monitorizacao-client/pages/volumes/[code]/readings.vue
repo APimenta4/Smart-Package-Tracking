@@ -1,10 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from "../store/auth-store";
 
 const route = useRoute();
-const sensorCode = route.params.code;
+const volumeCode = route.params.code;
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -20,26 +19,19 @@ const sensorTypeBadge = {
   ACCELERATION: 'warning'
 };
 
-const authStore = useAuthStore();
-
 async function fetchReadings() {
   try {
-    const response = await fetch(`${api}/sensors/${sensorCode}/readings`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
-    });
+    const response = await fetch(`${api}/volumes/${volumeCode}/readings`);
     const data = await response.json();
-    if (Array.isArray(data.readings)) {
-      readings.value = data.readings.map(reading => ({
+    readings.value = data
+      .filter(item => item.readings.length > 0)
+      .flatMap(item => item.readings.map(reading => ({
         ...reading,
-        volumeCode: data.sensor.volumeCode,
-        type: data.sensor.type,
+        sensorCode: item.sensor.code,
+        type: item.sensor.type,
+        deliveryCode: item.sensor.deliveryCode,
         timestamp: new Date(reading.timestamp).toLocaleString()
-      }));
-    } else {
-      console.error('Unexpected API response format:', data);
-    }
+      })));
   } catch (error) {
     console.error('Error fetching readings:', error);
   }
@@ -55,8 +47,13 @@ onMounted(() => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">Readings for Sensor {{ sensorCode }}</h2>
-
+          <h2 class="text-2xl font-bold">Readings for Volume {{ volumeCode }}</h2>
+          <Button
+            icon="pi pi-arrow-left"
+            label="Back to Volume"
+            text
+            @click="navigateTo(`/volumes/${volumeCode}`)"
+          />
         </div>
       </template>
       <template #content>
@@ -81,7 +78,7 @@ onMounted(() => {
             </div>
           </template>
 
-          <Column field="volumeCode" header="Volume" sortable />
+          <Column field="sensorCode" header="Sensor" sortable />
           <Column field="type" header="Type" sortable>
             <template #body="{ data }">
               <Tag
@@ -111,3 +108,5 @@ onMounted(() => {
     </Card>
   </div>
 </template>
+
+

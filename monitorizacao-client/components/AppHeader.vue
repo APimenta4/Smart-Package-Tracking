@@ -76,7 +76,7 @@ const items = ref([
         route: "/volumes",
       },
       {
-        label: "Find Volume by id or something else TODO",
+        label: "Find Volume",
         icon: "pi pi-search",
         command: () => showFindVolumeDialog.value = true
       },
@@ -92,7 +92,7 @@ const items = ref([
         route: "/readings",
       },
       {
-        label: "Find Reading",
+        label: "Find Readings by Sensor",
         icon: "pi pi-search",
         command: () => showFindReadingDialog.value = true
       },
@@ -239,12 +239,12 @@ onMounted(() => {
     <template #header>
       <div class="flex items-center gap-2">
       <i class="pi pi-history text-xl"></i>
-      <span class="text-xl font-bold">Find Reading</span>
+      <span class="text-xl font-bold">Find Readings</span>
       </div>
     </template>
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
-        <label for="searchReadingCode">Reading Code</label>
+        <label for="searchReadingCode">Sensor Code</label>
         <InputText 
           id="searchReadingCode" 
           v-model="searchReadingCode" 
