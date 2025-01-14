@@ -162,7 +162,7 @@ function resetSimulateSensorDialog() {
     >
       <template #item="slotProps">
         <div
-          class="border border-surface-200 dark:border-surface-700 rounded m-2.5 p-12 flex flex-col items-center group transition-transform duration-300 transform hover:scale-105"
+          class="border border-surface-200 dark:border-surface-700 rounded m-2.5 p-12 flex flex-col items-center group transition-transform duration-300 transform hover:scale-105 hover-pointer"
           :class="{
             'opacity-60':
               hoveredItem !== null &&
@@ -285,3 +285,10 @@ function resetSimulateSensorDialog() {
     </Dialog>
   </div>
 </template>
+
+<style scoped>
+/* Add this CSS class */
+.hover-pointer {
+  cursor: pointer;
+}
+</style>
