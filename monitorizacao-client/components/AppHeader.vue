@@ -150,23 +150,24 @@ const items = ref([]);
 const updateMenuItems = () => {
   const isManager = auth.user && auth.user.role === "Manager";
   const isClient = auth.user && auth.user.role === "Client";
+  const isLogistician = auth.user && auth.user.role === "Logistician";
 
   items.value = [
     {
-      label: isManager ? "Deliveries" : "Deliveries",
+      label: "Deliveries",
       icon: "pi pi-truck",
       items: [
         {
           label: isManager ? "All Deliveries" : "My Deliveries",
           icon: "pi pi-list",
           route: "/deliveries",
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "Find Delivery",
           icon: "pi pi-search",
           command: () => (showFindDeliveryDialog.value = true),
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "New Delivery",
@@ -177,20 +178,20 @@ const updateMenuItems = () => {
       ],
     },
     {
-      label: isManager ? "Volumes" : "Volumes",
+      label: "Volumes",
       icon: "pi pi-box",
       items: [
         {
           label: isManager ? "All Volumes" : "My Volumes",
           icon: "pi pi-list",
           route: "/volumes",
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "Find Volume",
           icon: "pi pi-search",
           command: () => (showFindVolumeDialog.value = true),
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "Update Volume Status",
@@ -207,25 +208,26 @@ const updateMenuItems = () => {
       ],
     },
     {
-      label: isManager ? "Readings" : "Readings",
+      label: "Readings",
       icon: "pi pi-history",
       items: [
         {
           label: isManager ? "All Readings" : "My Readings",
           icon: "pi pi-list",
           route: "/readings",
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "Find Readings by Sensor",
           icon: "pi pi-search",
           command: () => (showFindReadingDialog.value = true),
-          disabled: !auth.isAuthenticated,
+          disabled: !auth.isAuthenticated || isLogistician,
         },
         {
           label: "Simulate a Sensor",
           icon: "pi pi-cog",
           command: () => (showSimulateSensorDialog.value = true),
+          disabled: isLogistician,
         },
       ],
     },
