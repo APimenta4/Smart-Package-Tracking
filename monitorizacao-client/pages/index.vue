@@ -20,12 +20,6 @@ const features = [
     disabled: false,
   },
   {
-    description: "Add Volume to Delivery",
-    icon: "add_box",
-    action: () => router.push("/volumes/new"),
-    disabled: !isLogistician,
-  },
-  {
     description: "Simulate New Delivery",
     icon: "local_shipping",
     action: () => router.push("/deliveries/new"),
@@ -37,6 +31,12 @@ const features = [
     action: () => (showUpdateVolumeStatusDialog.value = true),
     disabled: !isLogistician,
   },
+  {
+    description: "Add Volume to Delivery",
+    icon: "add_box",
+    action: () => router.push("/volumes/new"),
+    disabled: !isLogistician,
+  }
 ];
 
 const responsiveOptions = ref([
