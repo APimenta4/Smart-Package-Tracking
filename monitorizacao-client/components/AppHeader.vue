@@ -29,14 +29,10 @@ const volumeStatusOptions = [
   "IN_TRANSIT",
   "DELIVERED",
   "RETURNED",
-  "CANCELLED"
+  "CANCELLED",
 ];
 
-const sensorTypeOptions = [
-  "ACCELERATION",
-  "TEMPERATURE",
-  "LOCATION"
-];
+const sensorTypeOptions = ["ACCELERATION", "TEMPERATURE", "LOCATION"];
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
@@ -69,7 +65,10 @@ function searchReading() {
 }
 
 async function updateVolumeStatus() {
-  if (!validateString(updateVolumeCode.value) || !validateString(newVolumeStatus.value)) {
+  if (
+    !validateString(updateVolumeCode.value) ||
+    !validateString(newVolumeStatus.value)
+  ) {
     console.error("Volume Code and New Status are required.");
     return;
   }
@@ -94,7 +93,11 @@ async function updateVolumeStatus() {
 }
 
 async function simulateSensor() {
-  if (!validateString(sensorCode.value) || !validateString(sensorType.value) || !validateString(sensorValue.value)) {
+  if (
+    !validateString(sensorCode.value) ||
+    !validateString(sensorType.value) ||
+    !validateString(sensorValue.value)
+  ) {
     console.error("Sensor Code, Type, and Value are required.");
     return;
   }
@@ -137,18 +140,16 @@ function resetSimulateSensorDialog() {
   sensorValue.value = "";
 }
 
-const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
+const validateString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
+
+const isLogistician = auth.user && auth.user.role === "Logistician";
 
 const items = ref([
   {
     label: "Deliveries",
     icon: "pi pi-truck",
     items: [
-      {
-        label: "New Delivery",
-        icon: "pi pi-plus",
-        route: "/deliveries/new",
-      },
       {
         label: "All Deliveries",
         icon: "pi pi-list",
@@ -157,7 +158,13 @@ const items = ref([
       {
         label: "Find Delivery",
         icon: "pi pi-search",
-        command: () => showFindDeliveryDialog.value = true
+        command: () => (showFindDeliveryDialog.value = true),
+      },
+      {
+        label: "New Delivery",
+        icon: "pi pi-plus",
+        route: "/deliveries/new",
+        disabled: !isLogistician,
       },
     ],
   },
@@ -166,11 +173,6 @@ const items = ref([
     icon: "pi pi-box",
     items: [
       {
-        label: "Add Volume to Delivery",
-        icon: "pi pi-plus",
-        route: "/volumes/new",
-      },
-      {
         label: "All Volumes",
         icon: "pi pi-list",
         route: "/volumes",
@@ -178,13 +180,20 @@ const items = ref([
       {
         label: "Find Volume",
         icon: "pi pi-search",
-        command: () => showFindVolumeDialog.value = true
+        command: () => (showFindVolumeDialog.value = true),
       },
       {
         label: "Update Volume Status",
         icon: "pi pi-refresh",
-        command: () => showUpdateVolumeStatusDialog.value = true
+        command: () => (showUpdateVolumeStatusDialog.value = true),
+        disabled: !isLogistician,
       },
+      {
+        label: "Add Volume to Delivery",
+        icon: "pi pi-plus",
+        route: "/volumes/new",
+        disabled: !isLogistician,
+      }
     ],
   },
   {
@@ -199,12 +208,12 @@ const items = ref([
       {
         label: "Find Readings by Sensor",
         icon: "pi pi-search",
-        command: () => showFindReadingDialog.value = true
+        command: () => (showFindReadingDialog.value = true),
       },
       {
         label: "Simulate a Sensor",
         icon: "pi pi-cog",
-        command: () => showSimulateSensorDialog.value = true
+        command: () => (showSimulateSensorDialog.value = true),
       },
     ],
   },
@@ -223,7 +232,10 @@ onMounted(() => {
 
 <template>
   <NuxtLoadingIndicator />
-  <Menubar :model="items" class="border-t-0 border-l-0 border-r-0 rounded-none h-14">
+  <Menubar
+    :model="items"
+    class="border-t-0 border-l-0 border-r-0 rounded-none h-14"
+  >
     <template v-slot:start>
       <router-link to="/">
         <img src="/logo.png" alt="Logo" class="h-10 inline-block mr-2" />
@@ -280,9 +292,9 @@ onMounted(() => {
     </template>
   </Menubar>
 
-  <Dialog 
-    v-model:visible="showFindDeliveryDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindDeliveryDialog"
+    modal
     :header="'Find Delivery'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
@@ -295,24 +307,24 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="searchDeliveryCode">Delivery Code</label>
-        <InputText 
-          id="searchDeliveryCode" 
-          v-model="searchDeliveryCode" 
+        <InputText
+          id="searchDeliveryCode"
+          v-model="searchDeliveryCode"
           class="w-full"
           @keyup.enter="searchDelivery"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindDeliveryDialog = false" />
       <Button label="Find" @click="searchDelivery" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showFindVolumeDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindVolumeDialog"
+    modal
     :header="'Find Volume'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
@@ -325,54 +337,54 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="searchVolumeCode">Volume Code</label>
-        <InputText 
-          id="searchVolumeCode" 
-          v-model="searchVolumeCode" 
+        <InputText
+          id="searchVolumeCode"
+          v-model="searchVolumeCode"
           class="w-full"
           @keyup.enter="searchVolume"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindVolumeDialog = false" />
       <Button label="Find" @click="searchVolume" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showFindReadingDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindReadingDialog"
+    modal
     :header="'Find Reading'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
     <template #header>
       <div class="flex items-center gap-2">
-      <i class="pi pi-history text-xl"></i>
-      <span class="text-xl font-bold">Find Readings</span>
+        <i class="pi pi-history text-xl"></i>
+        <span class="text-xl font-bold">Find Readings</span>
       </div>
     </template>
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="searchReadingCode">Sensor Code</label>
-        <InputText 
-          id="searchReadingCode" 
-          v-model="searchReadingCode" 
+        <InputText
+          id="searchReadingCode"
+          v-model="searchReadingCode"
           class="w-full"
           @keyup.enter="searchReading"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindReadingDialog = false" />
       <Button label="Find" @click="searchReading" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showUpdateVolumeStatusDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showUpdateVolumeStatusDialog"
+    modal
     :header="'Update Volume Status'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
     @hide="resetUpdateVolumeStatusDialog"
@@ -386,37 +398,45 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="updateVolumeCode">Volume Code</label>
-        <InputText 
-          id="updateVolumeCode" 
-          v-model="updateVolumeCode" 
+        <InputText
+          id="updateVolumeCode"
+          v-model="updateVolumeCode"
           class="w-full"
           :class="{ 'p-invalid': !validateString(updateVolumeCode) }"
         />
-        <small v-if="!validateString(updateVolumeCode)" class="p-error">Volume Code is required.</small>
+        <small v-if="!validateString(updateVolumeCode)" class="p-error"
+          >Volume Code is required.</small
+        >
       </span>
       <span class="p-float-label">
         <label for="newVolumeStatus">New Status</label>
-        <Dropdown 
-          id="newVolumeStatus" 
-          v-model="newVolumeStatus" 
-          :options="volumeStatusOptions" 
+        <Dropdown
+          id="newVolumeStatus"
+          v-model="newVolumeStatus"
+          :options="volumeStatusOptions"
           class="w-full"
           placeholder="Select a Status"
           :class="{ 'p-invalid': !validateString(newVolumeStatus) }"
         />
-        <small v-if="!validateString(newVolumeStatus)" class="p-error">New Status is required.</small>
+        <small v-if="!validateString(newVolumeStatus)" class="p-error"
+          >New Status is required.</small
+        >
       </span>
     </div>
-    
+
     <template #footer>
-      <Button label="Cancel" text @click="showUpdateVolumeStatusDialog = false" />
+      <Button
+        label="Cancel"
+        text
+        @click="showUpdateVolumeStatusDialog = false"
+      />
       <Button label="Update" @click="updateVolumeStatus" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showSimulateSensorDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showSimulateSensorDialog"
+    modal
     :header="'Simulate a Sensor'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
     @hide="resetSimulateSensorDialog"
@@ -430,38 +450,44 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="sensorCode">Sensor Code</label>
-        <InputText 
-          id="sensorCode" 
-          v-model="sensorCode" 
+        <InputText
+          id="sensorCode"
+          v-model="sensorCode"
           class="w-full"
           :class="{ 'p-invalid': !validateString(sensorCode) }"
         />
-        <small v-if="!validateString(sensorCode)" class="p-error">Sensor Code is required.</small>
+        <small v-if="!validateString(sensorCode)" class="p-error"
+          >Sensor Code is required.</small
+        >
       </span>
       <span class="p-float-label">
         <label for="sensorType">Sensor Type</label>
-        <Dropdown 
-          id="sensorType" 
-          v-model="sensorType" 
-          :options="sensorTypeOptions" 
+        <Dropdown
+          id="sensorType"
+          v-model="sensorType"
+          :options="sensorTypeOptions"
           class="w-full"
           placeholder="Select a Type"
           :class="{ 'p-invalid': !validateString(sensorType) }"
         />
-        <small v-if="!validateString(sensorType)" class="p-error">Sensor Type is required.</small>
+        <small v-if="!validateString(sensorType)" class="p-error"
+          >Sensor Type is required.</small
+        >
       </span>
       <span class="p-float-label">
         <label for="sensorValue">Sensor Value</label>
-        <InputText 
-          id="sensorValue" 
-          v-model="sensorValue" 
+        <InputText
+          id="sensorValue"
+          v-model="sensorValue"
           class="w-full"
           :class="{ 'p-invalid': !validateString(sensorValue) }"
         />
-        <small v-if="!validateString(sensorValue)" class="p-error">Sensor Value is required.</small>
+        <small v-if="!validateString(sensorValue)" class="p-error"
+          >Sensor Value is required.</small
+        >
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showSimulateSensorDialog = false" />
       <Button label="Simulate" @click="simulateSensor" />

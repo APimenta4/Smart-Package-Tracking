@@ -1,32 +1,41 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../store/auth-store";
+
+const auth = useAuthStore();
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
 const router = useRouter();
 
+const isLogistician = auth.user && auth.user.role === "Logistician";
+
 const features = [
   {
     description: "Add Volume to Delivery",
     icon: "add_box",
     action: () => router.push("/volumes/new"),
+    disabled: !isLogistician,
   },
   {
     description: "Simulate New Delivery",
     icon: "local_shipping",
     action: () => router.push("/deliveries/new"),
+    disabled: !isLogistician,
   },
   {
     description: "Update Volume Status",
     icon: "refresh",
     action: () => showUpdateVolumeStatusDialog.value = true,
+    disabled: !isLogistician,
   },
   {
     description: "Simulate Sensor Reading",
     icon: "sensors",
     action: () => showSimulateSensorDialog.value = true,
+    disabled: false,
   }
 ];
 
@@ -162,15 +171,18 @@ function resetSimulateSensorDialog() {
     >
       <template #item="slotProps">
         <div
-          class="border border-surface-200 dark:border-surface-700 rounded m-2.5 p-12 flex flex-col items-center group transition-transform duration-300 transform hover:scale-105 hover-pointer"
+          class="border border-surface-200 dark:border-surface-700 rounded m-2.5 p-12 flex flex-col items-center group transition-transform duration-300 transform hover:scale-105"
           :class="{
             'opacity-60':
               hoveredItem !== null &&
               hoveredItem.description !== slotProps.data.description,
+            'cursor-not-allowed opacity-50': slotProps.data.disabled,
+            'hover-pointer': !slotProps.data.disabled
           }"
+          :style="{ pointerEvents: slotProps.data.disabled ? 'none' : 'auto' }"
           @mouseover="hoveredItem = slotProps.data"
           @mouseleave="hoveredItem = null"
-          @click="slotProps.data.action && slotProps.data.action()"
+          @click="!slotProps.data.disabled && slotProps.data.action && slotProps.data.action()"
         >
           <div class="mb-4 font-medium text-center text-xl">
             {{ slotProps.data.description }}
@@ -287,7 +299,6 @@ function resetSimulateSensorDialog() {
 </template>
 
 <style scoped>
-/* Add this CSS class */
 .hover-pointer {
   cursor: pointer;
 }
