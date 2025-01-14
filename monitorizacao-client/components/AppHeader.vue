@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "../store/auth-store";
 import { useRouter } from "vue-router";
 
@@ -145,79 +145,100 @@ const validateString = (value) =>
 
 const isLogistician = auth.user && auth.user.role === "Logistician";
 
-const items = ref([
-  {
-    label: "Deliveries",
-    icon: "pi pi-truck",
-    items: [
-      {
-        label: "All Deliveries",
-        icon: "pi pi-list",
-        route: "/deliveries",
-      },
-      {
-        label: "Find Delivery",
-        icon: "pi pi-search",
-        command: () => (showFindDeliveryDialog.value = true),
-      },
-      {
-        label: "New Delivery",
-        icon: "pi pi-plus",
-        route: "/deliveries/new",
-        disabled: !isLogistician,
-      },
-    ],
+const items = ref([]);
+
+const updateMenuItems = () => {
+  const isManager = auth.user && auth.user.role === "Manager";
+  const isClient = auth.user && auth.user.role === "Client";
+
+  items.value = [
+    {
+      label: isManager ? "Deliveries" : "Deliveries",
+      icon: "pi pi-truck",
+      items: [
+        {
+          label: isManager ? "All Deliveries" : "My Deliveries",
+          icon: "pi pi-list",
+          route: "/deliveries",
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "Find Delivery",
+          icon: "pi pi-search",
+          command: () => (showFindDeliveryDialog.value = true),
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "New Delivery",
+          icon: "pi pi-plus",
+          route: "/deliveries/new",
+          disabled: !isLogistician,
+        },
+      ],
+    },
+    {
+      label: isManager ? "Volumes" : "Volumes",
+      icon: "pi pi-box",
+      items: [
+        {
+          label: isManager ? "All Volumes" : "My Volumes",
+          icon: "pi pi-list",
+          route: "/volumes",
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "Find Volume",
+          icon: "pi pi-search",
+          command: () => (showFindVolumeDialog.value = true),
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "Update Volume Status",
+          icon: "pi pi-refresh",
+          command: () => (showUpdateVolumeStatusDialog.value = true),
+          disabled: !isLogistician,
+        },
+        {
+          label: "Add Volume to Delivery",
+          icon: "pi pi-plus",
+          route: "/volumes/new",
+          disabled: !isLogistician,
+        }
+      ],
+    },
+    {
+      label: isManager ? "Readings" : "Readings",
+      icon: "pi pi-history",
+      items: [
+        {
+          label: isManager ? "All Readings" : "My Readings",
+          icon: "pi pi-list",
+          route: "/readings",
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "Find Readings by Sensor",
+          icon: "pi pi-search",
+          command: () => (showFindReadingDialog.value = true),
+          disabled: !auth.isAuthenticated,
+        },
+        {
+          label: "Simulate a Sensor",
+          icon: "pi pi-cog",
+          command: () => (showSimulateSensorDialog.value = true),
+        },
+      ],
+    },
+  ];
+};
+
+watch(
+  () => auth.user,
+  () => {
+    updateMenuItems();
   },
-  {
-    label: "Volumes",
-    icon: "pi pi-box",
-    items: [
-      {
-        label: "All Volumes",
-        icon: "pi pi-list",
-        route: "/volumes",
-      },
-      {
-        label: "Find Volume",
-        icon: "pi pi-search",
-        command: () => (showFindVolumeDialog.value = true),
-      },
-      {
-        label: "Update Volume Status",
-        icon: "pi pi-refresh",
-        command: () => (showUpdateVolumeStatusDialog.value = true),
-        disabled: !isLogistician,
-      },
-      {
-        label: "Add Volume to Delivery",
-        icon: "pi pi-plus",
-        route: "/volumes/new",
-        disabled: !isLogistician,
-      }
-    ],
-  },
-  {
-    label: "Readings",
-    icon: "pi pi-history",
-    items: [
-      {
-        label: "All Readings",
-        icon: "pi pi-list",
-        route: "/readings",
-      },
-      {
-        label: "Find Readings by Sensor",
-        icon: "pi pi-search",
-        command: () => (showFindReadingDialog.value = true),
-      },
-      {
-        label: "Simulate a Sensor",
-        icon: "pi pi-cog",
-        command: () => (showSimulateSensorDialog.value = true),
-      },
-    ],
-  },
-]);
+  { immediate: true }
+);
 
 onMounted(() => {
   const darkMode = localStorage.getItem("dark-mode");
@@ -227,6 +248,7 @@ onMounted(() => {
   if (isDark.value) {
     document.documentElement.classList.add("app-dark");
   }
+  updateMenuItems();
 });
 </script>
 

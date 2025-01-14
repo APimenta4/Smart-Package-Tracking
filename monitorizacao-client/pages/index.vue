@@ -14,6 +14,12 @@ const isLogistician = auth.user && auth.user.role === "Logistician";
 
 const features = [
   {
+    description: "Simulate Sensor Reading",
+    icon: "sensors",
+    action: () => (showSimulateSensorDialog.value = true),
+    disabled: false,
+  },
+  {
     description: "Add Volume to Delivery",
     icon: "add_box",
     action: () => router.push("/volumes/new"),
@@ -28,15 +34,9 @@ const features = [
   {
     description: "Update Volume Status",
     icon: "refresh",
-    action: () => showUpdateVolumeStatusDialog.value = true,
+    action: () => (showUpdateVolumeStatusDialog.value = true),
     disabled: !isLogistician,
   },
-  {
-    description: "Simulate Sensor Reading",
-    icon: "sensors",
-    action: () => showSimulateSensorDialog.value = true,
-    disabled: false,
-  }
 ];
 
 const responsiveOptions = ref([
@@ -73,13 +73,17 @@ const volumeStatusOptions = [
   "IN_TRANSIT",
   "DELIVERED",
   "RETURNED",
-  "CANCELLED"
+  "CANCELLED",
 ];
 
-const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
+const validateString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
 
 async function updateVolumeStatus() {
-  if (!validateString(updateVolumeCode.value) || !validateString(newVolumeStatus.value)) {
+  if (
+    !validateString(updateVolumeCode.value) ||
+    !validateString(newVolumeStatus.value)
+  ) {
     console.error("Volume Code and New Status are required.");
     return;
   }
@@ -113,14 +117,14 @@ const sensorCode = ref("");
 const sensorType = ref("");
 const sensorValue = ref("");
 
-const sensorTypeOptions = [
-  "ACCELERATION",
-  "TEMPERATURE",
-  "LOCATION"
-];
+const sensorTypeOptions = ["ACCELERATION", "TEMPERATURE", "LOCATION"];
 
 async function simulateSensor() {
-  if (!validateString(sensorCode.value) || !validateString(sensorType.value) || !validateString(sensorValue.value)) {
+  if (
+    !validateString(sensorCode.value) ||
+    !validateString(sensorType.value) ||
+    !validateString(sensorValue.value)
+  ) {
     console.error("Sensor Code, Type, and Value are required.");
     return;
   }
@@ -177,12 +181,16 @@ function resetSimulateSensorDialog() {
               hoveredItem !== null &&
               hoveredItem.description !== slotProps.data.description,
             'cursor-not-allowed opacity-50': slotProps.data.disabled,
-            'hover-pointer': !slotProps.data.disabled
+            'hover-pointer': !slotProps.data.disabled,
           }"
           :style="{ pointerEvents: slotProps.data.disabled ? 'none' : 'auto' }"
           @mouseover="hoveredItem = slotProps.data"
           @mouseleave="hoveredItem = null"
-          @click="!slotProps.data.disabled && slotProps.data.action && slotProps.data.action()"
+          @click="
+            !slotProps.data.disabled &&
+              slotProps.data.action &&
+              slotProps.data.action()
+          "
         >
           <div class="mb-4 font-medium text-center text-xl">
             {{ slotProps.data.description }}
@@ -198,9 +206,9 @@ function resetSimulateSensorDialog() {
       </template>
     </Carousel>
 
-    <Dialog 
-      v-model:visible="showUpdateVolumeStatusDialog" 
-      modal 
+    <Dialog
+      v-model:visible="showUpdateVolumeStatusDialog"
+      modal
       :header="'Update Volume Status'"
       :style="{ width: '90vw', maxWidth: '30rem' }"
       @hide="resetUpdateVolumeStatusDialog"
@@ -214,37 +222,45 @@ function resetSimulateSensorDialog() {
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
           <label for="updateVolumeCode">Volume Code</label>
-          <InputText 
-            id="updateVolumeCode" 
-            v-model="updateVolumeCode" 
+          <InputText
+            id="updateVolumeCode"
+            v-model="updateVolumeCode"
             class="w-full"
             :class="{ 'p-invalid': !validateString(updateVolumeCode) }"
           />
-          <small v-if="!validateString(updateVolumeCode)" class="p-error">Volume Code is required.</small>
+          <small v-if="!validateString(updateVolumeCode)" class="p-error"
+            >Volume Code is required.</small
+          >
         </span>
         <span class="p-float-label">
           <label for="newVolumeStatus">New Status</label>
-          <Dropdown 
-            id="newVolumeStatus" 
-            v-model="newVolumeStatus" 
-            :options="volumeStatusOptions" 
+          <Dropdown
+            id="newVolumeStatus"
+            v-model="newVolumeStatus"
+            :options="volumeStatusOptions"
             class="w-full"
             placeholder="Select a Status"
             :class="{ 'p-invalid': !validateString(newVolumeStatus) }"
           />
-          <small v-if="!validateString(newVolumeStatus)" class="p-error">New Status is required.</small>
+          <small v-if="!validateString(newVolumeStatus)" class="p-error"
+            >New Status is required.</small
+          >
         </span>
       </div>
-      
+
       <template #footer>
-        <Button label="Cancel" text @click="showUpdateVolumeStatusDialog = false" />
+        <Button
+          label="Cancel"
+          text
+          @click="showUpdateVolumeStatusDialog = false"
+        />
         <Button label="Update" @click="updateVolumeStatus" />
       </template>
     </Dialog>
 
-    <Dialog 
-      v-model:visible="showSimulateSensorDialog" 
-      modal 
+    <Dialog
+      v-model:visible="showSimulateSensorDialog"
+      modal
       :header="'Simulate a Sensor'"
       :style="{ width: '90vw', maxWidth: '30rem' }"
       @hide="resetSimulateSensorDialog"
@@ -258,38 +274,44 @@ function resetSimulateSensorDialog() {
       <div class="flex flex-col gap-4">
         <span class="p-float-label">
           <label for="sensorCode">Sensor Code</label>
-          <InputText 
-            id="sensorCode" 
-            v-model="sensorCode" 
+          <InputText
+            id="sensorCode"
+            v-model="sensorCode"
             class="w-full"
             :class="{ 'p-invalid': !validateString(sensorCode) }"
           />
-          <small v-if="!validateString(sensorCode)" class="p-error">Sensor Code is required.</small>
+          <small v-if="!validateString(sensorCode)" class="p-error"
+            >Sensor Code is required.</small
+          >
         </span>
         <span class="p-float-label">
           <label for="sensorType">Sensor Type</label>
-          <Dropdown 
-            id="sensorType" 
-            v-model="sensorType" 
-            :options="sensorTypeOptions" 
+          <Dropdown
+            id="sensorType"
+            v-model="sensorType"
+            :options="sensorTypeOptions"
             class="w-full"
             placeholder="Select a Type"
             :class="{ 'p-invalid': !validateString(sensorType) }"
           />
-          <small v-if="!validateString(sensorType)" class="p-error">Sensor Type is required.</small>
+          <small v-if="!validateString(sensorType)" class="p-error"
+            >Sensor Type is required.</small
+          >
         </span>
         <span class="p-float-label">
           <label for="sensorValue">Sensor Value</label>
-          <InputText 
-            id="sensorValue" 
-            v-model="sensorValue" 
+          <InputText
+            id="sensorValue"
+            v-model="sensorValue"
             class="w-full"
             :class="{ 'p-invalid': !validateString(sensorValue) }"
           />
-          <small v-if="!validateString(sensorValue)" class="p-error">Sensor Value is required.</small>
+          <small v-if="!validateString(sensorValue)" class="p-error"
+            >Sensor Value is required.</small
+          >
         </span>
       </div>
-      
+
       <template #footer>
         <Button label="Cancel" text @click="showSimulateSensorDialog = false" />
         <Button label="Simulate" @click="simulateSensor" />
