@@ -2,6 +2,9 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
 const router = useRouter();
 
 const features = [
@@ -21,7 +24,7 @@ const features = [
     action: () => showUpdateVolumeStatusDialog.value = true,
   },
   {
-    description: "Simulate a Sensor",
+    description: "Simulate Sensor Reading",
     icon: "sensors",
     action: () => showSimulateSensorDialog.value = true,
   }
