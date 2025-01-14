@@ -2,12 +2,15 @@
 import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "../store/auth-store";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast"; // Import useToast
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
 const auth = useAuthStore();
 const router = useRouter();
+
+const toast = useToast(); // Initialize toast
 
 const isDark = ref(false);
 const showFindDeliveryDialog = ref(false);
@@ -32,7 +35,7 @@ const volumeStatusOptions = [
   "CANCELLED",
 ];
 
-const sensorTypeOptions = ["ACCELERATION", "TEMPERATURE", "LOCATION"];
+const sensorTypeOptions = ["ACCELERATION (m/s²)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
@@ -99,15 +102,16 @@ async function simulateSensor() {
     !validateString(sensorValue.value)
   ) {
     console.error("Sensor Code, Type, and Value are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code, Type, and Value are required.', life: 3000 }); // Show error toast
     return;
   }
   try {
     const payload = { sensorCode: sensorCode.value };
-    if (sensorType.value === "ACCELERATION") {
+    if (sensorType.value === "ACCELERATION (m/s²)") {
       payload.acceleration = parseFloat(sensorValue.value);
-    } else if (sensorType.value === "TEMPERATURE") {
+    } else if (sensorType.value === "TEMPERATURE (ºC)") {
       payload.temperature = parseFloat(sensorValue.value);
-    } else if (sensorType.value === "LOCATION") {
+    } else if (sensorType.value === "LOCATION (LATITUDE,LONGITUDE)") {
       const [latitude, longitude] = sensorValue.value.split(",").map(Number);
       payload.latitude = latitude;
       payload.longitude = longitude;
@@ -120,12 +124,22 @@ async function simulateSensor() {
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      throw new Error("Failed to simulate sensor");
+      const errorText = await response.text();
+      let errorMessage = "Failed to simulate sensor";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
     }
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 }); // Show success toast
     showSimulateSensorDialog.value = false;
     resetSimulateSensorDialog();
   } catch (error) {
     console.error("Failed to simulate sensor:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
   }
 }
 
@@ -227,7 +241,6 @@ const updateMenuItems = () => {
           label: "Simulate a Sensor",
           icon: "pi pi-cog",
           command: () => (showSimulateSensorDialog.value = true),
-          disabled: isLogistician,
         },
       ],
     },
@@ -485,7 +498,7 @@ onMounted(() => {
         >
       </span>
       <span class="p-float-label">
-        <label for="sensorType">Sensor Type</label>
+        <label for="sensorType">Reading Type</label>
         <Dropdown
           id="sensorType"
           v-model="sensorType"
@@ -495,11 +508,11 @@ onMounted(() => {
           :class="{ 'p-invalid': !validateString(sensorType) }"
         />
         <small v-if="!validateString(sensorType)" class="p-error"
-          >Sensor Type is required.</small
+          >Reading Type is required.</small
         >
       </span>
       <span class="p-float-label">
-        <label for="sensorValue">Sensor Value</label>
+        <label for="sensorValue">Reading Value</label>
         <InputText
           id="sensorValue"
           v-model="sensorValue"
@@ -507,7 +520,7 @@ onMounted(() => {
           :class="{ 'p-invalid': !validateString(sensorValue) }"
         />
         <small v-if="!validateString(sensorValue)" class="p-error"
-          >Sensor Value is required.</small
+          >Reading Value is required.</small
         >
       </span>
     </div>
