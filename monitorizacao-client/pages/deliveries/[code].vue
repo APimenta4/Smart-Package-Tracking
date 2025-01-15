@@ -1,22 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
 const route = useRoute();
-
 const config = useRuntimeConfig();
-const api = config.public.API_URL;
+const toast = useToast();
 
-const delivery = ref({});
-
-async function fetchDelivery() {
-  try {
-    const response = await fetch(`${api}/orders/${route.params.code}`);
-    const data = await response.json();
-    delivery.value = data;
-  } catch (error) {
-    console.error("Failed to fetch delivery:", error);
-
-  }
-}
+const { data: delivery, error } = await useFetch(`/orders/${route.params.code}`, {
+  baseURL: config.public.API_URL,
+});
 
 const getPackageTypeSeverity = (type) => {
   const severityMap = {
@@ -39,11 +28,10 @@ const getStatusSeverity = (status) => {
   return severityMap[status] || "secondary";
 };
 
-onMounted(() => {
-  fetchDelivery();
-});
 </script>
+
 <template>
+  <Toast />
   <div class="w-10/12 mx-auto flex flex-col flex-grow mb-12">
     <Card class="mt-10">
       <template #title>
@@ -62,18 +50,18 @@ onMounted(() => {
         <div class="grid grid-cols-2 gap-4 mb-6">
           <div class="flex flex-col">
             <span class="text-sm font-medium">Delivery Code</span>
-            <span class="text-xl">{{ delivery.code }}</span>
+            <span class="text-xl">{{ delivery?.code }}</span>
           </div>
           <div class="flex flex-col">
             <span class="text-sm font-medium">Client Code</span>
-            <span class="text-xl">{{ delivery.clientCode }}</span>
+            <span class="text-xl">{{ delivery?.clientCode }}</span>
           </div>
         </div>
 
         <!-- Volumes Section -->
         <div class="mb-4">
           <h3 class="text-xl font-semibold mb-4">Volumes</h3>
-          <DataTable :value="delivery.volumes">
+          <DataTable :value="delivery?.volumes">
             <Column field="code" header="Code" />
             <Column field="packageType" header="Package Type">
               <template #body="{ data }">
@@ -131,6 +119,5 @@ onMounted(() => {
         </div>
       </template>
     </Card>
-    <Toast />
   </div>
 </template>

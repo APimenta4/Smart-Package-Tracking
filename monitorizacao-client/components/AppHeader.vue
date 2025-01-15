@@ -1,5 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useAuthStore } from "../store/auth-store";
+import { useRouter } from "vue-router";
+
+const auth = useAuthStore();
+const router = useRouter();
 
 const isDark = ref(false);
 const showFindDeliveryDialog = ref(false);
@@ -8,7 +13,6 @@ const showFindReadingDialog = ref(false);
 const searchDeliveryCode = ref("");
 const searchVolumeCode = ref("");
 const searchReadingCode = ref("");
-const router = useRouter();
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
@@ -141,9 +145,22 @@ onMounted(() => {
     </template>
     <template v-slot:end>
       <div class="flex items-center gap-4">
-        <span>Catarina Fernandes</span>
-        <Avatar icon="pi pi-user" />
-        <Button icon="pi pi-sign-out" label="Logout" class="p-button-sm" />
+        <span v-if="auth.isAuthenticated">{{ auth.user?.name }}</span>
+        <Avatar v-if="auth.isAuthenticated" icon="pi pi-user" />
+        <Button
+          v-if="auth.isAuthenticated"
+          icon="pi pi-sign-out"
+          label="Logout"
+          class="p-button-sm"
+          @click="auth.logout"
+        />
+        <Button
+          v-else
+          icon="pi pi-sign-in"
+          label="Login"
+          class="p-button-sm"
+          @click="router.push('/login')"
+        />
         <span
           :class="isDark ? 'pi pi-sun' : 'pi pi-moon'"
           style="font-size: 1.5rem; cursor: pointer"

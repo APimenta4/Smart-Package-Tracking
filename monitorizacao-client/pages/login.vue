@@ -1,8 +1,13 @@
 <script setup>
 import { ref } from "vue";
+import { useAuthStore } from "../store/auth-store";
+import { useRouter } from "vue-router";
+
+const auth = useAuthStore();
+const router = useRouter();
 
 const credentials = ref({
-  email: "",
+  code: "",
   password: "",
 });
 
@@ -11,9 +16,8 @@ const loading = ref(false);
 const handleLogin = async () => {
   loading.value = true;
   try {
-    // TODO: Implement actual login logic here
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-    console.log("Login attempt:", credentials.value);
+    await auth.login(credentials.value);
+    router.push("/");
   } catch (error) {
     console.error("Login failed:", error);
   } finally {
@@ -32,10 +36,10 @@ const handleLogin = async () => {
         <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <span class="p-float-label">
-              <label for="email">Email</label>
+              <label for="code">Code</label>
               <InputText
-                id="emails"
-                v-model="credentials.email"
+                id="code"
+                v-model="credentials.code"
                 class="w-full"
                 required
               />

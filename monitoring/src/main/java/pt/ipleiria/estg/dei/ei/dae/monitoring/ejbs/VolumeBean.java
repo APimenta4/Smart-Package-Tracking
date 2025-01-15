@@ -9,15 +9,13 @@ import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.helperClass.Counts;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -59,11 +57,124 @@ public class VolumeBean {
         String volumeCode = volumeDTO.getCode();
         create(volumeCode, orderCode, volumeDTO.getPackageType());
 
-        for (ProductDTO productDTO : volumeDTO.getProducts()) {
-            lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
+        // Process products
+        Counts counts = processProducts(volumeDTO, volumeCode);
+
+        // Process sensors
+        processSensors(volumeDTO, volumeCode, counts);
+
+        // Verify package type consistency
+        validatePackageTypeConsistency(volumeDTO.getPackageType(), counts);
+
+        // Final validation
+        if (counts.hasInconsistencies()) {
+            throw new CustomConstraintViolationException("Sensors and Products Quantity and/or PackageTypes don't match");
         }
+    }
+
+    private Counts processProducts(VolumeDTO volumeDTO, String volumeCode) throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        Counts counts = new Counts();
+        int flagNone = 0;
+
+        for (ProductDTO productDTO : volumeDTO.getProducts()) {
+            Product product = productBean.find(productDTO.getCode());
+            lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
+            long productDTOquantity = productDTO.getQuantity();
+
+            switch (product.getPackageType()) {
+                case NONE:
+                    flagNone = 1;
+                    break;
+                case FRAGILE:
+                    counts.addAcceleration(productDTOquantity);
+                    break;
+                case ISOTERMIC:
+                    counts.addTemperature(productDTOquantity);
+                    break;
+                case GEOLOCATION:
+                    counts.addLocation(productDTOquantity);
+                    break;
+                case FRAGILE_ISOTERMIC:
+                    counts.addAcceleration(productDTOquantity);
+                    counts.addTemperature(productDTOquantity);
+                    break;
+                case FRAGILE_GEOLOCATION:
+                    counts.addAcceleration(productDTOquantity);
+                    counts.addLocation(productDTOquantity);
+                    break;
+                case ISOTERMIC_GEOLOCATION:
+                    counts.addTemperature(productDTOquantity);
+                    counts.addLocation(productDTOquantity);
+                    break;
+                case FRAGILE_ISOTERMIC_GEOLOCATION:
+                    counts.addAcceleration(productDTOquantity);
+                    counts.addTemperature(productDTOquantity);
+                    counts.addLocation(productDTOquantity);
+                    break;
+                default:
+                    throw new CustomConstraintViolationException("Unknown status " + product.getPackageType());
+            }
+        }
+
+        if (volumeDTO.getPackageType() == PackageType.NONE && flagNone == 1) {
+            throw new CustomConstraintViolationException("Empty PackageType and Empty product package Type");
+        }
+
+        return counts;
+    }
+
+    private void processSensors(VolumeDTO volumeDTO, String volumeCode, Counts counts) throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
         for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
-            sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
+            sensorBean.create(sensorDTO.getCode(), volumeCode, sensorDTO.getType());
+
+            switch (sensorDTO.getType()) {
+                case ACCELERATION:
+                    counts.removeAcceleration(1);
+                    break;
+                case TEMPERATURE:
+                    counts.removeTemperature(1);
+                    break;
+                case LOCATION:
+                    counts.removeLocation(1);
+                    break;
+                default:
+                    throw new CustomConstraintViolationException("Unknown status " + sensorDTO.getType());
+            }
+        }
+    }
+
+    private void validatePackageTypeConsistency(PackageType packageType, Counts counts) throws CustomConstraintViolationException {
+        switch (packageType) {
+            case NONE:
+                break;
+            case FRAGILE:
+                counts.addAcceleration(1);
+                break;
+            case ISOTERMIC:
+                counts.addTemperature(1);
+                break;
+            case GEOLOCATION:
+                counts.addLocation(1);
+                break;
+            case FRAGILE_ISOTERMIC:
+                counts.addAcceleration(1);
+                counts.addTemperature(1);
+                break;
+            case FRAGILE_GEOLOCATION:
+                counts.addAcceleration(1);
+                counts.addLocation(1);
+                break;
+            case ISOTERMIC_GEOLOCATION:
+                counts.addTemperature(1);
+                counts.addLocation(1);
+                break;
+            case FRAGILE_ISOTERMIC_GEOLOCATION:
+                counts.addAcceleration(1);
+                counts.addTemperature(1);
+                counts.addLocation(1);
+                break;
+            default:
+                throw new CustomConstraintViolationException("Unknown status " + packageType);
         }
     }
 
