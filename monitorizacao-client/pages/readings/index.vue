@@ -95,7 +95,7 @@ onMounted(() => {
               />
             </template>
           </Column>
-          <Column field="timestamp" header="Timestamp" sortable />
+          <Column field="timestamp" header="Date" sortable />
           <Column header="Value" :exportable="false">
             <template #body="{ data }">
               <div>

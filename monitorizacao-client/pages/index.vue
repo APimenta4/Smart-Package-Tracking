@@ -2,9 +2,9 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth-store";
-import { useToast } from "primevue/usetoast"; // Import useToast
+import { useToast } from "primevue/usetoast";
 
-const toast = useToast(); // Initialize toast
+const toast = useToast(); 
 
 const auth = useAuthStore();
 
@@ -23,7 +23,7 @@ const features = [
     disabled: false,
   },
   {
-    description: "Simulate New Delivery",
+    description: "Create New Delivery",
     icon: "local_shipping",
     action: () => router.push("/deliveries/new"),
     disabled: !isLogistician,
@@ -88,7 +88,7 @@ async function updateVolumeStatus() {
     !validateString(newVolumeStatus.value)
   ) {
     console.error("Volume Code and New Status are required.");
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code and New Status are required.', life: 3000 }); // Show error toast
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code and New Status are required.', life: 3000 }); 
     return;
   }
   try {
@@ -96,7 +96,7 @@ async function updateVolumeStatus() {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}` // Use auth.token
+        'Authorization': `Bearer ${auth.token}` 
       },
       body: JSON.stringify({
         status: newVolumeStatus.value,
@@ -113,12 +113,12 @@ async function updateVolumeStatus() {
       }
       throw new Error(errorMessage);
     }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume status updated successfully', life: 3000 }); // Show success toast
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume status updated successfully', life: 3000 }); 
     showUpdateVolumeStatusDialog.value = false;
     resetUpdateVolumeStatusDialog();
   } catch (error) {
     console.error("Failed to update volume status:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
