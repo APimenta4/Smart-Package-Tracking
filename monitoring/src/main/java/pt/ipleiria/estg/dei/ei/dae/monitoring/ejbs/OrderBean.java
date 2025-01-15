@@ -56,6 +56,7 @@ public class OrderBean {
             throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
         String orderCode = orderDTO.getCode();
         create(orderCode ,orderDTO.getClientCode());
+
         for(VolumeDTO volumeDTO : orderDTO.getVolumes()) {
             String volumeCode = volumeDTO.getCode();
             volumeBean.create(volumeCode, orderCode, volumeDTO.getPackageType());

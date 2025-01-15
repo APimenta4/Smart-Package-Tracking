@@ -11,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
@@ -54,128 +55,36 @@ public class VolumeBean {
     @Transactional(rollbackOn = Exception.class)
     public void createWithDetails(VolumeDTO volumeDTO, String orderCode)
             throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
-        String volumeCode = volumeDTO.getCode();
-        create(volumeCode, orderCode, volumeDTO.getPackageType());
-
-        // Process products
-        Counts counts = processProducts(volumeDTO, volumeCode);
-
-        // Process sensors
-        processSensors(volumeDTO, volumeCode, counts);
-
-        // Verify package type consistency
-        validatePackageTypeConsistency(volumeDTO.getPackageType(), counts);
-
-        // Final validation
-        if (counts.hasInconsistencies()) {
-            throw new CustomConstraintViolationException("Sensors and Products Quantity and/or PackageTypes don't match");
-        }
-    }
-
-    private Counts processProducts(VolumeDTO volumeDTO, String volumeCode) throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
         Counts counts = new Counts();
-        int flagNone = 0;
+        String volumeCode = volumeDTO.getCode();
+        PackageType volumePackageType = volumeDTO.getPackageType();
 
+        create(volumeCode, orderCode, volumePackageType);
+        counts.add(volumePackageType, 1L);
+
+        // Process Products
         for (ProductDTO productDTO : volumeDTO.getProducts()) {
-            Product product = productBean.find(productDTO.getCode());
-            lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
-            long productDTOquantity = productDTO.getQuantity();
-
-            switch (product.getPackageType()) {
-                case NONE:
-                    flagNone = 1;
-                    break;
-                case FRAGILE:
-                    counts.addAcceleration(productDTOquantity);
-                    break;
-                case ISOTERMIC:
-                    counts.addTemperature(productDTOquantity);
-                    break;
-                case GEOLOCATION:
-                    counts.addLocation(productDTOquantity);
-                    break;
-                case FRAGILE_ISOTERMIC:
-                    counts.addAcceleration(productDTOquantity);
-                    counts.addTemperature(productDTOquantity);
-                    break;
-                case FRAGILE_GEOLOCATION:
-                    counts.addAcceleration(productDTOquantity);
-                    counts.addLocation(productDTOquantity);
-                    break;
-                case ISOTERMIC_GEOLOCATION:
-                    counts.addTemperature(productDTOquantity);
-                    counts.addLocation(productDTOquantity);
-                    break;
-                case FRAGILE_ISOTERMIC_GEOLOCATION:
-                    counts.addAcceleration(productDTOquantity);
-                    counts.addTemperature(productDTOquantity);
-                    counts.addLocation(productDTOquantity);
-                    break;
-                default:
-                    throw new CustomConstraintViolationException("Unknown status " + product.getPackageType());
+            String productCode = productDTO.getCode();
+            Product product = productBean.find(productCode);
+            PackageType productPackageType = product.getPackageType();
+            if (volumePackageType == PackageType.NONE && productPackageType == PackageType.NONE) {
+                throw new CustomConstraintViolationException("Cannot have both volume and product with NONE package type");
             }
+
+            Long productQuantity = productDTO.getQuantity();
+            lineOfSaleBean.create(volumeCode, productCode, productQuantity);
+            counts.add(productPackageType, productQuantity);
         }
 
-        if (volumeDTO.getPackageType() == PackageType.NONE && flagNone == 1) {
-            throw new CustomConstraintViolationException("Empty PackageType and Empty product package Type");
-        }
-
-        return counts;
-    }
-
-    private void processSensors(VolumeDTO volumeDTO, String volumeCode, Counts counts) throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        // Process Sensors
         for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
-            sensorBean.create(sensorDTO.getCode(), volumeCode, sensorDTO.getType());
+            SensorType sensorType = sensorDTO.getType();
 
-            switch (sensorDTO.getType()) {
-                case ACCELERATION:
-                    counts.removeAcceleration(1);
-                    break;
-                case TEMPERATURE:
-                    counts.removeTemperature(1);
-                    break;
-                case LOCATION:
-                    counts.removeLocation(1);
-                    break;
-                default:
-                    throw new CustomConstraintViolationException("Unknown status " + sensorDTO.getType());
-            }
+            sensorBean.create(sensorDTO.getCode(), volumeCode, sensorType);
+            counts.remove(sensorType);
         }
-    }
 
-    private void validatePackageTypeConsistency(PackageType packageType, Counts counts) throws CustomConstraintViolationException {
-        switch (packageType) {
-            case NONE:
-                break;
-            case FRAGILE:
-                counts.addAcceleration(1);
-                break;
-            case ISOTERMIC:
-                counts.addTemperature(1);
-                break;
-            case GEOLOCATION:
-                counts.addLocation(1);
-                break;
-            case FRAGILE_ISOTERMIC:
-                counts.addAcceleration(1);
-                counts.addTemperature(1);
-                break;
-            case FRAGILE_GEOLOCATION:
-                counts.addAcceleration(1);
-                counts.addLocation(1);
-                break;
-            case ISOTERMIC_GEOLOCATION:
-                counts.addTemperature(1);
-                counts.addLocation(1);
-                break;
-            case FRAGILE_ISOTERMIC_GEOLOCATION:
-                counts.addAcceleration(1);
-                counts.addTemperature(1);
-                counts.addLocation(1);
-                break;
-            default:
-                throw new CustomConstraintViolationException("Unknown status " + packageType);
-        }
+        counts.validate();
     }
 
     public void create(String code, String orderCode, PackageType packageType)
