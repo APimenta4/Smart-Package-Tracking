@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '../store/auth-store'
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
+const auth = useAuthStore(); // Use auth store
 const deliveries = ref([])
 
 const filters = ref({
@@ -12,7 +14,11 @@ const filters = ref({
 
 async function fetchDeliveries() {
   try {
-    const response = await fetch(`${api}/orders`)
+    const response = await fetch(`${api}/orders`, {
+      headers: {
+        'Authorization': `Bearer ${auth.token}` // Add auth token to headers
+      }
+    })
     const data = await response.json()
     deliveries.value = data   
   } catch (error) {
