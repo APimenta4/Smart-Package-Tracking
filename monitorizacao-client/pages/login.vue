@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import { useAuthStore } from "../store/auth-store";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast"; // Import useToast
 
 const auth = useAuthStore();
 const router = useRouter();
+const toast = useToast(); // Initialize toast
 
 const credentials = ref({
   code: "",
@@ -17,9 +19,11 @@ const handleLogin = async () => {
   loading.value = true;
   try {
     await auth.login(credentials.value);
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully', life: 3000 }); // Show success toast
     router.push("/");
   } catch (error) {
     console.error("Login failed:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Login failed. Please check your credentials.', life: 3000 }); // Show error toast
   } finally {
     loading.value = false;
   }

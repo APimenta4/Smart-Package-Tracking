@@ -2,12 +2,14 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast"; // Import useToast
 
 export const useAuthStore = defineStore("authStore", () => {
   const config = useRuntimeConfig();
   const baseURL = config.public.API_URL;
 
   const router = useRouter();
+  const toast = useToast(); // Initialize toast
 
   const token = ref(null);
   const user = ref(null);
@@ -57,6 +59,7 @@ export const useAuthStore = defineStore("authStore", () => {
   function logout() {
     token.value = null;
     user.value = null;
+    toast.add({ severity: 'info', summary: 'Info', detail: 'You have successfully logged out', life: 3000 });
     router.push("/");
   }
 
