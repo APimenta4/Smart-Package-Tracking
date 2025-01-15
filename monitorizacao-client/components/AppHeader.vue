@@ -28,11 +28,11 @@ const sensorType = ref("");
 const sensorValue = ref("");
 
 const volumeStatusOptions = [
-  "READY_FOR_PICKUP",
-  "IN_TRANSIT",
-  "DELIVERED",
-  "RETURNED",
-  "CANCELLED",
+  { label: "Ready for Pickup", value: "READY_FOR_PICKUP" },
+  { label: "In Transit", value: "IN_TRANSIT" },
+  { label: "Delivered", value: "DELIVERED" },
+  { label: "Returned", value: "RETURNED" },
+  { label: "Cancelled", value: "CANCELLED" },
 ];
 
 const sensorTypeOptions = ["ACCELERATION (m/s²)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
@@ -73,6 +73,7 @@ async function updateVolumeStatus() {
     !validateString(newVolumeStatus.value)
   ) {
     console.error("Volume Code and New Status are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code and New Status are required.', life: 3000 }); // Show error toast
     return;
   }
   try {
@@ -80,19 +81,29 @@ async function updateVolumeStatus() {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${authStore.token}`
+        'Authorization': `Bearer ${auth.token}` // Use auth.token
       },
       body: JSON.stringify({
         status: newVolumeStatus.value,
       }),
     });
     if (!response.ok) {
-      throw new Error("Failed to update volume status");
+      const errorText = await response.text();
+      let errorMessage = "Failed to update volume status";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
     }
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume status updated successfully', life: 3000 }); // Show success toast
     showUpdateVolumeStatusDialog.value = false;
     resetUpdateVolumeStatusDialog();
   } catch (error) {
     console.error("Failed to update volume status:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
   }
 }
 
@@ -452,6 +463,8 @@ onMounted(() => {
           id="newVolumeStatus"
           v-model="newVolumeStatus"
           :options="volumeStatusOptions"
+          optionLabel="label"
+          optionValue="value"
           class="w-full"
           placeholder="Select a Status"
           :class="{ 'p-invalid': !validateString(newVolumeStatus) }"
