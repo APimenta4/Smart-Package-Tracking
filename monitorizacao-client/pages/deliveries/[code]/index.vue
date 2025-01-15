@@ -1,10 +1,10 @@
 <script setup>
-import { useAuthStore } from '../store/auth-store'; // Import auth store
+import { useAuthStore } from '../store/auth-store'; 
 
 const route = useRoute();
 const config = useRuntimeConfig();
 const toast = useToast();
-const auth = useAuthStore(); // Use auth store
+const auth = useAuthStore(); 
 
 const delivery = ref(null);
 const error = ref(null);
@@ -12,7 +12,7 @@ const error = ref(null);
 try {
   const response = await fetch(`${config.public.API_URL}/orders/${route.params.code}`, {
     headers: {
-      'Authorization': `Bearer ${auth.token}` // Add auth token to headers
+      'Authorization': `Bearer ${auth.token}`
     },
   });
   if (!response.ok) {

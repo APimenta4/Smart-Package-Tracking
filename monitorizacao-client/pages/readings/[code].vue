@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from "../store/auth-store";
+import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();
 const sensorCode = route.params.code;
@@ -21,6 +22,7 @@ const sensorTypeBadge = {
 };
 
 const authStore = useAuthStore();
+const toast = useToast();
 
 async function fetchReadings() {
   try {
@@ -29,6 +31,17 @@ async function fetchReadings() {
         'Authorization': `Bearer ${authStore.token}`
       }
     });
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = "Failed to fetch readings";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
+    }
     const data = await response.json();
     if (Array.isArray(data.readings)) {
       readings.value = data.readings.map(reading => ({
@@ -42,6 +55,7 @@ async function fetchReadings() {
     }
   } catch (error) {
     console.error('Error fetching readings:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
   }
 }
 
