@@ -1,8 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '../store/auth-store';
+import { useToast } from 'primevue/usetoast'; 
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
+
+const auth = useAuthStore();
+const toast = useToast(); 
 
 const volumes = ref([]);
 const filters = ref({
@@ -33,11 +38,27 @@ const getStatusSeverity = (status) => {
 
 async function fetchVolumes() {
   try {
-    const response = await fetch(`${api}/volumes`);
+    const response = await fetch(`${api}/volumes`, {
+      headers: {
+        'Authorization': `Bearer ${auth.token}` 
+      }
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = "Failed to fetch volumes";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
+    }
     const data = await response.json();
     volumes.value = data;
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
   }
 }
 
