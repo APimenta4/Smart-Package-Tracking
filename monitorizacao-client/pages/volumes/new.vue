@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../store/auth-store";
+
+const authStore = useAuthStore();
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -39,6 +42,7 @@ async function createVolume() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${authStore.token}`
       },
       body: JSON.stringify({
         code: volumeCode.value,
@@ -51,7 +55,7 @@ async function createVolume() {
     if (!response.ok) {
       throw new Error("Failed to create new volume");
     }
-    router.push("/volumes");
+    router.push("/");
   } catch (error) {
     console.error("Failed to create new volume:", error);
   }

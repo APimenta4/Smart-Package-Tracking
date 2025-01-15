@@ -57,8 +57,18 @@ public class OrderBean {
         String orderCode = orderDTO.getCode();
         create(orderCode ,orderDTO.getClientCode());
         for(VolumeDTO volumeDTO : orderDTO.getVolumes()) {
-            volumeBean.createWithDetails(volumeDTO, orderCode);
+
+            String volumeCode = volumeDTO.getCode();
+            volumeBean.create(volumeCode, orderCode, volumeDTO.getPackageType());
+
+            for (ProductDTO productDTO : volumeDTO.getProducts()) {
+                lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
+            }
+            for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
+                sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
+            }
         }
+
     }
 
     public void create(String code, String clientCode)
