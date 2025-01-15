@@ -1,7 +1,9 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useToast } from "primevue/usetoast"; // Import useToast
+import { useAuthStore } from "../store/auth-store";
 
+const authStore = useAuthStore();
 const toast = useToast(); // Initialize toast
 
 const config = useRuntimeConfig();
@@ -182,6 +184,7 @@ async function createDelivery() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${authStore.token}`
       },
       body: JSON.stringify({
         clientCode: clientCode.value,

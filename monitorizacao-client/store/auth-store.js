@@ -41,7 +41,7 @@ export const useAuthStore = defineStore("authStore", () => {
     try {
       const response = await fetch(`${baseURL}/auth/user`, {
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          'Authorization': `Bearer ${token.value}`,
         },
       });
       if (!response.ok) {

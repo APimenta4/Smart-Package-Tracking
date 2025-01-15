@@ -80,6 +80,7 @@ async function updateVolumeStatus() {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${authStore.token}`
       },
       body: JSON.stringify({
         status: newVolumeStatus.value,
