@@ -1,33 +1,45 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRuntimeConfig } from '#imports'
+import { useRoute } from 'vue-router'
 
-const readings = ref([])
+const route = useRoute();
+const deliveryCode = route.params.code;
+
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
+const readings = ref([]);
 const filters = ref({
   global: { value: null, matchMode: 'contains' }
-})
+});
 
 const sensorTypeBadge = {
   LOCATION: 'info',
   TEMPERATURE: 'success', 
   ACCELERATION: 'warning'
+};
+
+async function fetchReadings() {
+  try {
+    const response = await fetch(`${api}/orders/${deliveryCode}/readings`);
+    const data = await response.json();
+    readings.value = data
+      .filter(item => item.readings.length > 0)
+      .flatMap(item => item.readings.map(reading => ({
+        ...reading,
+        sensorCode: item.sensor.code,
+        type: item.sensor.type,
+        volumeCode: item.sensor.volumeCode,
+        timestamp: new Date(reading.timestamp).toLocaleString()
+      })));
+  } catch (error) {
+    console.error('Error fetching readings:', error);
+  }
 }
 
-const config = useRuntimeConfig()
-const api = config.public.API_URL
-
-onMounted(async () => {
-  try {
-    const response = await fetch(`${api}/readings`)
-    const data = await response.json()
-    readings.value = data.map(reading => ({
-      ...reading,
-      timestamp: new Date(reading.timestamp).toLocaleString()
-    }))
-  } catch (error) {
-    console.error('Error fetching readings:', error)
-  }
-})
+onMounted(() => {
+  fetchReadings();
+});
 </script>
 
 <template>
@@ -35,7 +47,13 @@ onMounted(async () => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">All Readings</h2>
+          <h2 class="text-2xl font-bold">Readings for Delivery {{ deliveryCode }}</h2>
+          <Button
+            icon="pi pi-arrow-left"
+            label="Back to Delivery"
+            text
+            @click="navigateTo(`/deliveries/${deliveryCode}`)"
+          />
         </div>
       </template>
       <template #content>
@@ -83,21 +101,6 @@ onMounted(async () => {
                 <template v-else-if="data.type === 'ACCELERATION'">
                   {{ data.acceleration }} m/s²
                 </template>
-              </div>
-            </template>
-          </Column>
-          <Column header="Actions" :exportable="false">
-            <template #body="slotProps">
-              <div class="flex gap-2">
-                <Button
-                  icon="pi pi-box"
-                  rounded
-                  text
-                  severity="success" 
-                  @click="navigateTo(`/volumes/${slotProps.data.volumeCode}`)"
-                  tooltip="View Sensor"
-                  tooltipOptions="top"
-                />
               </div>
             </template>
           </Column>

@@ -1,10 +1,13 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useRuntimeConfig } from "#app";
+import { useRouter } from "vue-router";
 
 export const useAuthStore = defineStore("authStore", () => {
   const config = useRuntimeConfig();
   const baseURL = config.public.API_URL;
+
+  const router = useRouter();
 
   const token = ref(null);
   const user = ref(null);
@@ -30,13 +33,15 @@ export const useAuthStore = defineStore("authStore", () => {
       console.error("Login failed:", error);
       throw error;
     }
+    console.log("Logged in");
+    console.log(user.value);
   }
 
   async function fetchUser() {
     try {
       const response = await fetch(`${baseURL}/auth/user`, {
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          'Authorization': `Bearer ${token.value}`,
         },
       });
       if (!response.ok) {
@@ -52,6 +57,7 @@ export const useAuthStore = defineStore("authStore", () => {
   function logout() {
     token.value = null;
     user.value = null;
+    router.push("/");
   }
 
   return { token, user, isAuthenticated, login, fetchUser, logout };

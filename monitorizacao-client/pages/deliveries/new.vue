@@ -1,5 +1,10 @@
 <script setup>
 import { ref, watch, computed } from "vue";
+import { useToast } from "primevue/usetoast"; // Import useToast
+import { useAuthStore } from "../store/auth-store";
+
+const authStore = useAuthStore();
+const toast = useToast(); // Initialize toast
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -179,6 +184,7 @@ async function createDelivery() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${authStore.token}`
       },
       body: JSON.stringify({
         clientCode: clientCode.value,
@@ -187,11 +193,21 @@ async function createDelivery() {
       }),
     });
     if (!response.ok) {
-      throw new Error("Failed to create new delivery");
+      const errorText = await response.text();
+      let errorMessage = "Failed to create new delivery";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
     }
-    router.push("/deliveries");
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Delivery created successfully', life: 3000 }); // Show success toast
+    router.push("/");
   } catch (error) {
     console.error("Failed to create new delivery:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
   }
 }
 

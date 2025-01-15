@@ -1,18 +1,41 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "../store/auth-store";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast"; // Import useToast
+
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
 
 const auth = useAuthStore();
 const router = useRouter();
+
+const toast = useToast(); // Initialize toast
 
 const isDark = ref(false);
 const showFindDeliveryDialog = ref(false);
 const showFindVolumeDialog = ref(false);
 const showFindReadingDialog = ref(false);
+const showUpdateVolumeStatusDialog = ref(false);
+const showSimulateSensorDialog = ref(false);
 const searchDeliveryCode = ref("");
 const searchVolumeCode = ref("");
 const searchReadingCode = ref("");
+const updateVolumeCode = ref("");
+const newVolumeStatus = ref("");
+const sensorCode = ref("");
+const sensorType = ref("");
+const sensorValue = ref("");
+
+const volumeStatusOptions = [
+  "READY_FOR_PICKUP",
+  "IN_TRANSIT",
+  "DELIVERED",
+  "RETURNED",
+  "CANCELLED",
+];
+
+const sensorTypeOptions = ["ACCELERATION (m/s²)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
@@ -44,61 +67,194 @@ function searchReading() {
   }
 }
 
-const items = ref([
-  {
-    label: "Deliveries",
-    icon: "pi pi-truck",
-    items: [
-      {
-        label: "New Delivery (Logistica)",
-        icon: "pi pi-plus",
-        route: "/deliveries/new",
+async function updateVolumeStatus() {
+  if (
+    !validateString(updateVolumeCode.value) ||
+    !validateString(newVolumeStatus.value)
+  ) {
+    console.error("Volume Code and New Status are required.");
+    return;
+  }
+  try {
+    const response = await fetch(`${api}/volumes/${updateVolumeCode.value}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${authStore.token}`
       },
-      {
-        label: "All Deliveries",
-        icon: "pi pi-list",
-        route: "/deliveries",
+      body: JSON.stringify({
+        status: newVolumeStatus.value,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update volume status");
+    }
+    showUpdateVolumeStatusDialog.value = false;
+    resetUpdateVolumeStatusDialog();
+  } catch (error) {
+    console.error("Failed to update volume status:", error);
+  }
+}
+
+async function simulateSensor() {
+  if (
+    !validateString(sensorCode.value) ||
+    !validateString(sensorType.value) ||
+    !validateString(sensorValue.value)
+  ) {
+    console.error("Sensor Code, Type, and Value are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code, Type, and Value are required.', life: 3000 }); // Show error toast
+    return;
+  }
+  try {
+    const payload = { sensorCode: sensorCode.value };
+    if (sensorType.value === "ACCELERATION (m/s²)") {
+      payload.acceleration = parseFloat(sensorValue.value);
+    } else if (sensorType.value === "TEMPERATURE (ºC)") {
+      payload.temperature = parseFloat(sensorValue.value);
+    } else if (sensorType.value === "LOCATION (LATITUDE,LONGITUDE)") {
+      const [latitude, longitude] = sensorValue.value.split(",").map(Number);
+      payload.latitude = latitude;
+      payload.longitude = longitude;
+    }
+    const response = await fetch(`${api}/readings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        label: "Find Delivery",
-        icon: "pi pi-search",
-        command: () => showFindDeliveryDialog.value = true
-      },
-    ],
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = "Failed to simulate sensor";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
+    }
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 }); // Show success toast
+    showSimulateSensorDialog.value = false;
+    resetSimulateSensorDialog();
+  } catch (error) {
+    console.error("Failed to simulate sensor:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+  }
+}
+
+function resetUpdateVolumeStatusDialog() {
+  updateVolumeCode.value = "";
+  newVolumeStatus.value = "";
+}
+
+function resetSimulateSensorDialog() {
+  sensorCode.value = "";
+  sensorType.value = "";
+  sensorValue.value = "";
+}
+
+const validateString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
+
+const isLogistician = auth.user && auth.user.role === "Logistician";
+
+const items = ref([]);
+
+const updateMenuItems = () => {
+  const isManager = auth.user && auth.user.role === "Manager";
+  const isClient = auth.user && auth.user.role === "Client";
+  const isLogistician = auth.user && auth.user.role === "Logistician";
+
+  items.value = [
+    {
+      label: "Deliveries",
+      icon: "pi pi-truck",
+      items: [
+        {
+          label: isManager ? "All Deliveries" : "My Deliveries",
+          icon: "pi pi-list",
+          route: "/deliveries",
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "Find Delivery",
+          icon: "pi pi-search",
+          command: () => (showFindDeliveryDialog.value = true),
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "New Delivery",
+          icon: "pi pi-plus",
+          route: "/deliveries/new",
+          disabled: !isLogistician,
+        },
+      ],
+    },
+    {
+      label: "Volumes",
+      icon: "pi pi-box",
+      items: [
+        {
+          label: isManager ? "All Volumes" : "My Volumes",
+          icon: "pi pi-list",
+          route: "/volumes",
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "Find Volume",
+          icon: "pi pi-search",
+          command: () => (showFindVolumeDialog.value = true),
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "Update Volume Status",
+          icon: "pi pi-refresh",
+          command: () => (showUpdateVolumeStatusDialog.value = true),
+          disabled: !isLogistician,
+        },
+        {
+          label: "Add Volume to Delivery",
+          icon: "pi pi-plus",
+          route: "/volumes/new",
+          disabled: !isLogistician,
+        }
+      ],
+    },
+    {
+      label: "Readings",
+      icon: "pi pi-history",
+      items: [
+        {
+          label: isManager ? "All Readings" : "My Readings",
+          icon: "pi pi-list",
+          route: "/readings",
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "Find Readings by Sensor",
+          icon: "pi pi-search",
+          command: () => (showFindReadingDialog.value = true),
+          disabled: !auth.isAuthenticated || isLogistician,
+        },
+        {
+          label: "Simulate a Sensor",
+          icon: "pi pi-cog",
+          command: () => (showSimulateSensorDialog.value = true),
+        },
+      ],
+    },
+  ];
+};
+
+watch(
+  () => auth.user,
+  () => {
+    updateMenuItems();
   },
-  {
-    label: "Volumes",
-    icon: "pi pi-box",
-    items: [
-      {
-        label: "All Volumes",
-        icon: "pi pi-list",
-        route: "/volumes",
-      },
-      {
-        label: "Find Volume by id or something else TODO",
-        icon: "pi pi-search",
-        command: () => showFindVolumeDialog.value = true
-      },
-    ],
-  },
-  {
-    label: "Readings",
-    icon: "pi pi-history",
-    items: [
-      {
-        label: "All Readings",
-        icon: "pi pi-list",
-        route: "/readings",
-      },
-      {
-        label: "Find Reading",
-        icon: "pi pi-search",
-        command: () => showFindReadingDialog.value = true
-      },
-    ],
-  },
-]);
+  { immediate: true }
+);
 
 onMounted(() => {
   const darkMode = localStorage.getItem("dark-mode");
@@ -108,12 +264,16 @@ onMounted(() => {
   if (isDark.value) {
     document.documentElement.classList.add("app-dark");
   }
+  updateMenuItems();
 });
 </script>
 
 <template>
   <NuxtLoadingIndicator />
-  <Menubar :model="items" class="border-t-0 border-l-0 border-r-0 rounded-none h-14">
+  <Menubar
+    :model="items"
+    class="border-t-0 border-l-0 border-r-0 rounded-none h-14"
+  >
     <template v-slot:start>
       <router-link to="/">
         <img src="/logo.png" alt="Logo" class="h-10 inline-block mr-2" />
@@ -170,9 +330,9 @@ onMounted(() => {
     </template>
   </Menubar>
 
-  <Dialog 
-    v-model:visible="showFindDeliveryDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindDeliveryDialog"
+    modal
     :header="'Find Delivery'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
@@ -185,24 +345,24 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="searchDeliveryCode">Delivery Code</label>
-        <InputText 
-          id="searchDeliveryCode" 
-          v-model="searchDeliveryCode" 
+        <InputText
+          id="searchDeliveryCode"
+          v-model="searchDeliveryCode"
           class="w-full"
           @keyup.enter="searchDelivery"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindDeliveryDialog = false" />
       <Button label="Find" @click="searchDelivery" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showFindVolumeDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindVolumeDialog"
+    modal
     :header="'Find Volume'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
@@ -215,48 +375,160 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
         <label for="searchVolumeCode">Volume Code</label>
-        <InputText 
-          id="searchVolumeCode" 
-          v-model="searchVolumeCode" 
+        <InputText
+          id="searchVolumeCode"
+          v-model="searchVolumeCode"
           class="w-full"
           @keyup.enter="searchVolume"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindVolumeDialog = false" />
       <Button label="Find" @click="searchVolume" />
     </template>
   </Dialog>
 
-  <Dialog 
-    v-model:visible="showFindReadingDialog" 
-    modal 
+  <Dialog
+    v-model:visible="showFindReadingDialog"
+    modal
     :header="'Find Reading'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
     <template #header>
       <div class="flex items-center gap-2">
-      <i class="pi pi-history text-xl"></i>
-      <span class="text-xl font-bold">Find Reading</span>
+        <i class="pi pi-history text-xl"></i>
+        <span class="text-xl font-bold">Find Readings</span>
       </div>
     </template>
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
-        <label for="searchReadingCode">Reading Code</label>
-        <InputText 
-          id="searchReadingCode" 
-          v-model="searchReadingCode" 
+        <label for="searchReadingCode">Sensor Code</label>
+        <InputText
+          id="searchReadingCode"
+          v-model="searchReadingCode"
           class="w-full"
           @keyup.enter="searchReading"
         />
       </span>
     </div>
-    
+
     <template #footer>
       <Button label="Cancel" text @click="showFindReadingDialog = false" />
       <Button label="Find" @click="searchReading" />
+    </template>
+  </Dialog>
+
+  <Dialog
+    v-model:visible="showUpdateVolumeStatusDialog"
+    modal
+    :header="'Update Volume Status'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+    @hide="resetUpdateVolumeStatusDialog"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-refresh text-xl"></i>
+        <span class="text-xl font-bold">Update Volume Status</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span class="p-float-label">
+        <label for="updateVolumeCode">Volume Code</label>
+        <InputText
+          id="updateVolumeCode"
+          v-model="updateVolumeCode"
+          class="w-full"
+          :class="{ 'p-invalid': !validateString(updateVolumeCode) }"
+        />
+        <small v-if="!validateString(updateVolumeCode)" class="p-error"
+          >Volume Code is required.</small
+        >
+      </span>
+      <span class="p-float-label">
+        <label for="newVolumeStatus">New Status</label>
+        <Dropdown
+          id="newVolumeStatus"
+          v-model="newVolumeStatus"
+          :options="volumeStatusOptions"
+          class="w-full"
+          placeholder="Select a Status"
+          :class="{ 'p-invalid': !validateString(newVolumeStatus) }"
+        />
+        <small v-if="!validateString(newVolumeStatus)" class="p-error"
+          >New Status is required.</small
+        >
+      </span>
+    </div>
+
+    <template #footer>
+      <Button
+        label="Cancel"
+        text
+        @click="showUpdateVolumeStatusDialog = false"
+      />
+      <Button label="Update" @click="updateVolumeStatus" />
+    </template>
+  </Dialog>
+
+  <Dialog
+    v-model:visible="showSimulateSensorDialog"
+    modal
+    :header="'Simulate a Sensor'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+    @hide="resetSimulateSensorDialog"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-cog text-xl"></i>
+        <span class="text-xl font-bold">Simulate a Reading</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span class="p-float-label">
+        <label for="sensorCode">Sensor Code</label>
+        <InputText
+          id="sensorCode"
+          v-model="sensorCode"
+          class="w-full"
+          :class="{ 'p-invalid': !validateString(sensorCode) }"
+        />
+        <small v-if="!validateString(sensorCode)" class="p-error"
+          >Sensor Code is required.</small
+        >
+      </span>
+      <span class="p-float-label">
+        <label for="sensorType">Reading Type</label>
+        <Dropdown
+          id="sensorType"
+          v-model="sensorType"
+          :options="sensorTypeOptions"
+          class="w-full"
+          placeholder="Select a Type"
+          :class="{ 'p-invalid': !validateString(sensorType) }"
+        />
+        <small v-if="!validateString(sensorType)" class="p-error"
+          >Reading Type is required.</small
+        >
+      </span>
+      <span class="p-float-label">
+        <label for="sensorValue">Reading Value</label>
+        <InputText
+          id="sensorValue"
+          v-model="sensorValue"
+          class="w-full"
+          :class="{ 'p-invalid': !validateString(sensorValue) }"
+        />
+        <small v-if="!validateString(sensorValue)" class="p-error"
+          >Reading Value is required.</small
+        >
+      </span>
+    </div>
+
+    <template #footer>
+      <Button label="Cancel" text @click="showSimulateSensorDialog = false" />
+      <Button label="Simulate" @click="simulateSensor" />
     </template>
   </Dialog>
 </template>

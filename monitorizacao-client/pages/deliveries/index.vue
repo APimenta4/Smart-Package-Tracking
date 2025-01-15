@@ -57,7 +57,11 @@ onMounted(() => {
 
           <Column field="code" header="Delivery Code" sortable />
           <Column field="clientCode" header="Client" sortable />
-          <Column field="volumes.length" header="Volumes" sortable />
+            <Column field="volumes.length" header="Volumes" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.volumes.length }} {{ slotProps.data.volumes.length === 1 ? 'Volume' : 'Volumes' }}
+            </template>
+            </Column>
           <Column header="Actions" :exportable="false">
             <template #body="slotProps">
               <div class="flex gap-2">
@@ -73,7 +77,14 @@ onMounted(() => {
                   rounded
                   text
                   severity="success"
-                  @click="navigateTo('/', )"
+                  @click="navigateTo(`/deliveries/${slotProps.data.code}/volumes`)"
+                />
+                <Button
+                  icon="pi pi-chart-line"
+                  rounded
+                  text
+                  severity="success"
+                  @click="navigateTo(`/deliveries/${slotProps.data.code}/readings`)"
                 />
               </div>
             </template>

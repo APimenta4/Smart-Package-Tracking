@@ -1,27 +1,52 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from "../store/auth-store";
 
 const route = useRoute();
-const reading = ref(null);
+const sensorCode = route.params.code;
 
-// Mock reading data - replace with API call
-const mockReading = {
-  codigoSensor: 3453,
-  codigoVolume: 42,
-  tipo: 'GPS',
-  coordenadas: [-50.61, 165.97],
-  timestamp: '2024-12-28 19:30:23'
-};
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
+
+const readings = ref([]);
+const filters = ref({
+  global: { value: null, matchMode: 'contains' }
+});
 
 const sensorTypeBadge = {
-  GPS: 'info',
-  TEMPERATURA: 'success', 
-  ACELERACAO: 'warning'
+  LOCATION: 'info',
+  TEMPERATURE: 'success', 
+  ACCELERATION: 'warning'
 };
 
-onMounted(async () => {
-  // TODO: Replace with API call using route.params.code
-  reading.value = mockReading;
+const authStore = useAuthStore();
+
+async function fetchReadings() {
+  try {
+    const response = await fetch(`${api}/sensors/${sensorCode}/readings`, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    });
+    const data = await response.json();
+    if (Array.isArray(data.readings)) {
+      readings.value = data.readings.map(reading => ({
+        ...reading,
+        volumeCode: data.sensor.volumeCode,
+        type: data.sensor.type,
+        timestamp: new Date(reading.timestamp).toLocaleString()
+      }));
+    } else {
+      console.error('Unexpected API response format:', data);
+    }
+  } catch (error) {
+    console.error('Error fetching readings:', error);
+  }
+}
+
+onMounted(() => {
+  fetchReadings();
 });
 </script>
 
@@ -30,75 +55,58 @@ onMounted(async () => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">Reading Details</h2>
-          <Button 
-            icon="pi pi-arrow-left" 
-            label="Back to Readings" 
-            text 
-            @click="navigateTo('/readings')"
-          />
+          <h2 class="text-2xl font-bold">Readings for Sensor {{ sensorCode }}</h2>
+
         </div>
       </template>
       <template #content>
-        <div v-if="reading" class="grid grid-cols-2 gap-6">
-          <!-- Basic Reading Info -->
-          <div class="flex flex-col gap-2">
-            <div>
-              <span class="text-sm font-medium">Sensor Code</span>
-              <div class="text-xl">{{ reading.codigoSensor }}</div>
-            </div>
-            <div>
-              <span class="text-sm font-medium">Volume Code</span>
-              <div class="text-xl">{{ reading.codigoVolume }}</div>
-            </div>
-            <div>
-              <span class="text-sm font-medium">Type</span>
-              <div>
-                <Tag
-                  :value="reading.tipo"
-                  :severity="sensorTypeBadge[reading.tipo]"
-                  class="text-lg"
+        <DataTable
+          :value="readings"
+          paginator
+          :rows="10"
+          :filters="filters"
+          filterDisplay="menu"
+          :rowsPerPageOptions="[5, 10, 20]"
+          tableStyle="min-width: 50rem"
+        >
+          <template #header>
+            <div class="flex justify-between">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search mr-3" />
+                <InputText 
+                  v-model="filters['global'].value"
+                  placeholder="Search readings..." 
                 />
-              </div>
+              </span>
             </div>
-          </div>
+          </template>
 
-          <!-- Reading Value and Timestamp -->
-          <div class="flex flex-col gap-2">
-            <div>
-              <span class="text-sm font-medium">Value</span>
-              <div class="text-xl">
-                <template v-if="reading.tipo === 'GPS'">
-                  {{ reading.coordenadas.join(', ') }}
+          <Column field="volumeCode" header="Volume" sortable />
+          <Column field="type" header="Type" sortable>
+            <template #body="{ data }">
+              <Tag
+                :value="data.type"
+                :severity="sensorTypeBadge[data.type]"
+              />
+            </template>
+          </Column>
+          <Column field="timestamp" header="Timestamp" sortable />
+          <Column header="Value" :exportable="false">
+            <template #body="{ data }">
+              <div>
+                <template v-if="data.type === 'LOCATION'">
+                  {{ data.latitude }}, {{ data.longitude }}
                 </template>
-                <template v-else-if="reading.tipo === 'TEMPERATURA'">
-                  {{ reading.temperatura }}°C
+                <template v-else-if="data.type === 'TEMPERATURE'">
+                  {{ data.temperature }}°C
                 </template>
-                <template v-else-if="reading.tipo === 'ACELERACAO'">
-                  {{ reading.aceleracao }} m/s²
+                <template v-else-if="data.type === 'ACCELERATION'">
+                  {{ data.acceleration }} m/s²
                 </template>
               </div>
-            </div>
-            <div>
-              <span class="text-sm font-medium">Timestamp</span>
-              <div class="text-xl">{{ reading.timestamp }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="flex gap-4 mt-8">
-          <Button 
-            icon="pi pi-box" 
-            label="View Volume" 
-            @click="navigateTo(`/volumes/${reading?.codigoVolume}`)"
-          />
-          <Button 
-            icon="pi pi-rss" 
-            label="View Sensor" 
-            @click="navigateTo(`/sensors/${reading?.codigoSensor}`)"
-          />
-        </div>
+            </template>
+          </Column>
+        </DataTable>
       </template>
     </Card>
   </div>
