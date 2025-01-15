@@ -2,17 +2,17 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useRouter } from "vue-router";
-import { useToast } from "primevue/usetoast"; // Import useToast
+import { useToast } from "primevue/usetoast"; 
 
 export const useAuthStore = defineStore("authStore", () => {
   const config = useRuntimeConfig();
   const baseURL = config.public.API_URL;
 
   const router = useRouter();
-  const toast = useToast(); // Initialize toast
+  const toast = useToast(); 
 
-  const token = ref(null);
-  const user = ref(null);
+  const token = ref(localStorage.getItem('token'));
+  const user = ref(JSON.parse(localStorage.getItem('user')));
 
   const isAuthenticated = computed(() => !!token.value);
 
@@ -30,7 +30,9 @@ export const useAuthStore = defineStore("authStore", () => {
       }
       const tokenText = await response.text();
       token.value = tokenText;
+      localStorage.setItem('token', tokenText);
       await fetchUser();
+      localStorage.setItem('user', JSON.stringify(user.value));
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -50,6 +52,7 @@ export const useAuthStore = defineStore("authStore", () => {
         throw new Error("Fetching user failed");
       }
       user.value = await response.json();
+      localStorage.setItem('user', JSON.stringify(user.value));
     } catch (error) {
       console.error("Fetching user failed:", error);
       throw error;
@@ -59,6 +62,8 @@ export const useAuthStore = defineStore("authStore", () => {
   function logout() {
     token.value = null;
     user.value = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     toast.add({ severity: 'info', summary: 'Info', detail: 'You have successfully logged out', life: 3000 });
     router.push("/");
   }

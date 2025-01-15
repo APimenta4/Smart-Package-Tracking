@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/auth-store'
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
-const auth = useAuthStore(); // Use auth store
+const auth = useAuthStore(); 
 const deliveries = ref([])
 
 const filters = ref({
@@ -16,7 +16,7 @@ async function fetchDeliveries() {
   try {
     const response = await fetch(`${api}/orders`, {
       headers: {
-        'Authorization': `Bearer ${auth.token}` // Add auth token to headers
+        'Authorization': `Bearer ${auth.token}` 
       }
     })
     const data = await response.json()
