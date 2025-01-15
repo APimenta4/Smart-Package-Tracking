@@ -2,8 +2,10 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth-store";
+import { useToast } from "primevue/usetoast"; // Import useToast
 
 const authStore = useAuthStore();
+const toast = useToast(); // Initialize toast
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -37,6 +39,16 @@ const removeSensor = (index) => {
 };
 
 async function createVolume() {
+  if (
+    !validateString(volumeCode.value) ||
+    !validateString(orderCode.value) ||
+    !products.value.every(p => validateString(p.code)) ||
+    !sensors.value.every(s => validateString(s.code) && validateString(s.type))
+  ) {
+    console.error("Volume Code, Order Code, Products, and Sensors are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code, Order Code, Products, and Sensors are required.', life: 3000 }); // Show error toast
+    return;
+  }
   try {
     const response = await fetch(`${api}/volumes`, {
       method: "POST",
@@ -53,11 +65,21 @@ async function createVolume() {
       }),
     });
     if (!response.ok) {
-      throw new Error("Failed to create new volume");
+      const errorText = await response.text();
+      let errorMessage = "Failed to create new volume";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
     }
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume created successfully', life: 3000 }); // Show success toast
     router.push("/");
   } catch (error) {
     console.error("Failed to create new volume:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
   }
 }
 
