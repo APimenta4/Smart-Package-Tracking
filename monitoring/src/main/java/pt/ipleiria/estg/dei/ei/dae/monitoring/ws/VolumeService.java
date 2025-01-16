@@ -137,7 +137,7 @@ public class VolumeService {
         );
         volumeBean.createWithDetails(volumeDTO, volumeDTO.getOrderCode());
         Volume volume = volumeBean.findWithAllDetails(volumeCode);
-        return Response.status(Response.Status.CREATED).entity(VolumeDTO.from(volume)).build();
+        return Response.status(Response.Status.CREATED).entity(loadVolumeDTO(volume)).build();
     }
 
 

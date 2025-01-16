@@ -2,38 +2,10 @@
 
 IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
 
-Entrega Intermédia
-
 - Afonso Pimenta, 2223048
 - Isa Santos, 2221408
 - Rodrigo Camarada, 2221486
 - Tiago Garcia, 2222277
-
-## TODOS
-
-- colocar nos get um exemplo com o volume entrege.
-
-- Codigos das relações não devem parecer nos json.
-  
-  Não me faz sentido mas o stor disse, vou so deixar aqui a nota.
-  Em alguns endpoints realmente não é preciso mas nos endpoints especificos
-  dessas entidades são necessarios.
-  Exemplo do que seria no [EP07](#ep07-consultar-volumes-associados-á-sua-encomenda)
-
-  ```json
-  // exemplo embalagem
-  {
-    "codigo": 441,
-    "volume": {
-      "codigo": 23,
-      "codigoEmbalagem": 23,// remover este
-    }
-  }
-  ```
-
-- Codigo dos volumes nas leituras
-
-  O stor reclamou, mas concordou quando lhe disse que faria sentido se tiveres a ver uma leitura pelo endoint das leituras vai dar jeito no front end para n teres de ir á pagina do sensor para depois poderes ir ao volume.
 
 ## Indíce
 
@@ -65,12 +37,14 @@ Entrega Intermédia
     - [EP17 Consultar Leituras Associadas ao Seu Volume](#ep17-consultar-leituras-associados-ao-seu-volume)
 
   - [Sensores](#sensores)
-    - [EP18 Consultar as Leituras de um Sensor](#ep18-consultar-as-leituras-de-um-sensor)
+    - [EP18 Consultar Sensor](#ep18-consultar-sensor)
+    - [EP19 Consultar o Seu Sensor](#ep19-consultar-o-seu-sensor)
+    - [EP20 Consultar as Leituras de um Sensor](#ep20-consultar-as-leituras-de-um-sensor)
   
   - [Leituras](#leituras)
-    - [EP19 Enviar Leituras](#ep19-enviar-leituras)
-    - [EP20 Consultar Todas as Leituras](#ep20-consultar-todas-as-leituras)
-    - [EP21 Consultar Todas as Suas Leituras](#ep21-consultar-todas-as-suas-leituras)
+    - [EP21 Enviar Leituras](#ep21-enviar-leituras)
+    - [EP22 Consultar Todas as Leituras](#ep22-consultar-todas-as-leituras)
+    - [EP23 Consultar Todas as Suas Leituras](#ep23-consultar-todas-as-suas-leituras)
 
 ### Tipos de Usuários e Permissões
 
@@ -121,29 +95,28 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ```json
 {
-  "clientCode": "C1",
+  "clientCode": "client",
   "code": "O1",
   "volumes": [
     {
       "code": "V1",
-      "packageType": "ISOTERMIC_GEOLOCATION",
+      "packageType": "ISOTERMIC",
       "products": [
         {
           "code": "P01",
           "quantity": 100
-        }
+        },
+        ...
       ],
       "sensors": [
         {
           "code": "S1",
           "type": "TEMPERATURE"
         },
-        {
-          "code": "S2",
-          "type": "LOCATION"
-        }
+        ...
       ]
-    }
+    },
+    ...
   ]
 }
 ```
@@ -152,13 +125,13 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "clientCode": "C1",
+  "clientCode": "client",
   "code": "O1",
   "volumes": [
     {
       "code": "V1",
       "orderCode": "O1",
-      "packageType": "ISOTERMIC_GEOLOCATION",
+      "packageType": "ISOTERMIC",
       "products": [
         {
           "code": "P01",
@@ -166,6 +139,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "packageType": "NONE",
           "quantity": 100
         }
+        ...
       ],
       "sensors": [
         {
@@ -173,14 +147,12 @@ A resposta devolvida por este recurso segue o formato JSON:
           "type": "TEMPERATURE",
           "volumeCode": "V1"
         },
-        {
-          "code": "S2",
-          "type": "LOCATION",
-          "volumeCode": "V1"
-        }
+        ...
       ],
+      "readyDate": "2024-12-16T21:13:59.889Z[UTC]",
       "status": "READY_FOR_PICKUP"
-    }
+    },
+    ...
   ]
 }
 ```
@@ -202,13 +174,13 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "clientCode": "C1",
+    "clientCode": "client",
     "code": "O1",
     "volumes": [
       {
         "code": "V1",
         "orderCode": "O1",
-        "packageType": "ISOTERMIC_GEOLOCATION",
+        "packageType": "ISOTERMIC",
         "products": [
           {
             "code": "P01",
@@ -216,6 +188,7 @@ A resposta devolvida por este recurso segue o formato JSON:
             "packageType": "NONE",
             "quantity": 100
           }
+          ...
         ],
         "sensors": [
           {
@@ -223,16 +196,17 @@ A resposta devolvida por este recurso segue o formato JSON:
             "type": "TEMPERATURE",
             "volumeCode": "V1"
           },
-          {
-            "code": "S2",
-            "type": "LOCATION",
-            "volumeCode": "V1"
-          }
+          ...
         ],
-        "status": "READY_FOR_PICKUP"
-      }
+        "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+        "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+        "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+        "status": "DELIVERED"
+      },
+      ...
     ]
-  }
+  },
+  ...
 ]
 ```
 
@@ -253,13 +227,13 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "clientCode": "C1",
+    "clientCode": "client",
     "code": "O1",
     "volumes": [
       {
         "code": "V1",
         "orderCode": "O1",
-        "packageType": "ISOTERMIC_GEOLOCATION",
+        "packageType": "ISOTERMIC",
         "products": [
           {
             "code": "P01",
@@ -267,6 +241,7 @@ A resposta devolvida por este recurso segue o formato JSON:
             "packageType": "NONE",
             "quantity": 100
           }
+          ...
         ],
         "sensors": [
           {
@@ -274,16 +249,17 @@ A resposta devolvida por este recurso segue o formato JSON:
             "type": "TEMPERATURE",
             "volumeCode": "V1"
           },
-          {
-            "code": "S2",
-            "type": "LOCATION",
-            "volumeCode": "V1"
-          }
+          ...
         ],
-        "status": "READY_FOR_PICKUP"
-      }
+        "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+        "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+        "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+        "status": "DELIVERED"
+      },
+      ...
     ]
-  }
+  },
+  ...
 ]
 ```
 
@@ -296,20 +272,20 @@ Um utilizador, autenticado como gestor, consulta detalhes de uma encomenda espec
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}
+/monitoring/api/orders/{orderCode}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "clientCode": "C1",
+  "clientCode": "client",
   "code": "O1",
   "volumes": [
     {
       "code": "V1",
       "orderCode": "O1",
-      "packageType": "ISOTERMIC_GEOLOCATION",
+      "packageType": "ISOTERMIC",
       "products": [
         {
           "code": "P01",
@@ -317,6 +293,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "packageType": "NONE",
           "quantity": 100
         }
+        ...
       ],
       "sensors": [
         {
@@ -324,14 +301,14 @@ A resposta devolvida por este recurso segue o formato JSON:
           "type": "TEMPERATURE",
           "volumeCode": "V1"
         },
-        {
-          "code": "S2",
-          "type": "LOCATION",
-          "volumeCode": "V1"
-        }
+        ...
       ],
-      "status": "READY_FOR_PICKUP"
-    }
+      "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+      "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+      "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+      "status": "DELIVERED"
+    },
+    ...
   ]
 }
 ```
@@ -345,20 +322,20 @@ Um utilizador, autenticado como cliente, consulta detalhes de uma das suas encom
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}
+/monitoring/api/orders/{orderCode}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "clientCode": "C1",
+  "clientCode": "client",
   "code": "O1",
   "volumes": [
     {
       "code": "V1",
       "orderCode": "O1",
-      "packageType": "ISOTERMIC_GEOLOCATION",
+      "packageType": "ISOTERMIC",
       "products": [
         {
           "code": "P01",
@@ -366,6 +343,7 @@ A resposta devolvida por este recurso segue o formato JSON:
           "packageType": "NONE",
           "quantity": 100
         }
+        ...
       ],
       "sensors": [
         {
@@ -373,14 +351,14 @@ A resposta devolvida por este recurso segue o formato JSON:
           "type": "TEMPERATURE",
           "volumeCode": "V1"
         },
-        {
-          "code": "S2",
-          "type": "LOCATION",
-          "volumeCode": "V1"
-        }
+        ...
       ],
-      "status": "READY_FOR_PICKUP"
-    }
+      "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+      "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+      "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+      "status": "DELIVERED"
+    },
+    ...
   ]
 }
 ```
@@ -394,7 +372,7 @@ Um utilizador, autenticado como gestor, consulta todos os volumes de uma encomen
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}/volumes
+/monitoring/api/orders/{orderCode}/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -404,14 +382,15 @@ A resposta devolvida por este recurso segue o formato JSON:
   {
     "code": "V1",
     "orderCode": "O1",
-    "packageType": "ISOTERMIC_GEOLOCATION",
+    "packageType": "ISOTERMIC",
     "products": [
       {
         "code": "P01",
         "description": "Banana",
         "packageType": "NONE",
         "quantity": 100
-      }
+      },
+      ...
     ],
     "sensors": [
       {
@@ -419,14 +398,14 @@ A resposta devolvida por este recurso segue o formato JSON:
         "type": "TEMPERATURE",
         "volumeCode": "V1"
       },
-      {
-        "code": "S2",
-        "type": "LOCATION",
-        "volumeCode": "V1"
-      }
+      ...
     ],
-    "status": "READY_FOR_PICKUP"
-  }
+    "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+    "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+    "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+    "status": "DELIVERED"
+  },
+  ...
 ]
 ```
 
@@ -439,7 +418,7 @@ Um utilizador, autenticado como cliente, consulta todos os volumes de uma das su
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}/volumes
+/monitoring/api/orders/{orderCode}/volumes
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -449,14 +428,15 @@ A resposta devolvida por este recurso segue o formato JSON:
   {
     "code": "V1",
     "orderCode": "O1",
-    "packageType": "ISOTERMIC_GEOLOCATION",
+    "packageType": "ISOTERMIC",
     "products": [
       {
         "code": "P01",
         "description": "Banana",
         "packageType": "NONE",
         "quantity": 100
-      }
+      },
+      ...
     ],
     "sensors": [
       {
@@ -464,14 +444,14 @@ A resposta devolvida por este recurso segue o formato JSON:
         "type": "TEMPERATURE",
         "volumeCode": "V1"
       },
-      {
-        "code": "S2",
-        "type": "LOCATION",
-        "volumeCode": "V1"
-      }
+      ...
     ],
-    "status": "READY_FOR_PICKUP"
-  }
+    "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+    "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+    "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+    "status": "DELIVERED"
+  },
+  ...
 ]
 ```
 
@@ -484,7 +464,7 @@ Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores 
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}/readings
+/monitoring/api/orders/{orderCode}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -492,26 +472,18 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
-    "latitude": -50.61,
-    "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
-  },
-  {
-    "codigo": 3454,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {
-    "codigo": 3455,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "sensor": {
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
+    },
+    "readings": [
+      {
+        "temperature": 23.56,
+        "timestamp": 1737062019452
+      },
+      ...
+    ]
   },
   ...
 ]
@@ -526,7 +498,7 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/orders/{codigoEncomenda}/readings
+/monitoring/api/orders/{orderCode}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -534,26 +506,18 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
-    "latitude": -50.61,
-    "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
-  },
-  {
-    "codigo": 3454,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {
-    "codigo": 3455,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "sensor": {
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
+    },
+    "readings": [
+      {
+        "temperature": 23.56,
+        "timestamp": 1737062019452
+      },
+      ...
+    ]
   },
   ...
 ]
@@ -577,23 +541,52 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ```json
 {
-  "codigo": 42,
-  "codigoEncomenda": 2,
-  "tipoEmbalagem": "FRAGIL",
-  "produtos": [
+  "code": "V1",
+  "orderCode": "O1",
+  "packageType": "ISOTERMIC",
+  "products": [
     {
-      "codigo":1256,
-      "unidades": 5
+      "code": "P01",
+      "quantity": 100
     },
     ...
   ],
-  "sensores": [
+  "sensors": [
     {
-      "codigo": 345,
-      "tipo": "ACELERACAO"
+      "code": "S1",
+      "type": "TEMPERATURE"
     },
     ...
   ]
+}
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+{
+  "code": "V1",
+  "orderCode": "O1",
+  "packageType": "ISOTERMIC",
+  "products": [
+    {
+      "code": "P01",
+      "description": "Banana",
+      "packageType": "NONE",
+      "quantity": 100
+    },
+    ...
+  ],
+  "sensors": [
+    {
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
+    },
+    ...
+  ],
+  "readyDate": "2024-12-16T21:13:59.889Z[UTC]",
+  "status": "READY_FOR_PICKUP"
 }
 ```
 
@@ -606,14 +599,14 @@ Um utilizador, autenticado como funcionário de logística, atualiza o estado de
 **HTTP PATCH** para o sítio:
 
 ```text
-/monitoring/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{volumeCode}
 ```
 
 O pedido enviado a este recurso segue o formato JSON:
 
 ```json
 {
-  "estado": "ENTREGUE"
+  "status": "ENTREGUE"
 }
 ```
 
@@ -634,30 +627,30 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 42,
-    "codigoEncomenda": 2, 
-    "estado": "ENTREGUE",
-    "dataEnvio": "28/12/2024",
-    "dataEntrega": "08/01/2024",
-    "tipoEmbalagem": "FRAGIL",
-    "produtos": [
+    "code": "V1",
+    "orderCode": "O1",
+    "packageType": "ISOTERMIC",
+    "products": [
       {
-        "codigo":1256,
-        "codigoVolume": 42,//TODO chave composta?
-        "descricao": "LG Smart TV LED UHD 4K",
-        "categoria": "ELETRODOMESTICOS",
-        "unidades": 5
+        "code": "P01",
+        "description": "Banana",
+        "packageType": "NONE",
+        "quantity": 100
       },
       ...
-    ],          
-    "sensores": [
+    ],
+    "sensors": [
       {
-        "codigo": 345,
-        "codigoVolume": 42,
-        "tipo": "ACELERACAO"
+        "code": "S1",
+        "type": "TEMPERATURE",
+        "volumeCode": "V1"
       },
       ...
-    ], 
+    ],
+    "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+    "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+    "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+    "status": "DELIVERED"
   },
   ...
 ]
@@ -680,30 +673,30 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigo": 42,
-    "codigoEncomenda": 2, 
-    "estado": "ENTREGUE",
-    "dataEnvio": "28/12/2024",
-    "dataEntrega": "08/01/2024",
-    "tipoEmbalagem": "FRAGIL",
-    "produtos": [
+    "code": "V1",
+    "orderCode": "O1",
+    "packageType": "ISOTERMIC",
+    "products": [
       {
-        "codigo":1256,
-        "codigoVolume": 42,//TODO chave composta?
-        "descricao": "LG Smart TV LED UHD 4K",
-        "categoria": "ELETRODOMESTICOS",
-        "unidades": 5,
+        "code": "P01",
+        "description": "Banana",
+        "packageType": "NONE",
+        "quantity": 100
       },
       ...
-    ],          
-    "sensores": [
+    ],
+    "sensors": [
       {
-        "codigo": 345,
-        "codigoVolume": 42,
-        "tipo": "ACELERACAO"
+        "code": "S1",
+        "type": "TEMPERATURE",
+        "volumeCode": "V1"
       },
       ...
-    ], 
+    ],
+    "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+    "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+    "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+    "status": "DELIVERED"
   },
   ...
 ]
@@ -718,37 +711,37 @@ Um utilizador, autenticado como gestor, consulta os detalhes de um volume.
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{volumeCode}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "codigo": 42,
-  "codigoEncomenda": 2, 
-  "estado": "ENTREGUE",
-  "dataEnvio": "28/12/2024",
-  "dataEntrega": "08/01/2024",
-  "tipoEmbalagem": "FRAGIL",
-  "produtos": [
+  "code": "V1",
+  "orderCode": "O1",
+  "packageType": "ISOTERMIC",
+  "products": [
     {
-      "codigo":1256,
-      "codigoVolume": 42,//TODO chave composta?
-      "descricao": "LG Smart TV LED UHD 4K",
-      "categoria": "ELETRODOMESTICOS",
-      "unidades": 5
+      "code": "P01",
+      "description": "Banana",
+      "packageType": "NONE",
+      "quantity": 100
     },
     ...
-  ],          
-  "sensores": [
+  ],
+  "sensors": [
     {
-      "codigo": 345,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO"
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
     },
     ...
-  ], 
+  ],
+  "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+  "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+  "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+  "status": "DELIVERED"
 }
 ```
 
@@ -761,37 +754,37 @@ Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus vol
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/volumes/{codigoVolume}
+/monitoring/api/volumes/{volumeCode}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "codigo": 42,
-  "codigoEncomenda": 2, 
-  "estado": "ENTREGUE",
-  "dataEnvio": "28/12/2024",
-  "dataEntrega": "08/01/2024",
-  "tipoEmbalagem": "FRAGIL",
-  "produtos": [
+  "code": "V1",
+  "orderCode": "O1",
+  "packageType": "ISOTERMIC",
+  "products": [
     {
-        "codigo":1256,
-        "codigoVolume": 42,//TODO chave composta?
-        "descricao": "LG Smart TV LED UHD 4K",
-        "categoria": "ELETRODOMESTICOS",
-        "unidades": 5
+      "code": "P01",
+      "description": "Banana",
+      "packageType": "NONE",
+      "quantity": 100
     },
     ...
-  ],          
-  "sensores": [
+  ],
+  "sensors": [
     {
-      "codigo": 345,
-      "codigoVolume": 42,
-      "tipo": "ACELERACAO"
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
     },
     ...
-  ], 
+  ],
+  "readyDate": "2024-12-16T10:13:59.889Z[UTC]",
+  "shippedDate": "2024-12-16T16:24:10.798Z[UTC]",
+  "deliveredDate": "2024-12-20T11:54:59.978Z[UTC]",
+  "status": "DELIVERED"
 }
 ```
 
@@ -804,7 +797,7 @@ Um utilizador, autenticado como gestor, consulta as leituras dos sensores de um 
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/volumes/{codigoVolume}/readings
+/monitoring/api/volumes/{volumeCode}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -812,26 +805,18 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
-    "latitude": -50.61,
-    "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
-  },
-  {
-    "codigoSensor": 3454,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {
-    "codigoSensor": 3455,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "sensor": {
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
+    },
+    "readings": [
+      {
+        "temperature": 23.56,
+        "timestamp": 1737062019452
+      },
+      ...
+    ]
   },
   ...
 ]
@@ -846,7 +831,7 @@ Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/volumes/{codigoVolume}/readings
+/monitoring/api/volumes/{volumeCode}/readings
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
@@ -854,26 +839,18 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
-    "latitude": -50.61,
-    "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
-  },
-  {
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {     
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "sensor": {
+      "code": "S1",
+      "type": "TEMPERATURE",
+      "volumeCode": "V1"
+    },
+    "readings": [
+      {
+        "temperature": 23.56,
+        "timestamp": 1737062019452
+      },
+      ...
+    ]
   },
   ...
 ]
@@ -883,38 +860,73 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Sensores
 
-#### `EP18` Consultar as Leituras de Um Sensor
+#### `EP18` Consultar Sensor
 
-Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
+Um utilizador, autenticado como gestor, consulta os detalhes de um sensor.
 
 **HTTP GET** para o sítio:
 
 ```text
-/monitoring/api/sensors/{codigoSensor}/readings
+/monitoring/api/sensors/{sensorCode}
 ```
 
 A resposta devolvida por este recurso segue o formato JSON:
 
 ```json
 {
-  "sensor":
+  "code": "S1",
+  "type": "TEMPERATURE",
+  "volumeCode": "V1"
+}
+```
+
+---
+
+#### `EP19` Consultar o Seu Sensor
+
+Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus sensors.
+
+**HTTP GET** para o sítio:
+
+```text
+/monitoring/api/sensors/{sensorCode}
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+{
+  "code": "S1",
+  "type": "TEMPERATURE",
+  "volumeCode": "V1"
+}
+```
+
+---
+
+#### `EP20` Consultar as Leituras de Um Sensor
+
+Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
+
+**HTTP GET** para o sítio:
+
+```text
+/monitoring/api/sensors/{sensorCode}/readings
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+{
+  "sensor": {
+    "code": "S1",
+    "type": "TEMPERATURE",
+    "volumeCode": "V1"
+  },
+  "readings": [
     {
-      "codigo": 3454,
-      "codigoVolume": 42,
-      "tipo": "TEMPERATURA"
-    },
-  "leituras":[
-    {
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:30:23"
-    },
-    {
-      "temperatura": 15,
-      "timestamp":"2024-12-28 19:25:20"
-    },
-    {
-      "temperatura": 16,
-      "timestamp":"2024-12-28 19:20:49"
+      "temperature": 23.56,
+      "timestamp": 1737062019452
     },
     ...
   ]
@@ -925,7 +937,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Leituras
 
-#### `EP19` Enviar Leituras
+#### `EP21` Enviar Leituras
 
 Um sensor envia uma nova leitura para o sistema de monitorização.
 
@@ -939,27 +951,25 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ```json
 {
-  "codigoSensor": 5321,
+  "sensorCode": "S1",
+  "temperature": 23.56
+}
+ou
+{
+  "sensorCode": "S2",
   "latitude": -50.61,
   "longitude": 165.97
 }
 ou
 {
-  "codigoSensor": 5331,
-  "temperatura": 12
+  "sensorCode": "S3",
+  "acceleration": 1.5
 }
-ou
-{
-  "codigoSensor": 5451,
-  "aceleracao": 5
-}
-ou
-...
 ```
 
 ---
 
-#### `EP20` Consultar Todas as Leituras
+#### `EP22` Consultar Todas as Leituras
 
 Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 
@@ -974,32 +984,32 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
+    "sensorCode": "S1",
+    "temperature": 24,
+    "timestamp": 1737062019452,
+    "type": "TEMPERATURE",
+    "volumeCode": "V1"
+  },
+  {
     "latitude": -50.61,
     "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
+    "sensorCode": "S2",
+    "timestamp": 1737062019454,
+    "type": "LOCATION",
+    "volumeCode": "V1"
   },
   {
-    "codigoSensor": 3454,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {
-    "codigoSensor": 3455,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "acceleration": 1.5,
+    "sensorCode": "S3",
+    "timestamp": 1737062019458,
+    "type": "ACCELERATION",
+    "volumeCode": "V2"
   },
   ...
 ]
 ```
 
-#### `EP21` Consultar Todas as Suas Leituras
+#### `EP23` Consultar Todas as Suas Leituras
 
 Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
 
@@ -1014,26 +1024,26 @@ A resposta devolvida por este recurso segue o formato JSON:
 ```json
 [
   {
-    "codigoSensor": 3453,
-    "codigoVolume": 42,
-    "tipo": "GPS",
+    "sensorCode": "S1",
+    "temperature": 24,
+    "timestamp": 1737062019452,
+    "type": "TEMPERATURE",
+    "volumeCode": "V1"
+  },
+  {
     "latitude": -50.61,
     "longitude": 165.97,
-    "timestamp":"2024-12-28 19:30:23"
+    "sensorCode": "S2",
+    "timestamp": 1737062019454,
+    "type": "LOCATION",
+    "volumeCode": "V1"
   },
   {
-    "codigoSensor": 3454,
-    "codigoVolume": 42,
-    "tipo": "TEMPERATURA",
-    "temperatura": 15,
-    "timestamp":"2024-12-28 19:25:20"
-  },
-  {
-    "codigoSensor": 3455,
-    "codigoVolume": 42,
-    "tipo": "ACELERACAO",
-    "aceleracao": 6,
-    "timestamp":"2024-12-27 19:18:41"
+    "acceleration": 1.5,
+    "sensorCode": "S3",
+    "timestamp": 1737062019458,
+    "type": "ACCELERATION",
+    "volumeCode": "V2"
   },
   ...
 ]

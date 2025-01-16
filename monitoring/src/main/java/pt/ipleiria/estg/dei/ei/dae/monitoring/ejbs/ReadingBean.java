@@ -6,13 +6,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ReadingDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Reading;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingAcceleration;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.User;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,6 +18,9 @@ import java.util.logging.Logger;
 public class ReadingBean {
     @PersistenceContext
     private EntityManager em;
+
+    @EJB
+    private ClientBean clientBean;
 
     @EJB
     private SensorBean sensorBean;
@@ -34,11 +35,6 @@ public class ReadingBean {
     private ReadingTemperatureBean readingTemperatureBean;
 
     private static final Logger logger = Logger.getLogger("ws.ReadingBean");
-
-
-    public List<Reading> findAll() {
-        return em.createNamedQuery("getAllReading", Reading.class).getResultList();
-    }
 
     public Reading create(ReadingDTO readingDTO) throws CustomEntityNotFoundException, CustomConstraintViolationException {
         String sensorCode = readingDTO.getSensorCode();
@@ -59,5 +55,14 @@ public class ReadingBean {
                 throw new CustomConstraintViolationException("Invalid sensor type");
         }
         return reading;
+    }
+
+    public List<Reading> findAll() {
+        return em.createNamedQuery("getAllReading", Reading.class).getResultList();
+    }
+
+    public List<Reading> findAll(String clientCode) throws CustomEntityNotFoundException {
+        Client client = clientBean.find(clientCode);
+        return client.getReadings();
     }
 }
