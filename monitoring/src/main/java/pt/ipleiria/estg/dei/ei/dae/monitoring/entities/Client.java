@@ -24,6 +24,15 @@ public class Client extends User implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    @Transient
+    public List<Reading> getReadings() {
+        return orders.stream()
+                .flatMap(order -> order.getVolumes().stream())
+                .flatMap(volume -> volume.getSensors().stream())
+                .flatMap(sensor -> sensor.getReadings().stream())
+                .collect(Collectors.toList());
+    }
+
     public List<Order> getOrders() {
         return new ArrayList<>(orders);
     }
