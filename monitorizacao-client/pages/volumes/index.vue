@@ -11,7 +11,7 @@ const authStore = useAuthStore();
 const toast = useToast(); 
 const router = useRouter();
 
-if (!authStore.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
   router.push("/");
 }
 
@@ -46,7 +46,7 @@ async function fetchVolumes() {
   try {
     const response = await fetch(`${api}/volumes`, {
       headers: {
-        'Authorization': `Bearer ${auth.token}` 
+        'Authorization': `Bearer ${authStore.token}` 
       }
     });
     if (!response.ok) {

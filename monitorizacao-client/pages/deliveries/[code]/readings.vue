@@ -59,7 +59,7 @@ async function fetchReadings() {
       })));
   } catch (error) {
     console.error('Error fetching readings:', error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 

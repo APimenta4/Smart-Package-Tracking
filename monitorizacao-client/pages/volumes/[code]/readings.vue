@@ -7,7 +7,7 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-if (!authStore.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
   router.push("/");
 }
 
@@ -29,7 +29,10 @@ const sensorTypeBadge = {
 
 async function fetchReadings() {
   try {
-    const response = await fetch(`${api}/volumes/${volumeCode}/readings`);
+    const response = await fetch(`${api}/volumes/${volumeCode}/readings`, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }});
     const data = await response.json();
     readings.value = data
       .filter(item => item.readings.length > 0)
