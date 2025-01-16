@@ -2,38 +2,10 @@
 
 IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
 
-Entrega Intermédia
-
 - Afonso Pimenta, 2223048
 - Isa Santos, 2221408
 - Rodrigo Camarada, 2221486
 - Tiago Garcia, 2222277
-
-## TODOS
-
-- colocar nos get um exemplo com o volume entrege.
-
-- Codigos das relações não devem parecer nos json.
-  
-  Não me faz sentido mas o stor disse, vou so deixar aqui a nota.
-  Em alguns endpoints realmente não é preciso mas nos endpoints especificos
-  dessas entidades são necessarios.
-  Exemplo do que seria no [EP07](#ep07-consultar-volumes-associados-á-sua-encomenda)
-
-  ```json
-  // exemplo embalagem
-  {
-    "codigo": 441,
-    "volume": {
-      "codigo": 23,
-      "codigoEmbalagem": 23,// remover este
-    }
-  }
-  ```
-
-- Codigo dos volumes nas leituras
-
-  O stor reclamou, mas concordou quando lhe disse que faria sentido se tiveres a ver uma leitura pelo endoint das leituras vai dar jeito no front end para n teres de ir á pagina do sensor para depois poderes ir ao volume.
 
 ## Indíce
 
@@ -65,12 +37,14 @@ Entrega Intermédia
     - [EP17 Consultar Leituras Associadas ao Seu Volume](#ep17-consultar-leituras-associados-ao-seu-volume)
 
   - [Sensores](#sensores)
-    - [EP18 Consultar as Leituras de um Sensor](#ep18-consultar-as-leituras-de-um-sensor)
+    - [EP18 Consultar Sensor](#ep18-consultar-sensor)
+    - [EP19 Consultar o Seu Sensor](#ep19-consultar-o-seu-sensor)
+    - [EP20 Consultar as Leituras de um Sensor](#ep20-consultar-as-leituras-de-um-sensor)
   
   - [Leituras](#leituras)
-    - [EP19 Enviar Leituras](#ep19-enviar-leituras)
-    - [EP20 Consultar Todas as Leituras](#ep20-consultar-todas-as-leituras)
-    - [EP21 Consultar Todas as Suas Leituras](#ep21-consultar-todas-as-suas-leituras)
+    - [EP21 Enviar Leituras](#ep21-enviar-leituras)
+    - [EP22 Consultar Todas as Leituras](#ep22-consultar-todas-as-leituras)
+    - [EP23 Consultar Todas as Suas Leituras](#ep23-consultar-todas-as-suas-leituras)
 
 ### Tipos de Usuários e Permissões
 
@@ -886,7 +860,51 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Sensores
 
-#### `EP18` Consultar as Leituras de Um Sensor
+#### `EP18` Consultar Sensor
+
+Um utilizador, autenticado como gestor, consulta os detalhes de um sensor.
+
+**HTTP GET** para o sítio:
+
+```text
+/monitoring/api/sensors/{sensorCode}
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+{
+  "code": "S1",
+  "type": "TEMPERATURE",
+  "volumeCode": "V1"
+}
+```
+
+---
+
+#### `EP19` Consultar o Seu Sensor
+
+Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus sensors.
+
+**HTTP GET** para o sítio:
+
+```text
+/monitoring/api/sensors/{sensorCode}
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+{
+  "code": "S1",
+  "type": "TEMPERATURE",
+  "volumeCode": "V1"
+}
+```
+
+---
+
+#### `EP20` Consultar as Leituras de Um Sensor
 
 Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
 
@@ -919,7 +937,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Leituras
 
-#### `EP19` Enviar Leituras
+#### `EP21` Enviar Leituras
 
 Um sensor envia uma nova leitura para o sistema de monitorização.
 
@@ -951,7 +969,7 @@ ou
 
 ---
 
-#### `EP20` Consultar Todas as Leituras
+#### `EP22` Consultar Todas as Leituras
 
 Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 
@@ -991,7 +1009,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 ]
 ```
 
-#### `EP21` Consultar Todas as Suas Leituras
+#### `EP23` Consultar Todas as Suas Leituras
 
 Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
 
