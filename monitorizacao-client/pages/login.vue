@@ -2,11 +2,15 @@
 import { ref } from "vue";
 import { useAuthStore } from "../store/auth-store";
 import { useRouter } from "vue-router";
-import { useToast } from "primevue/usetoast"; // Import useToast
+import { useToast } from "primevue/usetoast";
 
 const auth = useAuthStore();
 const router = useRouter();
-const toast = useToast(); // Initialize toast
+const toast = useToast();
+
+if (auth.isAuthenticated) {
+  router.push("/");
+}
 
 const credentials = ref({
   code: "",

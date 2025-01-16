@@ -1,8 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../store/auth-store'
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+
+if (!authStore.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
+
 const volumeCode = route.params.code;
 
 const config = useRuntimeConfig();
@@ -38,7 +46,9 @@ async function fetchReadings() {
 }
 
 onMounted(() => {
-  fetchReadings();
+  if (authStore.isAuthenticated) {
+    fetchReadings();
+  }
 });
 </script>
 

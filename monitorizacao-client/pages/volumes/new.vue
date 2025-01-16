@@ -18,6 +18,10 @@ const sensors = ref([]);
 
 const router = useRouter();
 
+if (!authStore.isAuthenticated || authStore.user.role !== "Logistician") {
+  router.push("/");
+}
+
 const validateString = (value) => typeof value === 'string' && value.trim().length > 0;
 
 const isFormValid = computed(() => validateString(volumeCode.value) && validateString(orderCode.value) && products.value.every(p => validateString(p.code)) && sensors.value.every(s => validateString(s.code) && validateString(s.type)));

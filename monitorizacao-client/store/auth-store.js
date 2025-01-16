@@ -68,5 +68,12 @@ export const useAuthStore = defineStore("authStore", () => {
     router.push("/");
   }
 
-  return { token, user, isAuthenticated, login, fetchUser, logout };
+  function getUserRole() {
+    if (isAuthenticated.value) {
+      return user.value.role;
+    }
+    return null;
+  }
+
+  return { token, user, isAuthenticated, login, fetchUser, logout, getUserRole };
 });

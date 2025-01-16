@@ -6,9 +6,13 @@ import { useToast } from 'primevue/usetoast';
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
-const route = useRoute();
-const auth = useAuthStore();
+const router = useRouter();
+const authStore = useAuthStore();
 const toast = useToast(); 
+
+if (!authStore.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
 
 const volume = ref(null);
 
@@ -62,12 +66,14 @@ async function fetchVolume() {
     volume.value = data;
   } catch (error) {
     console.error("Failed to fetch volume:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
 onMounted(() => {
-  fetchVolume();
+  if (authStore.isAuthenticated) {
+    fetchVolume();
+  }
 });
 </script>
 

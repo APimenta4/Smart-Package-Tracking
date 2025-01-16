@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from "../store/auth-store";
 import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();
+const router = useRouter();
 const sensorCode = route.params.code;
 
 const config = useRuntimeConfig();
@@ -23,6 +24,10 @@ const sensorTypeBadge = {
 
 const authStore = useAuthStore();
 const toast = useToast();
+
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+  router.push("/");
+}
 
 async function fetchReadings() {
   try {
@@ -60,7 +65,9 @@ async function fetchReadings() {
 }
 
 onMounted(() => {
-  fetchReadings();
+  if (authStore.isAuthenticated) {
+    fetchReadings();
+  }
 });
 </script>
 

@@ -2,12 +2,18 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../store/auth-store';
 import { useToast } from 'primevue/usetoast'; 
+import { useRouter } from 'vue-router';
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
-const auth = useAuthStore();
+const authStore = useAuthStore();
 const toast = useToast(); 
+const router = useRouter();
+
+if (!authStore.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
 
 const volumes = ref([]);
 const filters = ref({
@@ -58,12 +64,14 @@ async function fetchVolumes() {
     volumes.value = data;
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
 onMounted(() => {
-  fetchVolumes();
+  if (authStore.isAuthenticated) {
+    fetchVolumes();
+  }
 });
 </script>
 
