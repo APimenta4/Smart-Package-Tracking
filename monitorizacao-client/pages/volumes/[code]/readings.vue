@@ -1,8 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../store/auth-store'
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+  router.push("/");
+}
+
 const volumeCode = route.params.code;
 
 const config = useRuntimeConfig();
@@ -21,7 +29,10 @@ const sensorTypeBadge = {
 
 async function fetchReadings() {
   try {
-    const response = await fetch(`${api}/volumes/${volumeCode}/readings`);
+    const response = await fetch(`${api}/volumes/${volumeCode}/readings`, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }});
     const data = await response.json();
     readings.value = data
       .filter(item => item.readings.length > 0)
@@ -38,7 +49,9 @@ async function fetchReadings() {
 }
 
 onMounted(() => {
-  fetchReadings();
+  if (authStore.isAuthenticated) {
+    fetchReadings();
+  }
 });
 </script>
 

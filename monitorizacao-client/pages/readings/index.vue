@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRuntimeConfig } from '#imports'
 import { useAuthStore } from '../store/auth-store'; 
 import { useToast } from 'primevue/usetoast';
+import { useRouter } from 'vue-router';
+
 
 const readings = ref([]);
 const filters = ref({
@@ -20,6 +22,11 @@ const api = config.public.API_URL;
 
 const auth = useAuthStore();
 const toast = useToast();
+const router = useRouter();
+
+if (!auth.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
 
 async function fetchReadings() {
   try {
@@ -46,12 +53,14 @@ async function fetchReadings() {
     }));
   } catch (error) {
     console.error('Error fetching readings:', error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
 onMounted(() => {
-  fetchReadings();
+  if (auth.isAuthenticated) {
+    fetchReadings();
+  }
 });
 </script>
 

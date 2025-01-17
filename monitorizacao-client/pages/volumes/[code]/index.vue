@@ -1,14 +1,20 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '../store/auth-store';
 import { useToast } from 'primevue/usetoast';
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
+const router = useRouter();
+const toast = useToast();
 const route = useRoute();
-const auth = useAuthStore();
-const toast = useToast(); 
+const authStore = useAuthStore();
+
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+  router.push("/");
+}
 
 const volume = ref(null);
 
@@ -44,7 +50,7 @@ async function fetchVolume() {
   try {
     const response = await fetch(`${api}/volumes/${route.params.code}`, {
       headers: {
-        'Authorization': `Bearer ${auth.token}` 
+        'Authorization': `Bearer ${authStore.token}` 
       }
     });
     if (!response.ok) {
@@ -62,12 +68,14 @@ async function fetchVolume() {
     volume.value = data;
   } catch (error) {
     console.error("Failed to fetch volume:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
 onMounted(() => {
-  fetchVolume();
+  if (authStore.isAuthenticated) {
+    fetchVolume();
+  }
 });
 </script>
 

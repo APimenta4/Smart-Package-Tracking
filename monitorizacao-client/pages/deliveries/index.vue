@@ -1,16 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../store/auth-store'
+import { useRouter } from 'vue-router'
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
 const auth = useAuthStore(); 
+const router = useRouter();
 const deliveries = ref([])
 
-const filters = ref({
+const filters = ref(auth.isAuthenticated ? {
   global: { value: null, matchMode: 'contains' }
-})
+} : null);
+
+if (!auth.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
 
 async function fetchDeliveries() {
   try {
@@ -27,7 +33,9 @@ async function fetchDeliveries() {
 }
 
 onMounted(() => {
-  fetchDeliveries()
+  if (auth.isAuthenticated) {
+    fetchDeliveries();
+  }
 });
 </script>
 
@@ -63,11 +71,11 @@ onMounted(() => {
 
           <Column field="code" header="Delivery Code" sortable />
           <Column field="clientCode" header="Client" sortable />
-            <Column field="volumes.length" header="Volumes" sortable>
+          <Column field="volumes.length" header="Volumes" sortable>
             <template #body="slotProps">
                 {{ slotProps.data.volumes.length }} {{ slotProps.data.volumes.length === 1 ? 'Volume' : 'Volumes' }}
             </template>
-            </Column>
+          </Column>
           <Column header="Actions" :exportable="false">
             <template #body="slotProps">
               <div class="flex gap-2">

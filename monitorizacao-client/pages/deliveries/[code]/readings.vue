@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth-store';
 import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();
+const router = useRouter();
 const deliveryCode = route.params.code;
 
 const config = useRuntimeConfig();
@@ -12,6 +13,10 @@ const api = config.public.API_URL;
 
 const auth = useAuthStore();
 const toast = useToast();
+
+if (!auth.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+  router.push("/");
+}
 
 const readings = ref([]);
 const filters = ref({
@@ -54,12 +59,14 @@ async function fetchReadings() {
       })));
   } catch (error) {
     console.error('Error fetching readings:', error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
 onMounted(() => {
-  fetchReadings();
+  if (auth.isAuthenticated) {
+    fetchReadings();
+  }
 });
 </script>
 
