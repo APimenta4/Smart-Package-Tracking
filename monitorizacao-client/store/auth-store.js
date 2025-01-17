@@ -87,6 +87,36 @@ export const useAuthStore = defineStore("authStore", () => {
     }
   }
 
+  async function changePassword(oldPassword, newPassword, confirmPassword) {
+    try {
+      const response = await fetch(`${baseURL}/auth/set-password`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token.value}`
+        },
+        body: JSON.stringify({ oldPassword, newPassword, confirmPassword }),
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("The old password field is incorrect");
+        }
+        const errorText = await response.text();
+        let errorMessage = "Failed to change password";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          errorMessage = errorText;
+        }
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Failed to change password:", error);
+      throw error;
+    }
+  }
+
   function logout() {
     if (refreshTokenTimer.value) {
       clearTimeout(refreshTokenTimer.value);
@@ -126,5 +156,5 @@ export const useAuthStore = defineStore("authStore", () => {
     logout,
     getUserRole,
     refreshToken,
-  };
+ , changePassword };
 });
