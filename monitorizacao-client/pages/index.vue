@@ -72,7 +72,6 @@ const updateVolumeCode = ref("");
 const newVolumeStatus = ref("");
 
 const volumeStatusOptions = [
-  { label: "Ready for Pickup", value: "READY_FOR_PICKUP" },
   { label: "In Transit", value: "IN_TRANSIT" },
   { label: "Delivered", value: "DELIVERED" },
   { label: "Returned", value: "RETURNED" },
