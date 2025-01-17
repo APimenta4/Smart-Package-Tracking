@@ -317,7 +317,9 @@ onMounted(() => {
     <template v-slot:end>
       <div class="flex items-center gap-4">
         <span v-if="auth.isAuthenticated">{{ auth.user?.name }}</span>
-        <Avatar v-if="auth.isAuthenticated" icon="pi pi-user" />
+        <router-link to="/profile">
+          <Avatar v-if="auth.isAuthenticated" icon="pi pi-user" class="cursor-pointer" />
+        </router-link>
         <Button
           v-if="auth.isAuthenticated"
           icon="pi pi-sign-out"
