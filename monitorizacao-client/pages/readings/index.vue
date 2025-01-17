@@ -69,7 +69,9 @@ onMounted(() => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">All Readings</h2>
+          <h2 class="text-2xl font-bold">
+            {{ auth.user.role === "Client" ? "My Readings" : "All Readings" }}
+          </h2>
         </div>
       </template>
       <template #content>
