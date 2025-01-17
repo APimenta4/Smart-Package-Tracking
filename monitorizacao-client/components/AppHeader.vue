@@ -45,7 +45,7 @@ function toggleDarkMode() {
 
 function searchDelivery() {
   if (searchDeliveryCode.value) {
-    router.push(`/deliveries/${searchDeliveryCode.value}`);
+    router.push(`/orders/${searchDeliveryCode.value}`);
     searchDeliveryCode.value = "";
     showFindDeliveryDialog.value = false;
   }
@@ -180,25 +180,25 @@ const updateMenuItems = () => {
 
   items.value = [
     {
-      label: "Deliveries",
+      label: "Orders",
       icon: "pi pi-truck",
       items: [
         {
-          label: isManager ? "All Deliveries" : "My Deliveries",
+          label: isManager ? "All Orders" : "My Orders",
           icon: "pi pi-list",
-          route: "/deliveries",
+          route: "/orders",
           disabled: !auth.isAuthenticated || isLogistician,
         },
         {
-          label: "Find Delivery",
+          label: "Find Order",
           icon: "pi pi-search",
           command: () => (showFindDeliveryDialog.value = true),
           disabled: !auth.isAuthenticated || isLogistician,
         },
         {
-          label: "New Delivery",
+          label: "New Order",
           icon: "pi pi-plus",
-          route: "/deliveries/new",
+          route: "/orders/new",
           disabled: !isLogistician,
         },
       ],
@@ -226,7 +226,7 @@ const updateMenuItems = () => {
           disabled: !isLogistician,
         },
         {
-          label: "Add Volume to Delivery",
+          label: "Add Volume to Order",
           icon: "pi pi-plus",
           route: "/volumes/new",
           disabled: !isLogistician,
@@ -344,18 +344,18 @@ onMounted(() => {
   <Dialog
     v-model:visible="showFindDeliveryDialog"
     modal
-    :header="'Find Delivery'"
+    :header="'Find Order'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
   >
     <template #header>
       <div class="flex items-center gap-2">
         <i class="pi pi-truck text-xl"></i>
-        <span class="text-xl font-bold">Find Delivery</span>
+        <span class="text-xl font-bold">Find Order</span>
       </div>
     </template>
     <div class="flex flex-col gap-4">
       <span class="p-float-label">
-        <label for="searchDeliveryCode">Delivery Code</label>
+        <label for="searchDeliveryCode">Order Code</label>
         <InputText
           id="searchDeliveryCode"
           v-model="searchDeliveryCode"

@@ -23,9 +23,9 @@ const features = [
     disabled: false,
   },
   {
-    description: "Create New Delivery",
+    description: "Create New Order",
     icon: "local_shipping",
-    action: () => router.push("/deliveries/new"),
+    action: () => router.push("/orders/new"),
     disabled: !isLogistician,
   },
   {
@@ -35,7 +35,7 @@ const features = [
     disabled: !isLogistician,
   },
   {
-    description: "Add Volume to Delivery",
+    description: "Add Volume to Order",
     icon: "add_box",
     action: () => router.push("/volumes/new"),
     disabled: !isLogistician,

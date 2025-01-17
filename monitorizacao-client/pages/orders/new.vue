@@ -198,7 +198,7 @@ async function createDelivery() {
     });
     if (!response.ok) {
       const errorText = await response.text();
-      let errorMessage = "Failed to create new delivery";
+      let errorMessage = "Failed to create new order";
       try {
         const errorData = JSON.parse(errorText);
         errorMessage = errorData.message || errorMessage;
@@ -207,10 +207,10 @@ async function createDelivery() {
       }
       throw new Error(errorMessage);
     }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Delivery created successfully', life: 3000 }); 
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Order created successfully', life: 3000 }); 
     router.push("/");
   } catch (error) {
-    console.error("Failed to create new delivery:", error);
+    console.error("Failed to create new order:", error);
     toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
@@ -266,7 +266,7 @@ const getPackageTypeSeverity = (type) => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center mb-2">
-          <h2 class="text-2xl font-bold">New Delivery</h2>
+          <h2 class="text-2xl font-bold">New Order</h2>
         </div>
       </template>
       <template #content>
@@ -274,14 +274,14 @@ const getPackageTypeSeverity = (type) => {
         <div class="flex gap-4 mb-6">
           <div class="flex-1">
             <span class="p-float-label">
-              <label for="deliveryCode">Delivery Code</label>
+              <label for="deliveryCode">Order Code</label>
               <InputText
                 id="deliveryCode"
                 v-model="deliveryCode"
                 class="w-full"
                 :class="{ 'p-invalid': !validateString(deliveryCode) }"
               />
-              <small v-if="!validateString(deliveryCode)" class="p-error">Delivery Code is required.</small>
+              <small v-if="!validateString(deliveryCode)" class="p-error">Order Code is required.</small>
             </span>
           </div>
           <div class="flex-1">
@@ -364,7 +364,7 @@ const getPackageTypeSeverity = (type) => {
         <!-- Submit Button -->
         <div class="flex justify-end">
           <Button
-            label="Create Delivery"
+            label="Create Order"
             severity="success"
             :disabled="!isFormValid"
             @click.prevent="createDelivery"

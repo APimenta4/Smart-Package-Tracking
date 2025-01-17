@@ -114,7 +114,7 @@ onMounted(() => {
           </template>
 
           <Column field="code" header="Volume Code" sortable />
-          <Column field="orderCode" header="Delivery" sortable />
+          <Column field="orderCode" header="Order" sortable />
           <Column field="packageType" header="Package Type" sortable>
             <template #body="{ data }">
               <div class="flex flex-wrap gap-1">

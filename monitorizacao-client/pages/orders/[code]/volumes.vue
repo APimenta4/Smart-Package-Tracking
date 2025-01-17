@@ -114,13 +114,13 @@ onMounted(() => {
       <template #title>
         <div class="flex justify-between items-center">
           <h2 class="text-2xl font-bold">
-            Delivery {{ deliveryCode }} Volumes
+            Order {{ deliveryCode }} Volumes
           </h2>
           <Button
             icon="pi pi-arrow-left"
-            label="Back to Deliveries"
+            label="Back to Orders"
             text
-            @click="navigateTo('/deliveries')"
+            @click="navigateTo('/orders')"
           />
         </div>
       </template>

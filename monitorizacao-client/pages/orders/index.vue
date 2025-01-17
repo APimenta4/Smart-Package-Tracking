@@ -28,7 +28,7 @@ async function fetchDeliveries() {
     const data = await response.json()
     deliveries.value = data   
   } catch (error) {
-    console.error("Failed to fetch deliveries:", error);
+    console.error("Failed to fetch orders:", error);
   }
 }
 
@@ -44,7 +44,7 @@ onMounted(() => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">All Deliveries</h2>
+          <h2 class="text-2xl font-bold">All Orders</h2>
         </div>
       </template>
       <template #content>
@@ -63,13 +63,13 @@ onMounted(() => {
                 <i class="pi pi-search mr-3" />
                 <InputText 
                   v-model="filters['global'].value" 
-                  placeholder="Search deliveries..." 
+                  placeholder="Search orders..." 
                 />
               </span>
             </div>
           </template>
 
-          <Column field="code" header="Delivery Code" sortable />
+          <Column field="code" header="Order Code" sortable />
           <Column field="clientCode" header="Client" sortable />
           <Column field="volumes.length" header="Volumes" sortable>
             <template #body="slotProps">
@@ -84,21 +84,21 @@ onMounted(() => {
                   rounded
                   text
                   severity="info"
-                  @click="navigateTo(`/deliveries/${slotProps.data.code}`)"
+                  @click="navigateTo(`/orders/${slotProps.data.code}`)"
                 />
                 <Button
                   icon="pi pi-box"
                   rounded
                   text
-                  severity="success"
-                  @click="navigateTo(`/deliveries/${slotProps.data.code}/volumes`)"
+                  severity="warning"
+                  @click="navigateTo(`/orders/${slotProps.data.code}/volumes`)"
                 />
                 <Button
                   icon="pi pi-chart-line"
                   rounded
                   text
                   severity="success"
-                  @click="navigateTo(`/deliveries/${slotProps.data.code}/readings`)"
+                  @click="navigateTo(`/orders/${slotProps.data.code}/readings`)"
                 />
               </div>
             </template>

@@ -27,7 +27,7 @@ async function fetchDeliveryDetails() {
     });
     if (!response.ok) {
       const errorText = await response.text();
-      let errorMessage = "Failed to fetch delivery details";
+      let errorMessage = "Failed to fetch order details";
       try {
         const errorData = JSON.parse(errorText);
         errorMessage = errorData.message || errorMessage;
@@ -38,7 +38,7 @@ async function fetchDeliveryDetails() {
     }
     delivery.value = await response.json();
   } catch (err) {
-    console.error("Failed to fetch delivery details:", err);
+    console.error("Failed to fetch order details:", err);
     toast.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
     error.value = err;
   }
@@ -105,12 +105,12 @@ const showSensorDetails = (sensors) => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">Delivery Details</h2>
+          <h2 class="text-2xl font-bold">Order Details</h2>
           <Button
             icon="pi pi-arrow-left"
-            label="Back to Deliveries"
+            label="Back to Orders"
             text
-            @click="navigateTo('/deliveries')"
+            @click="navigateTo('/orders')"
           />
         </div>
       </template>
@@ -118,7 +118,7 @@ const showSensorDetails = (sensors) => {
         <!-- Basic Delivery Info -->
         <div class="grid grid-cols-2 gap-4 mb-6">
           <div class="flex flex-col">
-            <span class="text-sm font-medium">Delivery Code</span>
+            <span class="text-sm font-medium">Order Code</span>
             <span class="text-xl">{{ delivery?.code }}</span>
           </div>
           <div class="flex flex-col">

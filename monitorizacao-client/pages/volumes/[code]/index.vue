@@ -157,12 +157,12 @@ onMounted(() => {
                 <div class="text-xl">{{ volume.code }}</div>
               </div>
               <div>
-                <span class="text-sm font-medium">Delivery Code</span>
+                <span class="text-sm font-medium">Order Code</span>
                 <div class="text-xl">
                   <Button
                     link
                     class="text-blue-600 hover:text-blue-800 p-0 text-xl"
-                    @click="navigateTo(`/deliveries/${volume.orderCode}`)"
+                    @click="navigateTo(`/orders/${volume.orderCode}`)"
                   >
                     {{ volume.orderCode }}
                   </Button>

@@ -75,12 +75,12 @@ onMounted(() => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">Readings for Delivery {{ deliveryCode }}</h2>
+          <h2 class="text-2xl font-bold">Readings for Order {{ deliveryCode }}</h2>
           <Button
             icon="pi pi-arrow-left"
-            label="Back to Delivery"
+            label="Back to Order"
             text
-            @click="navigateTo(`/deliveries/${deliveryCode}`)"
+            @click="navigateTo(`/orders/${deliveryCode}`)"
           />
         </div>
       </template>

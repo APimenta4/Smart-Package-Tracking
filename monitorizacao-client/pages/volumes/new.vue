@@ -139,14 +139,14 @@ watch(selectedPackageTypes, (newTypes) => {
           </div>
           <div class="flex-1">
             <span class="p-float-label">
-              <label for="orderCode">Delivery Code</label>
+              <label for="orderCode">Order Code</label>
               <InputText
                 id="orderCode"
                 v-model="orderCode"
                 class="w-full"
                 :class="{ 'p-invalid': !validateString(orderCode) }"
               />
-              <small v-if="!validateString(orderCode)" class="p-error">Delivery Code is required.</small>
+              <small v-if="!validateString(orderCode)" class="p-error">Order Code is required.</small>
             </span>
           </div>
         </div>
