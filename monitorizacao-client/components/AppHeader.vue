@@ -24,7 +24,6 @@ const searchReadingCode = ref("");
 const updateVolumeCode = ref("");
 const newVolumeStatus = ref("");
 const sensorCode = ref("");
-const sensorType = ref("");
 const sensorValue = ref("");
 
 const volumeStatusOptions = [
@@ -34,6 +33,64 @@ const volumeStatusOptions = [
   { label: "Returned", value: "RETURNED" },
   { label: "Cancelled", value: "CANCELLED" },
 ];
+
+async function simulateSensor() {
+  if (!validateString(sensorCode.value) || !validateString(sensorValue.value)) {
+    console.error("Sensor Code and Value are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code and Value are required.', life: 3000 });
+    return;
+  }
+  try {
+    const sensorResponse = await fetch(`${api}/sensors/${sensorCode.value}`);
+    if (!sensorResponse.ok) {
+      throw new Error("Failed to fetch sensor details");
+    }
+    const sensorData = await sensorResponse.json();
+    const payload = { sensorCode: sensorCode.value };
+
+
+    if (sensorData.type === "ACCELERATION") {
+      payload.acceleration = parseFloat(sensorValue.value);
+    } else if (sensorData.type === "TEMPERATURE") {
+      payload.temperature = parseFloat(sensorValue.value);
+    } else if (sensorData.type === "LOCATION") {
+      const [latitude, longitude] = sensorValue.value.split(",").map(Number);
+      payload.latitude = latitude;
+      payload.longitude = longitude;
+    }
+
+    const response = await fetch(`${api}/readings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = "Failed to simulate sensor";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
+    }
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 });
+    showSimulateSensorDialog.value = false;
+    resetSimulateSensorDialog();
+  } catch (error) {
+    console.error("Failed to simulate sensor:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+  }
+}
+
+function resetSimulateSensorDialog() {
+  sensorCode.value = "";
+  sensorValue.value = "";
+}
 
 const sensorTypeOptions = ["ACCELERATION (m/s²)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
 
@@ -105,65 +162,6 @@ async function updateVolumeStatus() {
     console.error("Failed to update volume status:", error);
     toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
-}
-
-async function simulateSensor() {
-  if (
-    !validateString(sensorCode.value) ||
-    !validateString(sensorType.value) ||
-    !validateString(sensorValue.value)
-  ) {
-    console.error("Sensor Code, Type, and Value are required.");
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code, Type, and Value are required.', life: 3000 }); 
-    return;
-  }
-  try {
-    const payload = { sensorCode: sensorCode.value };
-    if (sensorType.value === "ACCELERATION (m/s²)") {
-      payload.acceleration = parseFloat(sensorValue.value);
-    } else if (sensorType.value === "TEMPERATURE (ºC)") {
-      payload.temperature = parseFloat(sensorValue.value);
-    } else if (sensorType.value === "LOCATION (LATITUDE,LONGITUDE)") {
-      const [latitude, longitude] = sensorValue.value.split(",").map(Number);
-      payload.latitude = latitude;
-      payload.longitude = longitude;
-    }
-    const response = await fetch(`${api}/readings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = "Failed to simulate sensor";
-      try {
-        const errorData = JSON.parse(errorText);
-        errorMessage = errorData.message || errorMessage;
-      } catch (e) {
-        errorMessage = errorText;
-      }
-      throw new Error(errorMessage);
-    }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 }); 
-    showSimulateSensorDialog.value = false;
-    resetSimulateSensorDialog();
-  } catch (error) {
-    console.error("Failed to simulate sensor:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
-  }
-}
-
-function resetUpdateVolumeStatusDialog() {
-  updateVolumeCode.value = "";
-  newVolumeStatus.value = "";
-}
-
-function resetSimulateSensorDialog() {
-  sensorCode.value = "";
-  sensorType.value = "";
-  sensorValue.value = "";
 }
 
 const validateString = (value) =>
@@ -509,20 +507,6 @@ onMounted(() => {
         />
         <small v-if="!validateString(sensorCode)" class="p-error"
           >Sensor Code is required.</small
-        >
-      </span>
-      <span class="p-float-label">
-        <label for="sensorType">Reading Type</label>
-        <Dropdown
-          id="sensorType"
-          v-model="sensorType"
-          :options="sensorTypeOptions"
-          class="w-full"
-          placeholder="Select a Type"
-          :class="{ 'p-invalid': !validateString(sensorType) }"
-        />
-        <small v-if="!validateString(sensorType)" class="p-error"
-          >Reading Type is required.</small
         >
       </span>
       <span class="p-float-label">
