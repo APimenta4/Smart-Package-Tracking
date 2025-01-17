@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.utils.LineOfSalePK;
 
 import java.io.Serializable;
 

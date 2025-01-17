@@ -2,7 +2,8 @@ package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -11,8 +12,13 @@ import java.time.Instant;
 @Table(name = "readings_location")
 public class ReadingLocation extends Reading implements Serializable {
 
-    @NotNull
+
+    @DecimalMin(value = "-90.0")
+    @DecimalMax(value = "90.0")
     private Double latitude;
+
+    @DecimalMin(value = "-180.0")
+    @DecimalMax(value = "180.0")
     private Double longitude;
 
     public ReadingLocation(Sensor sensor, Instant timestamp, Double latitude, Double longitude) {
@@ -23,20 +29,19 @@ public class ReadingLocation extends Reading implements Serializable {
 
     public ReadingLocation() {}
 
-    @NotNull
-    public Double getLatitude() {
+    public @DecimalMin(value = "-90.0") @DecimalMax(value = "90.0") Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(@NotNull Double latitude) {
+    public void setLatitude(@DecimalMin(value = "-90.0") @DecimalMax(value = "90.0") Double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public @DecimalMin(value = "-180.0") @DecimalMax(value = "180.0") Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(@DecimalMin(value = "-180.0") @DecimalMax(value = "180.0") Double longitude) {
         this.longitude = longitude;
     }
 }

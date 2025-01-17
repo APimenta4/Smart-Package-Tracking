@@ -1,4 +1,7 @@
-package pt.ipleiria.estg.dei.ei.dae.monitoring.entities;
+package pt.ipleiria.estg.dei.ei.dae.monitoring.utils;
+
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Product;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 
 import java.io.Serializable;
 import java.util.Objects;

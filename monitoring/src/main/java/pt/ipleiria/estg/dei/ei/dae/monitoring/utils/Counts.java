@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.monitoring.helperClass;
+package pt.ipleiria.estg.dei.ei.dae.monitoring.utils;
 
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.SensorType;

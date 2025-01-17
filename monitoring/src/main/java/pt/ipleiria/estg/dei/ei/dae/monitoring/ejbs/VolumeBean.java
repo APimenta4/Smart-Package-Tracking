@@ -16,7 +16,7 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.helperClass.Counts;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.utils.Counts;
 
 import java.util.*;
 import java.util.logging.Logger;
