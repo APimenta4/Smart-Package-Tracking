@@ -17,6 +17,7 @@ if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore
 }
 
 const volume = ref(null);
+const timelineEvents = ref([]);
 
 const statusSeverity = {
   READY_FOR_PICKUP: "info",
@@ -66,6 +67,13 @@ async function fetchVolume() {
     }
     const data = await response.json();
     volume.value = data;
+    timelineEvents.value = [
+      { status: 'Ready for Pickup', date: data.readyDate ? new Date(data.readyDate.replace('[UTC]', '')) : null, icon: 'pi pi-info-circle', color: '#2db7f5' },
+      { status: 'Shipped', date: data.shippedDate ? new Date(data.shippedDate.replace('[UTC]', '')) : null, icon: 'pi pi-truck', color: '#ff9800' },
+      { status: 'Delivered', date: data.deliveredDate ? new Date(data.deliveredDate.replace('[UTC]', '')) : null, icon: 'pi pi-check', color: '#28a745' },
+      { status: 'Returned', date: data.returnedDate ? new Date(data.returnedDate.replace('[UTC]', '')) : null, icon: 'pi pi-undo', color: '#ffc107' },
+      { status: 'Cancelled', date: data.cancelledDate ? new Date(data.cancelledDate.replace('[UTC]', '')) : null, icon: 'pi pi-times', color: '#dc3545' }
+    ].filter(event => event.date);
   } catch (error) {
     console.error("Failed to fetch volume:", error);
     toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
@@ -76,6 +84,9 @@ onMounted(() => {
   if (authStore.isAuthenticated) {
     fetchVolume();
   }
+  setTimeout(() => {
+    console.log(timelineEvents.value);
+  }, 2000);
 });
 </script>
 
@@ -188,6 +199,36 @@ onMounted(() => {
                 </template>
               </Column>
             </DataTable>
+          </div>
+
+          <!-- Timeline Section -->
+          <div>
+            <h3 class="text-xl font-semibold mb-10">Volume Tracking</h3>
+            <Timeline :value="timelineEvents">
+              <template #opposite="{ item }">
+                <span>{{ item.date ? item.date.toLocaleString() : '' }}</span>
+              </template>
+              <template #marker="{ item }">
+                <span
+                  class="p-shadow-2"
+                  :style="{
+                    backgroundColor: item.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '2rem',
+                    height: '2rem',
+                    borderRadius: '50%',
+                    color: '#fff'
+                  }"
+                >
+                  <i :class="item.icon"></i>
+                </span>
+              </template>
+              <template #content="{ item }">
+                <h4 :style="{ fontSize: '1.25rem' }">{{ item.status }}</h4>
+              </template>
+            </Timeline>
           </div>
         </div>
       </template>
