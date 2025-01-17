@@ -1,10 +1,10 @@
 <script setup>
 import { ref, watch, computed } from "vue";
-import { useToast } from "primevue/usetoast"; // Import useToast
+import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "../store/auth-store";
 
 const authStore = useAuthStore();
-const toast = useToast(); // Initialize toast
+const toast = useToast(); 
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -16,6 +16,10 @@ const deliveryCode = ref("");
 const clientCode = ref("");
 
 const router = useRouter();
+
+if (!authStore.isAuthenticated || authStore.user.role !== "Logistician") {
+  router.push("/");
+}
 
 const newVolume = ref({
   code: "",
@@ -94,7 +98,7 @@ const saveEditedVolume = () => {
   } else {
     console.error("Invalid edited volume data");
   }
-  originalVolume.value = null; // Reset originalVolume after saving
+  originalVolume.value = null; 
 };
 
 const resetNewVolume = () => {
@@ -104,7 +108,7 @@ const resetNewVolume = () => {
     products: [],
     sensors: [],
   };
-  selectedPackageTypes.value = []; // Make sure this is explicitly reset
+  selectedPackageTypes.value = [];
 };
 
 const resetEditVolume = () => {
@@ -203,11 +207,11 @@ async function createDelivery() {
       }
       throw new Error(errorMessage);
     }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Delivery created successfully', life: 3000 }); // Show success toast
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Delivery created successfully', life: 3000 }); 
     router.push("/");
   } catch (error) {
     console.error("Failed to create new delivery:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 
@@ -223,14 +227,12 @@ const editSelectedPackageTypes = ref([]);
 const combinePackageTypes = (types) => {
   if (!types || types.length === 0) return 'NONE';
   
-  // Define the desired order
   const orderMap = {
     FRAGILE: 1,
     ISOTERMIC: 2,
     GEOLOCATION: 3
   };
   
-  // Sort based on the predefined order
   return types
     .sort((a, b) => orderMap[a] - orderMap[b])
     .join('_');
@@ -241,7 +243,6 @@ const parsePackageType = (packageType) => {
   return packageType.split('_');
 };
 
-// Add this watch to update the volume's package type when selections change
 watch(selectedPackageTypes, (newTypes) => {
   newVolume.value.packageType = combinePackageTypes(newTypes);
 });

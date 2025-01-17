@@ -11,14 +11,13 @@ import java.time.Instant;
 @Entity
 @Table(name = "readings_location")
 public class ReadingLocation extends Reading implements Serializable {
-
-
     @DecimalMin(value = "-90.0")
     @DecimalMax(value = "90.0")
     private Double latitude;
 
     @DecimalMin(value = "-180.0")
     @DecimalMax(value = "180.0")
+
     private Double longitude;
 
     public ReadingLocation(Sensor sensor, Instant timestamp, Double latitude, Double longitude) {

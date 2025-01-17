@@ -22,8 +22,6 @@ public class VolumeDTO {
     private List<ProductDTO> products = new ArrayList<>();
     private List<SensorDTO> sensors = new ArrayList<>();
 
-
-
     public VolumeDTO(String code, String orderCode, VolumeStatus status, Date readyDate, Date shippedDate, Date cancelledDate, Date returnedDate, Date deliveredDate, PackageType packageType) {
         this.code = code;
         this.orderCode = orderCode;

@@ -1,37 +1,54 @@
 <script setup>
-import { useAuthStore } from '../store/auth-store'; 
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '../store/auth-store';
+import { useRouter, useRoute } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
+const authStore = useAuthStore();
+const router = useRouter();
 const route = useRoute();
-const config = useRuntimeConfig();
 const toast = useToast();
-const auth = useAuthStore(); 
+const config = useRuntimeConfig();
+const api = config.public.API_URL;
 
 const delivery = ref(null);
 const error = ref(null);
 
-try {
-  const response = await fetch(`${config.public.API_URL}/orders/${route.params.code}`, {
-    headers: {
-      'Authorization': `Bearer ${auth.token}`
-    },
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    let errorMessage = "Failed to fetch delivery details";
-    try {
-      const errorData = JSON.parse(errorText);
-      errorMessage = errorData.message || errorMessage;
-    } catch (e) {
-      errorMessage = errorText;
-    }
-    throw new Error(errorMessage);
-  }
-  delivery.value = await response.json();
-} catch (err) {
-  console.error("Failed to fetch delivery details:", err);
-  toast.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 }); // Show error toast with details
-  error.value = err;
+if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+  router.push("/");
 }
+
+async function fetchDeliveryDetails() {
+  try {
+    const response = await fetch(`${api}/orders/${route.params.code}`, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      },
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = "Failed to fetch delivery details";
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
+    }
+    delivery.value = await response.json();
+  } catch (err) {
+    console.error("Failed to fetch delivery details:", err);
+    toast.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+    error.value = err;
+  }
+}
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    fetchDeliveryDetails();
+  }
+});
 
 const getPackageTypeSeverity = (type) => {
   const severityMap = {
