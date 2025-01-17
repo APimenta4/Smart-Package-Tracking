@@ -15,13 +15,13 @@ params:path {
 }
 
 headers {
-  Content-Type: application/json
+  Authorization: Bearer {{bearer_token}}
 }
 
 body:json {
   {
     "subject": "Meeting Reminder",
-    "body": "Don't forget about our meeting tomorrow at 10 AM."
+    "body": "this is a test email heheh"
   }
   
 }
