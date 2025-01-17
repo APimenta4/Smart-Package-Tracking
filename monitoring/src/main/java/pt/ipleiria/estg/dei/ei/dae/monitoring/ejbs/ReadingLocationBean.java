@@ -39,8 +39,14 @@ public class ReadingLocationBean {
     public ReadingLocation create(String sensorCode, Double latitude, Double longitude)
             throws CustomConstraintViolationException, CustomEntityNotFoundException {
         logger.info("Creating new location reading, sensor '" + sensorCode+"'");
-        Sensor sensor = sensorBean.find(sensorCode);
+        if (latitude < -90.0 || latitude > 90.0) {
+            throw new CustomConstraintViolationException("Latitude must be between -90.0 and 90.0. Provided: " + latitude);
+        }
+        if (longitude < -180.0 || longitude > 180.0) {
+            throw new CustomConstraintViolationException("Longitude must be between -180.0 and 180.0. Provided: " + longitude);
+        }
 
+        Sensor sensor = sensorBean.find(sensorCode);
         try {
             VolumeStatus status = sensor.getVolume().getStatus();
             if (EnumSet.of(VolumeStatus.CANCELLED, VolumeStatus.RETURNED, VolumeStatus.DELIVERED).contains(status)) {

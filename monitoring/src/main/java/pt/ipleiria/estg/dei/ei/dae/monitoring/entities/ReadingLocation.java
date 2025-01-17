@@ -11,12 +11,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "readings_location")
 public class ReadingLocation extends Reading implements Serializable {
-    @DecimalMin(value = "-90.0")
-    @DecimalMax(value = "90.0")
     private Double latitude;
-
-    @DecimalMin(value = "-180.0")
-    @DecimalMax(value = "180.0")
 
     private Double longitude;
 
@@ -28,19 +23,19 @@ public class ReadingLocation extends Reading implements Serializable {
 
     public ReadingLocation() {}
 
-    public @DecimalMin(value = "-90.0") @DecimalMax(value = "90.0") Double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(@DecimalMin(value = "-90.0") @DecimalMax(value = "90.0") Double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public @DecimalMin(value = "-180.0") @DecimalMax(value = "180.0") Double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(@DecimalMin(value = "-180.0") @DecimalMax(value = "180.0") Double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 }
