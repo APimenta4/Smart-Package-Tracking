@@ -1,0 +1,26 @@
+meta {
+  name: Refresh
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{api_url}}/auth/refresh
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{bearer_token}}
+}
+
+body:json {
+  {
+    "code":"manager",
+    "password":"123"
+  }
+}
+
+vars:post-response {
+  bearer_token: res.body
+}

@@ -79,4 +79,14 @@ public class AuthService {
         User user = userBean.findOrFail(code);
         return Response.ok(UserDTO.from(user)).build();
     }
+
+
+    @POST
+    @Authenticated
+    @Path("/refresh")
+    public Response refreshToken() {
+        String userCode = securityContext.getUserPrincipal().getName();
+        String token = issuer.issue(userCode);
+        return Response.ok(token).build();
+    }
 }

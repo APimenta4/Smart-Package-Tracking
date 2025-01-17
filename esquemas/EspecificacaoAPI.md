@@ -16,41 +16,42 @@ IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
 
 - [EndPoints](#endpoints)
 
-  - [Autenticação](#autencacao)
-    - [EP01]
-    - [EP01]
-    - [EP01]
+  - [Autenticação](#autenticação)
+    - [EP01 Login](#ep01-login)
+    - [EP02 Refresh token](#ep02-refresh-token)
+    - [EP03 Atualizar password](#ep03-atualizar-password)
+    - [EP04 Consultar a sua informaçao de utilizador](#ep04-consultar-a-sua-informaçao-de-utilizador)
 
   - [Encomendas](#encomendas)
-    - [EP01 Criar Encomenda](#ep01-criar-encomenda)
-    - [EP02 Consultar Todas as Encomendas](#ep02-consultar-todas-as-encomendas)
-    - [EP03 Consultar Todas as Suas Encomendas](#ep03-consultar-todas-as-suas-encomendas)
-    - [EP04 Consultar Uma Encomenda](#ep04-consultar-uma-encomenda)
-    - [EP05 Consultar a Sua Encomenda](#ep05-consultar-a-sua-encomenda)
-    - [EP06 Consultar Volumes Associados a Uma Ancomenda](#ep06-consultar-volumes-associados-a-uma-encomenda)
-    - [EP07 Consultar Volumes Associados á Sua Encomenda](#ep07-consultar-volumes-associados-á-sua-encomenda)
-    - [EP08 Consultar Leituras Associadas a Uma Encomenda](#ep08-consultar-leituras-associadas-a-uma-encomenda)
-    - [EP09 Consultar Leituras Associadas á Sua Encomenda](#ep09-consultar-leituras-associadas-á-sua-encomenda)
+    - [EP05 Criar Encomenda](#ep05-criar-encomenda)
+    - [EP06 Consultar Todas as Encomendas](#ep06-consultar-todas-as-encomendas)
+    - [EP07 Consultar Todas as Suas Encomendas](#ep07-consultar-todas-as-suas-encomendas)
+    - [EP08 Consultar Uma Encomenda](#ep08-consultar-uma-encomenda)
+    - [EP09 Consultar a Sua Encomenda](#ep09-consultar-a-sua-encomenda)
+    - [EP10 Consultar Volumes Associados a Uma Ancomenda](#ep10-consultar-volumes-associados-a-uma-encomenda)
+    - [EP11 Consultar Volumes Associados á Sua Encomenda](#ep11-consultar-volumes-associados-á-sua-encomenda)
+    - [EP12 Consultar Leituras Associadas a Uma Encomenda](#ep12-consultar-leituras-associadas-a-uma-encomenda)
+    - [EP13 Consultar Leituras Associadas á Sua Encomenda](#ep13-consultar-leituras-associadas-á-sua-encomenda)
   
   - [Volumes](#volumes)
-    - [EP10 Adicionar Volume a Uma Encomenda](#ep10-adicionar-volume-a-uma-encomenda)
-    - [EP11 Atualizar Estado Volume](#ep11-atualizar-estado-volume)
-    - [EP12 Consultar Todos os Volumes](#ep12-consultar-todos-os-volumes)
-    - [EP13 Consultar Todos os Seus Volumes](#ep13-consultar-todos-os-seus-volumes)
-    - [EP14 Consultar Volume](#ep14-consultar-volume)
-    - [EP15 Consultar o Seu Volume](#ep15-consultar-o-seu-volume)
-    - [EP16 Consultar Leituras Associadas a Um Volume](#ep16-consultar-leituras-associados-a-um-volume)
-    - [EP17 Consultar Leituras Associadas ao Seu Volume](#ep17-consultar-leituras-associados-ao-seu-volume)
+    - [EP14 Adicionar Volume a Uma Encomenda](#ep14-adicionar-volume-a-uma-encomenda)
+    - [EP15 Atualizar Estado Volume](#ep15-atualizar-estado-volume)
+    - [EP16 Consultar Todos os Volumes](#ep16-consultar-todos-os-volumes)
+    - [EP17 Consultar Todos os Seus Volumes](#ep17-consultar-todos-os-seus-volumes)
+    - [EP18 Consultar Volume](#ep18-consultar-volume)
+    - [EP19 Consultar o Seu Volume](#ep19-consultar-o-seu-volume)
+    - [EP20 Consultar Leituras Associadas a Um Volume](#ep20-consultar-leituras-associados-a-um-volume)
+    - [EP21 Consultar Leituras Associadas ao Seu Volume](#ep21-consultar-leituras-associados-ao-seu-volume)
 
   - [Sensores](#sensores)
-    - [EP18 Consultar Sensor](#ep18-consultar-sensor)
-    - [EP19 Consultar o Seu Sensor](#ep19-consultar-o-seu-sensor)
-    - [EP20 Consultar as Leituras de um Sensor](#ep20-consultar-as-leituras-de-um-sensor)
+    - [EP22 Consultar Sensor](#ep22-consultar-sensor)
+    - [EP23 Consultar o Seu Sensor](#ep23-consultar-o-seu-sensor)
+    - [EP24 Consultar as Leituras de um Sensor](#ep24-consultar-as-leituras-de-um-sensor)
   
   - [Leituras](#leituras)
-    - [EP21 Enviar Leituras](#ep21-enviar-leituras)
-    - [EP22 Consultar Todas as Leituras](#ep22-consultar-todas-as-leituras)
-    - [EP23 Consultar Todas as Suas Leituras](#ep23-consultar-todas-as-suas-leituras)
+    - [EP25 Enviar Leituras](#ep25-enviar-leituras)
+    - [EP26 Consultar Todas as Leituras](#ep26-consultar-todas-as-leituras)
+    - [EP27 Consultar Todas as Suas Leituras](#ep27-consultar-todas-as-suas-leituras)
 
 ### Tipos de Usuários e Permissões
 
@@ -106,9 +107,33 @@ O pedido enviado a este recurso segue o formato JSON:
 }
 ```
 
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+asdfZXCVFDGQasdfq93.fdsQAdgaDFGhe3Lc3
+```
+
 ---
 
-#### `EP02` Atualizar password
+#### `EP02` Refresh token
+
+Um utilizador atualiza o seu token.
+
+**HTTP POST** para o sítio:
+
+```text
+/monitoring/api/auth/refresh
+```
+
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+asdfZXCVFDGQasdfq93.fdsQAdgaDFGhe3Lc3
+```
+
+---
+
+#### `EP03` Atualizar password
 
 Um utilizador autenticado atualiza a sua password.
 
@@ -128,9 +153,15 @@ O pedido enviado a este recurso segue o formato JSON:
 }
 ```
 
+A resposta devolvida por este recurso segue o formato JSON:
+
+```json
+asdfZXCVFDGQasdfq93.fdsQAdgaDFGhe3Lc3
+```
+
 ---
 
-#### `EP03` Consultar a sua informaçao de utilizador
+#### `EP04` Consultar a sua informaçao de utilizador
 
 Um utilizador autenticado atualiza a sua password.
 
@@ -154,7 +185,7 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ### Encomendas
 
-#### `EP01` Criar Encomenda
+#### `EP05` Criar Encomenda
 
 Um utilizador, autenticado como funcionário de logística, adiciona uma nova encomenda com um volume para monitorização.
 
@@ -232,7 +263,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP02` Consultar Todas as Encomendas
+#### `EP06` Consultar Todas as Encomendas
 
 Um utilizador, autenticado como gestor, consulta todas as encomendas.
 
@@ -285,7 +316,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP03` Consultar Todas as Suas Encomendas
+#### `EP07` Consultar Todas as Suas Encomendas
 
 Um utilizador, autenticado como cliente, consulta as suas encomendas.
 
@@ -338,7 +369,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP04` Consultar Uma Encomenda
+#### `EP08` Consultar Uma Encomenda
 
 Um utilizador, autenticado como gestor, consulta detalhes de uma encomenda específica.
 
@@ -388,7 +419,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP05` Consultar a Sua Encomenda
+#### `EP09` Consultar a Sua Encomenda
 
 Um utilizador, autenticado como cliente, consulta detalhes de uma das suas encomendas.
 
@@ -438,7 +469,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP06` Consultar Volumes Associados a Uma Encomenda
+#### `EP10` Consultar Volumes Associados a Uma Encomenda
 
 Um utilizador, autenticado como gestor, consulta todos os volumes de uma encomenda.
 
@@ -484,7 +515,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP07` Consultar Volumes Associados á Sua Encomenda
+#### `EP11` Consultar Volumes Associados á Sua Encomenda
 
 Um utilizador, autenticado como cliente, consulta todos os volumes de uma das suas encomendas.
 
@@ -530,7 +561,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP08` Consultar Leituras Associadas a Uma Encomenda
+#### `EP12` Consultar Leituras Associadas a Uma Encomenda
 
 Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores de uma encomenda.
 
@@ -564,7 +595,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP09` Consultar Leituras Associadas á Sua Encomenda
+#### `EP13` Consultar Leituras Associadas á Sua Encomenda
 
 Um utilizador, autenticado como cliente, consulta as leituras dos sensores de uma das suas encomendas.
 
@@ -600,7 +631,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Volumes
 
-#### `EP10` Adicionar Volume a Uma Encomenda
+#### `EP14` Adicionar Volume a Uma Encomenda
 
 Um utilizador, autenticado como funcionário de logística, adiciona um novo volume a uma encomenda.
 
@@ -665,7 +696,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP11` Atualizar Estado Volume
+#### `EP15` Atualizar Estado Volume
 
 Um utilizador, autenticado como funcionário de logística, atualiza o estado de um volume.
 
@@ -685,7 +716,7 @@ O pedido enviado a este recurso segue o formato JSON:
 
 ---
 
-#### `EP12` Consultar Todos os Volumes
+#### `EP16` Consultar Todos os Volumes
 
 Um utilizador, autenticado como gestor, consulta todos os volumes.
 
@@ -731,7 +762,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP13` Consultar Todos os Seus Volumes
+#### `EP17` Consultar Todos os Seus Volumes
 
 Um utilizador, autenticado como cliente, consulta todos os seus volumes.
 
@@ -777,7 +808,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP14` Consultar Volume
+#### `EP18` Consultar Volume
 
 Um utilizador, autenticado como gestor, consulta os detalhes de um volume.
 
@@ -820,7 +851,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP15` Consultar o Seu Volume
+#### `EP19` Consultar o Seu Volume
 
 Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus volumes.
 
@@ -863,7 +894,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP16` Consultar Leituras Associados a Um Volume
+#### `EP20` Consultar Leituras Associados a Um Volume
 
 Um utilizador, autenticado como gestor, consulta as leituras dos sensores de um volume.
 
@@ -897,7 +928,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP17` Consultar Leituras Associados ao Seu Volume
+#### `EP21` Consultar Leituras Associados ao Seu Volume
 
 Um utilizador, autenticado como cliente, consulta as leituras dos sensores de um dos seus volumes.
 
@@ -933,7 +964,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Sensores
 
-#### `EP18` Consultar Sensor
+#### `EP22` Consultar Sensor
 
 Um utilizador, autenticado como gestor, consulta os detalhes de um sensor.
 
@@ -955,7 +986,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP19` Consultar o Seu Sensor
+#### `EP23` Consultar o Seu Sensor
 
 Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus sensors.
 
@@ -977,7 +1008,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP20` Consultar as Leituras de Um Sensor
+#### `EP24` Consultar as Leituras de Um Sensor
 
 Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
 
@@ -1010,7 +1041,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Leituras
 
-#### `EP21` Enviar Leituras
+#### `EP25` Enviar Leituras
 
 Um sensor envia uma nova leitura para o sistema de monitorização.
 
@@ -1042,7 +1073,7 @@ ou
 
 ---
 
-#### `EP22` Consultar Todas as Leituras
+#### `EP26` Consultar Todas as Leituras
 
 Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 
@@ -1082,7 +1113,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 ]
 ```
 
-#### `EP23` Consultar Todas as Suas Leituras
+#### `EP27` Consultar Todas as Suas Leituras
 
 Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
 
