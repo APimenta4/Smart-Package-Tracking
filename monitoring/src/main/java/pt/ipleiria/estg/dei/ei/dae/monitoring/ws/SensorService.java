@@ -57,10 +57,7 @@ public class SensorService {
     @GET
     @Path("{sensorCode}")
     public Response getSensor(@PathParam("sensorCode") String sensorCode) throws CustomEntityNotFoundException {
-        Principal principal = securityContext.getUserPrincipal();
-        String userCode = principal.getName();
         logger.info("Sensor '" + sensorCode + "' being requested" );
-
         Sensor sensor = sensorBean.find(sensorCode);
         return Response.ok(SensorDTO.from(sensor)).build();
     }
