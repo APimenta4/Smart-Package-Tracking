@@ -62,7 +62,7 @@ export const useAuthStore = defineStore("authStore", () => {
       localStorage.setItem("token", tokenText);
       await fetchUser();
       localStorage.setItem("user", JSON.stringify(user.value));
-      startRefreshTimer(); 
+      startRefreshTimer();
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -93,7 +93,7 @@ export const useAuthStore = defineStore("authStore", () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${token.value}`
+          Authorization: `Bearer ${token.value}`,
         },
         body: JSON.stringify({ oldPassword, newPassword, confirmPassword }),
       });
@@ -156,5 +156,6 @@ export const useAuthStore = defineStore("authStore", () => {
     logout,
     getUserRole,
     refreshToken,
- , changePassword };
+    changePassword,
+  };
 });
