@@ -27,7 +27,6 @@ const sensorCode = ref("");
 const sensorValue = ref("");
 
 const volumeStatusOptions = [
-  { label: "Ready for Pickup", value: "READY_FOR_PICKUP" },
   { label: "In Transit", value: "IN_TRANSIT" },
   { label: "Delivered", value: "DELIVERED" },
   { label: "Returned", value: "RETURNED" },
@@ -162,6 +161,11 @@ async function updateVolumeStatus() {
     console.error("Failed to update volume status:", error);
     toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
+}
+
+function resetUpdateVolumeStatusDialog() {
+  updateVolumeCode.value = "";
+  newVolumeStatus.value = "";
 }
 
 const validateString = (value) =>
