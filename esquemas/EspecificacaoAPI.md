@@ -15,6 +15,12 @@ IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
   - [Cliente](#cliente)
 
 - [EndPoints](#endpoints)
+
+  - [Autenticação](#autencacao)
+    - [EP01]
+    - [EP01]
+    - [EP01]
+
   - [Encomendas](#encomendas)
     - [EP01 Criar Encomenda](#ep01-criar-encomenda)
     - [EP02 Consultar Todas as Encomendas](#ep02-consultar-todas-as-encomendas)
@@ -78,6 +84,73 @@ IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
 - consultar as leituras dos sensores associados às suas encomendas.
 
 ## EndPoints
+
+### Autenticação
+
+#### `EP01` Login
+
+Um utilizador autentica-se no sistemas.
+
+**HTTP POST** para o sítio:
+
+```text
+/monitoring/api/auth/login
+```
+
+O pedido enviado a este recurso segue o formato JSON:
+
+```json
+{
+  "code":"client",
+  "password":"123"
+}
+```
+
+---
+
+#### `EP02` Atualizar password
+
+Um utilizador autenticado atualiza a sua password.
+
+**HTTP POST** para o sítio:
+
+```text
+/monitoring/api/auth/set-password
+```
+
+O pedido enviado a este recurso segue o formato JSON:
+
+```json
+{
+  "oldPassword":"123",
+  "newPassword":"321",
+  "confirmPassword":"321"
+}
+```
+
+---
+
+#### `EP03` Consultar a sua informaçao de utilizador
+
+Um utilizador autenticado atualiza a sua password.
+
+**HTTP POST** para o sítio:
+
+```text
+/monitoring/api/auth/set-password
+```
+
+O pedido enviado a este recurso segue o formato JSON:
+
+```json
+{
+  "oldPassword":"123",
+  "newPassword":"321",
+  "confirmPassword":"321"
+}
+```
+
+---
 
 ### Encomendas
 

@@ -55,6 +55,35 @@ public class VolumeService {
     }
 
 
+    @POST
+    @Path("/")
+    @RolesAllowed({"Logistician"})
+    public Response createVolume(VolumeDTO volumeDTO)
+            throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
+        String volumeCode = volumeDTO.getCode();
+        logger.info(
+                "Logistician '" + securityContext.getUserPrincipal().getName() +
+                        "' requesting creation of volume '" + volumeCode + "'"
+        );
+        volumeBean.createWithDetails(volumeDTO, volumeDTO.getOrderCode());
+        Volume volume = volumeBean.findWithAllDetails(volumeCode);
+        return Response.status(Response.Status.CREATED).entity(loadVolumeDTO(volume)).build();
+    }
+
+
+    @PATCH
+    @Path("{volumeCode}")
+    @RolesAllowed({"Logistician"})
+    public Response patchVolumeStatus(@PathParam("volumeCode") String volumeCode, VolumeDTO volumeDTO) throws CustomEntityNotFoundException, CustomConstraintViolationException{
+        logger.info(
+                "Logistician '" + securityContext.getUserPrincipal().getName() +
+                        "' requesting update of volume '" + volumeCode + "' status"
+        );
+        volumeBean.updateStatus(volumeCode,volumeDTO.getStatus());
+        return Response.ok().build();
+    }
+
+
     @GET
     @Path("/")
     @RolesAllowed({"Manager","Client"})
@@ -122,34 +151,5 @@ public class VolumeService {
         }
         List<SensorReadingsDTO> sensorReadingsDTOs = SensorReadingsDTO.from(volume.getSensors());
         return Response.ok(sensorReadingsDTOs).build();
-    }
-
-
-    @POST
-    @Path("/")
-    @RolesAllowed({"Logistician"})
-    public Response createVolume(VolumeDTO volumeDTO)
-            throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
-        String volumeCode = volumeDTO.getCode();
-        logger.info(
-            "Logistician '" + securityContext.getUserPrincipal().getName() +
-            "' requesting creation of volume '" + volumeCode + "'"
-        );
-        volumeBean.createWithDetails(volumeDTO, volumeDTO.getOrderCode());
-        Volume volume = volumeBean.findWithAllDetails(volumeCode);
-        return Response.status(Response.Status.CREATED).entity(loadVolumeDTO(volume)).build();
-    }
-
-
-    @PATCH
-    @Path("{volumeCode}")
-    @RolesAllowed({"Logistician"})
-    public Response patchVolumeStatus(@PathParam("volumeCode") String volumeCode, VolumeDTO volumeDTO) throws CustomEntityNotFoundException, CustomConstraintViolationException{
-        logger.info(
-            "Logistician '" + securityContext.getUserPrincipal().getName() +
-            "' requesting update of volume '" + volumeCode + "' status"
-        );
-        volumeBean.updateStatus(volumeCode,volumeDTO.getStatus());
-        return Response.ok().build();
     }
 }

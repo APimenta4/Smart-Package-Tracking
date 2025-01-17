@@ -37,6 +37,16 @@ public class ReadingService {
 
     private static final Logger logger = Logger.getLogger("ws.ReadingService");
 
+
+    @POST
+    @Path("/")
+    public Response createReading(ReadingDTO readingDTO)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException {
+        Reading reading = readingBean.create(readingDTO);
+        return Response.status(Response.Status.CREATED).entity(ReadingDTO.from(reading)).build();
+    }
+    
+
     @GET
     @Path("/")
     @Authenticated
@@ -60,13 +70,5 @@ public class ReadingService {
                                                .collect(Collectors.toList());
 
         return Response.ok(readingDTOS).build();
-    }
-
-    @POST
-    @Path("/")
-    public Response createReading(ReadingDTO readingDTO)
-            throws CustomConstraintViolationException, CustomEntityNotFoundException {
-        Reading reading = readingBean.create(readingDTO);
-        return Response.status(Response.Status.CREATED).entity(ReadingDTO.from(reading)).build();
     }
 }

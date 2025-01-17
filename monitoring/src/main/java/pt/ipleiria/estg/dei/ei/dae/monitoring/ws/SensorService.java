@@ -55,6 +55,7 @@ public class SensorService {
         return !securityContext.isUserInRole("Manager");
     }
 
+
     @GET
     @Path("{sensorCode}")
     @RolesAllowed({"Manager","Client"})
@@ -73,6 +74,7 @@ public class SensorService {
 
         return Response.ok(SensorDTO.from(sensor)).build();
     }
+
 
     @GET
     @Path("{sensorCode}/readings")

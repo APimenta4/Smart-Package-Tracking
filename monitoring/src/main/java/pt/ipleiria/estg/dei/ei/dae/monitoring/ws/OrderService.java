@@ -63,6 +63,22 @@ public class OrderService {
     }
 
 
+    @POST
+    @Path("/")
+    @RolesAllowed({"Logistician"})
+    public Response createOrder(OrderDTO orderDTO)
+            throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
+        String orderCode = orderDTO.getCode();
+        logger.info(
+                "Logistician '" + securityContext.getUserPrincipal().getName() +
+                        "' requesting creation of volume '" + orderCode + "'"
+        );
+        orderBean.createWithDetails(orderDTO);
+        Order order = orderBean.findWithAllDetails(orderCode);
+        return Response.status(Response.Status.CREATED).entity(loadOrderDTO(order)).build();
+    }
+
+
     @GET
     @Path("/")
     @RolesAllowed({"Manager","Client"})
@@ -81,8 +97,8 @@ public class OrderService {
         }
 
         List<OrderDTO> orderDTOs = orders.stream()
-                                          .map(this::loadOrderDTO)
-                                          .collect(Collectors.toList());
+                .map(this::loadOrderDTO)
+                .collect(Collectors.toList());
 
         return Response.ok(orderDTOs).build();
     }
@@ -160,21 +176,5 @@ public class OrderService {
             sensorReadingsDTOs.addAll(SensorReadingsDTO.from(volume.getSensors()));
         }
         return Response.ok(sensorReadingsDTOs).build();
-    }
-
-
-    @POST
-    @Path("/")
-    @RolesAllowed({"Logistician"})
-    public Response createOrder(OrderDTO orderDTO)
-            throws CustomEntityNotFoundException, CustomEntityExistsException, CustomConstraintViolationException {
-        String orderCode = orderDTO.getCode();
-        logger.info(
-                "Logistician '" + securityContext.getUserPrincipal().getName() +
-                        "' requesting creation of volume '" + orderCode + "'"
-        );
-        orderBean.createWithDetails(orderDTO);
-        Order order = orderBean.findWithAllDetails(orderCode);
-        return Response.status(Response.Status.CREATED).entity(loadOrderDTO(order)).build();
     }
 }
