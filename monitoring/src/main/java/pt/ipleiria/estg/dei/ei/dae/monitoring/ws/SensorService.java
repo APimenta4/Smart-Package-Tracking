@@ -16,14 +16,12 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.ejbs.UserBean;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Reading;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.User;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
@@ -33,7 +31,6 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.security.Authenticated;
 @Path("sensors")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @Consumes({MediaType.APPLICATION_JSON})
-@Authenticated
 public class SensorService {
     @Context
     private SecurityContext securityContext;
@@ -45,6 +42,7 @@ public class SensorService {
     private SensorBean sensorBean;
 
     private static final Logger logger = Logger.getLogger("ws.SensorService");
+
 
     private boolean isUserForbiddenToAccessSensor(String userCode,Sensor sensor) {
         if (securityContext.isUserInRole("Client")) {
@@ -58,26 +56,19 @@ public class SensorService {
 
     @GET
     @Path("{sensorCode}")
-    @RolesAllowed({"Manager","Client"})
-    public Response getVolume(@PathParam("sensorCode") String sensorCode) throws CustomEntityNotFoundException {
+    public Response getSensor(@PathParam("sensorCode") String sensorCode) throws CustomEntityNotFoundException {
         Principal principal = securityContext.getUserPrincipal();
         String userCode = principal.getName();
-        logger.info("User '" +userCode + "' requesting sensor '" + sensorCode + "'");
+        logger.info("Sensor '" + sensorCode + "' being requested" );
 
         Sensor sensor = sensorBean.find(sensorCode);
-        if(isUserForbiddenToAccessSensor(userCode,sensor)) {
-            logger.warning("Unauthorized access attempt by user '" + userCode + "'");
-            return Response.status(Response.Status.FORBIDDEN)
-                    .entity("Access denied for this sensor.")
-                    .build();
-        }
-
         return Response.ok(SensorDTO.from(sensor)).build();
     }
 
 
     @GET
     @Path("{sensorCode}/readings")
+    @Authenticated
     @RolesAllowed({"Manager", "Client"})
     public Response getSensorReadings(@PathParam("sensorCode") String sensorCode)
             throws CustomEntityNotFoundException {
