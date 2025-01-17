@@ -2,10 +2,10 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth-store";
-import { useToast } from "primevue/usetoast"; // Import useToast
+import { useToast } from "primevue/usetoast"; 
 
 const authStore = useAuthStore();
-const toast = useToast(); // Initialize toast
+const toast = useToast();
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -50,7 +50,7 @@ async function createVolume() {
     !sensors.value.every(s => validateString(s.code) && validateString(s.type))
   ) {
     console.error("Volume Code, Order Code, Products, and Sensors are required.");
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code, Order Code, Products, and Sensors are required.', life: 3000 }); // Show error toast
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Volume Code, Order Code, Products, and Sensors are required.', life: 3000 });
     return;
   }
   try {
@@ -79,11 +79,11 @@ async function createVolume() {
       }
       throw new Error(errorMessage);
     }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume created successfully', life: 3000 }); // Show success toast
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Volume created successfully', life: 3000 }); 
     router.push("/");
   } catch (error) {
     console.error("Failed to create new volume:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
   }
 }
 

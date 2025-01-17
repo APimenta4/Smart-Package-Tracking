@@ -141,7 +141,7 @@ async function simulateSensor() {
     !validateString(sensorValue.value)
   ) {
     console.error("Sensor Code, Type, and Value are required.");
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code, Type, and Value are required.', life: 3000 }); // Show error toast
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code, Type, and Value are required.', life: 3000 });
     return;
   }
   try {
@@ -159,7 +159,7 @@ async function simulateSensor() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}` // Use auth.token
+        'Authorization': `Bearer ${auth.token}` 
       },
       body: JSON.stringify(payload),
     });
@@ -174,12 +174,12 @@ async function simulateSensor() {
       }
       throw new Error(errorMessage);
     }
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 }); // Show success toast
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Sensor simulated successfully', life: 3000 }); 
     showSimulateSensorDialog.value = false;
     resetSimulateSensorDialog();
   } catch (error) {
     console.error("Failed to simulate sensor:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); // Show error toast with details
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
   }
 }
 

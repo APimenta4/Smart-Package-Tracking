@@ -23,11 +23,11 @@ const handleLogin = async () => {
   loading.value = true;
   try {
     await auth.login(credentials.value);
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully', life: 3000 }); // Show success toast
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully', life: 3000 }); 
     router.push("/");
   } catch (error) {
     console.error("Login failed:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Login failed. Please check your credentials.', life: 3000 }); // Show error toast
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Login failed. Please check your credentials.', life: 3000 }); 
   } finally {
     loading.value = false;
   }
