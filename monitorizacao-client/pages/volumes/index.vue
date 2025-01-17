@@ -1,31 +1,34 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useAuthStore } from '../store/auth-store';
-import { useToast } from 'primevue/usetoast'; 
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "../store/auth-store";
+import { useToast } from "primevue/usetoast";
+import { useRouter } from "vue-router";
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
 
 const authStore = useAuthStore();
-const toast = useToast(); 
+const toast = useToast();
 const router = useRouter();
 
-if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+if (
+  !authStore.isAuthenticated ||
+  (authStore.user.role !== "Client" && authStore.user.role !== "Manager")
+) {
   router.push("/");
 }
 
 const volumes = ref([]);
 const filters = ref({
-  global: { value: null, matchMode: 'contains' }
+  global: { value: null, matchMode: "contains" },
 });
 
 const statusSeverity = {
-  READY_FOR_PICKUP: 'info',
-  IN_TRANSIT: 'info',
-  DELIVERED: 'success',
-  RETURNED: 'warning',
-  CANCELLED: 'danger'
+  READY_FOR_PICKUP: "secondary",
+  IN_TRANSIT: "info",
+  DELIVERED: "success",
+  RETURNED: "warning",
+  CANCELLED: "danger",
 };
 
 const getPackageTypeSeverity = (type) => {
@@ -46,8 +49,8 @@ async function fetchVolumes() {
   try {
     const response = await fetch(`${api}/volumes`, {
       headers: {
-        'Authorization': `Bearer ${authStore.token}` 
-      }
+        Authorization: `Bearer ${authStore.token}`,
+      },
     });
     if (!response.ok) {
       const errorText = await response.text();
@@ -64,7 +67,12 @@ async function fetchVolumes() {
     volumes.value = data;
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: error.message,
+      life: 3000,
+    });
   }
 }
 
@@ -97,9 +105,9 @@ onMounted(() => {
             <div class="flex justify-between">
               <span class="p-input-icon-left">
                 <i class="pi pi-search mr-3" />
-                <InputText 
+                <InputText
                   v-model="filters['global'].value"
-                  placeholder="Search volumes..." 
+                  placeholder="Search volumes..."
                 />
               </span>
             </div>
@@ -110,7 +118,10 @@ onMounted(() => {
           <Column field="packageType" header="Package Type" sortable>
             <template #body="{ data }">
               <div class="flex flex-wrap gap-1">
-                <template v-for="type in data.packageType.split('_')" :key="type">
+                <template
+                  v-for="type in data.packageType.split('_')"
+                  :key="type"
+                >
                   <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
                 </template>
               </div>
@@ -119,7 +130,7 @@ onMounted(() => {
           <Column field="status" header="Status" sortable>
             <template #body="{ data }">
               <Tag
-                :value="data.status.replace(/_/g, ' ')" 
+                :value="data.status.replace(/_/g, ' ')"
                 :severity="getStatusSeverity(data.status)"
               />
             </template>
@@ -139,7 +150,9 @@ onMounted(() => {
                   rounded
                   text
                   severity="success"
-                  @click="navigateTo(`/volumes/${slotProps.data.code}/readings`)"
+                  @click="
+                    navigateTo(`/volumes/${slotProps.data.code}/readings`)
+                  "
                 />
               </div>
             </template>

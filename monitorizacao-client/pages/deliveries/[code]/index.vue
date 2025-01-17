@@ -62,7 +62,7 @@ const getPackageTypeSeverity = (type) => {
 
 const getStatusSeverity = (status) => {
   const severityMap = {
-    READY_FOR_PICKUP: "info",
+    READY_FOR_PICKUP: "secondary",
     IN_TRANSIT: "info",
     DELIVERED: "success",
     RETURNED: "warning",

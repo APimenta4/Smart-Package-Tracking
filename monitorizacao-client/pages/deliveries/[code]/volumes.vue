@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '../store/auth-store';
-import { useToast } from 'primevue/usetoast'; 
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "../store/auth-store";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
 const router = useRouter();
@@ -14,7 +14,10 @@ const api = config.public.API_URL;
 const auth = useAuthStore();
 const toast = useToast();
 
-if (!auth.isAuthenticated || (auth.user.role !== "Client" && auth.user.role !== "Manager")) {
+if (
+  !auth.isAuthenticated ||
+  (auth.user.role !== "Client" && auth.user.role !== "Manager")
+) {
   router.push("/");
 }
 
@@ -29,8 +32,8 @@ async function fetchVolumes() {
   try {
     const response = await fetch(`${api}/orders/${deliveryCode}/volumes`, {
       headers: {
-        'Authorization': `Bearer ${auth.token}`
-      }
+        Authorization: `Bearer ${auth.token}`,
+      },
     });
     if (!response.ok) {
       const errorText = await response.text();
@@ -47,7 +50,12 @@ async function fetchVolumes() {
     volumes.value = data;
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: error.message,
+      life: 3000,
+    });
   }
 }
 
@@ -63,7 +71,7 @@ const getPackageTypeSeverity = (type) => {
 
 const getStatusSeverity = (status) => {
   const severityMap = {
-    READY_FOR_PICKUP: "info",
+    READY_FOR_PICKUP: "secondary",
     IN_TRANSIT: "info",
     DELIVERED: "success",
     RETURNED: "warning",
@@ -105,13 +113,15 @@ onMounted(() => {
     <Card class="mt-10">
       <template #title>
         <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold">Delivery {{ deliveryCode }} Volumes</h2>
+          <h2 class="text-2xl font-bold">
+            Delivery {{ deliveryCode }} Volumes
+          </h2>
           <Button
             icon="pi pi-arrow-left"
             label="Back to Deliveries"
             text
             @click="navigateTo('/deliveries')"
-          />       
+          />
         </div>
       </template>
       <template #content>
@@ -125,7 +135,10 @@ onMounted(() => {
           <Column field="packageType" header="Package Type" sortable>
             <template #body="{ data }">
               <div class="flex flex-wrap gap-1">
-                <template v-for="type in data.packageType.split('_')" :key="type">
+                <template
+                  v-for="type in data.packageType.split('_')"
+                  :key="type"
+                >
                   <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
                 </template>
               </div>
@@ -133,7 +146,10 @@ onMounted(() => {
           </Column>
           <Column field="status" header="Status" sortable>
             <template #body="{ data }">
-              <Tag :value="data.status.replace(/_/g, ' ')" :severity="getStatusSeverity(data.status)" />
+              <Tag
+                :value="data.status.replace(/_/g, ' ')"
+                :severity="getStatusSeverity(data.status)"
+              />
             </template>
           </Column>
           <Column header="Products">

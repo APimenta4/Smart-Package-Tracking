@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from 'vue-router';
-import { useAuthStore } from '../store/auth-store';
-import { useToast } from 'primevue/usetoast';
+import { useRoute } from "vue-router";
+import { useAuthStore } from "../store/auth-store";
+import { useToast } from "primevue/usetoast";
 
 const config = useRuntimeConfig();
 const api = config.public.API_URL;
@@ -12,7 +12,10 @@ const toast = useToast();
 const route = useRoute();
 const authStore = useAuthStore();
 
-if (!authStore.isAuthenticated || (authStore.user.role !== "Client" && authStore.user.role !== "Manager")) {
+if (
+  !authStore.isAuthenticated ||
+  (authStore.user.role !== "Client" && authStore.user.role !== "Manager")
+) {
   router.push("/");
 }
 
@@ -20,7 +23,7 @@ const volume = ref(null);
 const timelineEvents = ref([]);
 
 const statusSeverity = {
-  READY_FOR_PICKUP: "info",
+  READY_FOR_PICKUP: "secondary",
   IN_TRANSIT: "info",
   DELIVERED: "success",
   RETURNED: "warning",
@@ -51,8 +54,8 @@ async function fetchVolume() {
   try {
     const response = await fetch(`${api}/volumes/${route.params.code}`, {
       headers: {
-        'Authorization': `Bearer ${authStore.token}` 
-      }
+        Authorization: `Bearer ${authStore.token}`,
+      },
     });
     if (!response.ok) {
       const errorText = await response.text();
@@ -68,15 +71,55 @@ async function fetchVolume() {
     const data = await response.json();
     volume.value = data;
     timelineEvents.value = [
-      { status: 'Ready for Pickup', date: data.readyDate ? new Date(data.readyDate.replace('[UTC]', '')) : null, icon: 'pi pi-info-circle', color: '#2db7f5' },
-      { status: 'Shipped', date: data.shippedDate ? new Date(data.shippedDate.replace('[UTC]', '')) : null, icon: 'pi pi-truck', color: '#ff9800' },
-      { status: 'Delivered', date: data.deliveredDate ? new Date(data.deliveredDate.replace('[UTC]', '')) : null, icon: 'pi pi-check', color: '#28a745' },
-      { status: 'Returned', date: data.returnedDate ? new Date(data.returnedDate.replace('[UTC]', '')) : null, icon: 'pi pi-undo', color: '#ffc107' },
-      { status: 'Cancelled', date: data.cancelledDate ? new Date(data.cancelledDate.replace('[UTC]', '')) : null, icon: 'pi pi-times', color: '#dc3545' }
-    ].filter(event => event.date);
+      {
+        status: "Ready for Pickup",
+        date: data.readyDate
+          ? new Date(data.readyDate.replace("[UTC]", ""))
+          : null,
+        icon: "pi pi-info-circle",
+        color: "#2db7f5",
+      },
+      {
+        status: "Shipped",
+        date: data.shippedDate
+          ? new Date(data.shippedDate.replace("[UTC]", ""))
+          : null,
+        icon: "pi pi-truck",
+        color: "#ff9800",
+      },
+      {
+        status: "Delivered",
+        date: data.deliveredDate
+          ? new Date(data.deliveredDate.replace("[UTC]", ""))
+          : null,
+        icon: "pi pi-check",
+        color: "#28a745",
+      },
+      {
+        status: "Returned",
+        date: data.returnedDate
+          ? new Date(data.returnedDate.replace("[UTC]", ""))
+          : null,
+        icon: "pi pi-undo",
+        color: "#ffc107",
+      },
+      {
+        status: "Cancelled",
+        date: data.cancelledDate
+          ? new Date(data.cancelledDate.replace("[UTC]", ""))
+          : null,
+        icon: "pi pi-times",
+        color: "#dc3545",
+      },
+    ].filter((event) => event.date);
   } catch (error) {
     console.error("Failed to fetch volume:", error);
-    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 }); 
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: error.message,
+      life: 3000,
+    });
   }
 }
 
@@ -109,19 +152,19 @@ onMounted(() => {
           <!-- Basic Volume Info -->
           <div class="grid grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-                <div>
+              <div>
                 <span class="text-sm font-medium">Volume Code</span>
                 <div class="text-xl">{{ volume.code }}</div>
-                </div>
-                <div>
+              </div>
+              <div>
                 <span class="text-sm font-medium">Delivery Code</span>
                 <div class="text-xl">
                   <Button
-                  link
-                  class="text-blue-600 hover:text-blue-800 p-0 text-xl"
-                  @click="navigateTo(`/deliveries/${volume.orderCode}`)"
+                    link
+                    class="text-blue-600 hover:text-blue-800 p-0 text-xl"
+                    @click="navigateTo(`/deliveries/${volume.orderCode}`)"
                   >
-                  {{ volume.orderCode }}
+                    {{ volume.orderCode }}
                   </Button>
                 </div>
               </div>
@@ -164,8 +207,14 @@ onMounted(() => {
               <Column field="packageType" header="Package Type">
                 <template #body="{ data }">
                   <div class="flex flex-wrap gap-1">
-                    <template v-for="type in data.packageType.split('_')" :key="type">
-                      <Tag :value="type" :severity="getPackageTypeSeverity(type)" />
+                    <template
+                      v-for="type in data.packageType.split('_')"
+                      :key="type"
+                    >
+                      <Tag
+                        :value="type"
+                        :severity="getPackageTypeSeverity(type)"
+                      />
                     </template>
                   </div>
                 </template>
@@ -181,7 +230,10 @@ onMounted(() => {
               <Column field="code" header="Code" />
               <Column field="type" header="Type">
                 <template #body="{ data }">
-                  <Tag :value="data.type" :severity="getSensorTypeSeverity(data.type)" />
+                  <Tag
+                    :value="data.type"
+                    :severity="getSensorTypeSeverity(data.type)"
+                  />
                 </template>
               </Column>
               <Column header="Actions">
@@ -206,7 +258,7 @@ onMounted(() => {
             <h3 class="text-xl font-semibold mb-10">Volume Tracking</h3>
             <Timeline :value="timelineEvents">
               <template #opposite="{ item }">
-                <span>{{ item.date ? item.date.toLocaleString() : '' }}</span>
+                <span>{{ item.date ? item.date.toLocaleString() : "" }}</span>
               </template>
               <template #marker="{ item }">
                 <span
@@ -219,7 +271,7 @@ onMounted(() => {
                     width: '2rem',
                     height: '2rem',
                     borderRadius: '50%',
-                    color: '#fff'
+                    color: '#fff',
                   }"
                 >
                   <i :class="item.icon"></i>
