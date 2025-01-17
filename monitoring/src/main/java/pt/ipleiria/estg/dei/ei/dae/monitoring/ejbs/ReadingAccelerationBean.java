@@ -7,6 +7,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintViolationException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Manager;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.ReadingAcceleration;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.VolumeStatus;
@@ -24,6 +26,11 @@ public class ReadingAccelerationBean {
 
     @EJB
     private SensorBean sensorBean;
+
+    @EJB
+    private EmailBean emailBean;
+    @EJB
+    private ManagerBean managerBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.ReadingAccelerationBean");
 
@@ -48,10 +55,27 @@ public class ReadingAccelerationBean {
             }
             ReadingAcceleration readingAcceleration = new ReadingAcceleration(sensor, Instant.now(),acceleration);
             em.persist(readingAcceleration);
+
+
+            if( acceleration >= 5 ){
+                sendEmail(acceleration, sensorCode, sensor.getVolume().getCode(), status);
+            }
+
             return readingAcceleration;
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
+    }
+
+    private void sendEmail(Double acceleration, String sensorCode, String volumeCode, VolumeStatus status) throws CustomEntityNotFoundException {
+        Manager manager = managerBean.find("Head - manager");
+        String subject = "Sensor detected high impact!";
+        String body = "Hello, Head manager " + manager.getName() + ",\n\n"
+                + "Here to inform that volume '" + volumeCode + "' while in status '" + status + "' suffered an impact with "
+                + acceleration + "G. It was detected by the sensor with code '" + sensorCode + "' consider get a check on the volume to might return it.\n\n"
+                + "Email generated automatically by the system";
+
+        emailBean.send(manager.getEmail(), subject, body);
     }
 
     public ReadingAcceleration find(Long id)

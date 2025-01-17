@@ -52,10 +52,10 @@ public class ConfigBean {
 
         logger.info("Creating users");
         try {
-            clientBean.create("client","client", "client@mail.pt","123");
-            clientBean.create("client2","client2", "client2@mail.pt","123");
-            logisticianBean.create("logistician","logistician", "logistician@mail.pt","123");
-            managerBean.create("manager","manager", "manager@mail.pt","123");
+            clientBean.create("client","Tiago", "client1@mail.pt","123");
+            clientBean.create("client2","Rodrigo", "client2@mail.pt","123");
+            logisticianBean.create("logistician","Isa", "logistician@mail.pt","123");
+            managerBean.create("Head - manager","Afonso", "manager@mail.pt","123");
         } catch (Exception ignore) {}
         logger.info("Users created");
 

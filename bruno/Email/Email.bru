@@ -1,0 +1,27 @@
+meta {
+  name: Email
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/users/:code/email
+  body: json
+  auth: none
+}
+
+params:path {
+  code: client
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "subject": "Meeting Reminder",
+    "body": "Don't forget about our meeting tomorrow at 10 AM."
+  }
+  
+}

@@ -40,6 +40,8 @@ public class VolumeBean {
 
     @EJB
     private ProductBean productBean;
+    @EJB
+    private EmailBean emailBean;
 
     private static final Logger logger = Logger.getLogger("ejbs.VolumeBean");
 
@@ -154,15 +156,30 @@ public class VolumeBean {
         Volume volume = find(code);
         VolumeStatus currentStatus = volume.getStatus();
 
+        Client client = volume.getOrder().getClient();
+
         validateStatusChange(volume, currentStatus, newStatus);
 
         em.lock(volume, LockModeType.OPTIMISTIC);
         logger.info("Updating volume '" + code + "' from status '" + currentStatus + "' to '" + newStatus + "'");
         try {
+
+            sendEmail(client, code, currentStatus, newStatus);
+
             updateVolumeStatus(volume, currentStatus, newStatus);
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
+    }
+
+    private void sendEmail(Client client, String code, VolumeStatus currentStatus, VolumeStatus newStatus){
+        String subject = "Volume Status Updated";
+        String body = "Hello " + client.getName() + ",\n\n"
+                + "Your volume '" + code + "' was updated from '"
+                + currentStatus + "' to '" + newStatus + "'.\n\n"
+                + "sincerely,\nManagement Team";
+
+        emailBean.send(client.getEmail(), subject, body);
     }
 
     private void validateStatusChange(Volume volume, VolumeStatus currentStatus, VolumeStatus newStatus)
