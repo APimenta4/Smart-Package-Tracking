@@ -17,7 +17,7 @@ public class EmailBean {
     private Session mailSession;
     private static final Logger logger = Logger.getLogger("EmailBean.logger");
     public void send(String to, String subject, String text) {
-        logger.info("Sending email to '"+to+"'");
+        logger.info("Sending email to '"+to+"' subject '"+subject+"'");
         Thread emailJob = new Thread(() -> {
             Message message = new MimeMessage(mailSession);
             Date timestamp = new Date();

@@ -92,6 +92,11 @@ public class VolumeBean {
         }
 
         counts.validate();
+
+        try{
+            Volume volume = find(volumeCode);
+            sendEmail(volume.getOrder().getClient(), volumeCode);
+        } catch (Exception ignored){}
     }
 
     public void create(String code, String orderCode, PackageType packageType)
@@ -105,8 +110,6 @@ public class VolumeBean {
             Volume volume = new Volume(code, order, packageType);
             order.addVolume(volume);
             em.persist(volume);
-
-            sendEmail(volume.getOrder().getClient(), code);
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
@@ -172,7 +175,10 @@ public class VolumeBean {
         try {
             updateVolumeStatus(volume, currentStatus, newStatus);
 
-            sendEmail(client, code, currentStatus, newStatus);
+            try{
+                sendEmail(client, code, currentStatus, newStatus);
+            } catch (Exception ignored){}
+
         } catch (ConstraintViolationException e) {
             throw new CustomConstraintViolationException(e);
         }
@@ -255,29 +261,26 @@ public class VolumeBean {
                 "' status is '" + currentStatus + "'";
     }
 
-    private void sendEmail(Client client, String code, VolumeStatus currentStatus, VolumeStatus newStatus){
-        try{
-            String subject = "Volume Status Updated";
-            String body = "Dear " + client.getName() + ",\n\n"
-                    + "We would like to inform you that the status of your volume '" + code
-                    + "' has been updated from '" + currentStatus + "' to '" + newStatus + "'."
-                    + "\n\nIf you have any questions or need further clarification, please feel free to contact us."
-                    + "\n\nSincerely,\nManagement Team";
+    private void sendEmail(Client client, String volumeCode, VolumeStatus currentStatus, VolumeStatus newStatus){
+        String subject = "Volume Status Updated";
+        String body = "Dear " + client.getName() + ",\n\n"
+                + "We would like to inform you that the status of your volume '" + volumeCode
+                + "' has been updated to '" + newStatus + "'."
+                + "\n\nIf you have any questions or need further clarification, please feel free to contact us."
+                + "\n\nSincerely,\nManagement Team";
 
-            emailBean.send(client.getEmail(), subject, body);
-        } catch (Exception ignored){}
+        emailBean.send(client.getEmail(), subject, body);
     }
 
-    private void sendEmail(Client client, String code) {
-        try{
-            String subject = "Volume Status Update";
-            String body = "Dear " + client.getName() + ",\n\n"
-                    + "We are pleased to inform you that your volume '" + code
-                    + "' has been successfully processed and is now awaiting distribution."
-                    + "\n\nIf you have any questions or need further assistance, "
-                    + "please do not hesitate to reach out to us."
-                    + "\n\nBest regards,\nManagement Team";
-        } catch (Exception ignored){}
+    private void sendEmail(Client client, String volumeCode) {
+        String subject = "Volume Status Update";
+        String body = "Dear " + client.getName() + ",\n\n"
+                + "We are pleased to inform you that your volume '" + volumeCode
+                + "' has been successfully processed and is now awaiting distribution."
+                + "\n\nIf you have any questions or need further assistance, "
+                + "please do not hesitate to reach out to us."
+                + "\n\nBest regards,\nManagement Team";
+        emailBean.send(client.getEmail(), subject, body);
     }
 
     public void delete(String code) throws CustomEntityNotFoundException {
