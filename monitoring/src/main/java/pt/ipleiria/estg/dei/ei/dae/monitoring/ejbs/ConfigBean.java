@@ -55,6 +55,7 @@ public class ConfigBean {
             clientBean.create("client", "Client", "client@mail.pt", "123");
             clientBean.create("client2", "Client 2", "client2@mail.pt", "123");
             logisticianBean.create("logistician", "Logistician", "logistician@mail.pt", "123");
+            logisticianBean.create("logistician2", "Logistician 2", "logistician2@mail.pt", "123");
             managerBean.create("manager", "Manager", "manager@mail.pt", "123");
         } catch (Exception e) {
             logger.warning("An error occurred while creating users: " + e.getMessage());
