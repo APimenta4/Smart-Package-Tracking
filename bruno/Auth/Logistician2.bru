@@ -1,0 +1,22 @@
+meta {
+  name: Logistician2
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{api_url}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code":"logistician2",
+    "password":"123"
+  }
+}
+
+vars:post-response {
+  bearer_token: res.body
+}
