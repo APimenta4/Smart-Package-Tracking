@@ -66,11 +66,16 @@ public class VolumeBean {
         String volumeCode = volumeDTO.getCode();
         PackageType volumePackageType = volumeDTO.getPackageType();
 
+        List<ProductDTO> productDTOs = volumeDTO.getProducts();
+        if (productDTOs.isEmpty()){
+            throw new CustomConstraintViolationException("Empty or missing product list");
+        }
+
         create(volumeCode, orderCode, volumePackageType);
         counts.add(volumePackageType, 1L);
 
         // Process Products
-        for (ProductDTO productDTO : volumeDTO.getProducts()) {
+        for (ProductDTO productDTO : productDTOs) {
             String productCode = productDTO.getCode();
             Product product = productBean.find(productCode);
             PackageType productPackageType = product.getPackageType();
