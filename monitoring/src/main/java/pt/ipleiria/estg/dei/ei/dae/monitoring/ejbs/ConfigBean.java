@@ -46,77 +46,36 @@ public class ConfigBean {
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
     @PostConstruct
-    public void populateDB()
-    {
+    public void populateDB(){
         logger.info("Starting to populate DB");
 
+        // Creating Users
         logger.info("Creating users");
         try {
-            clientBean.create("client","client", "client@mail.pt","123");
-            clientBean.create("client2","client2", "client2@mail.pt","123");
-            logisticianBean.create("logistician","logistician", "logistician@mail.pt","123");
-            managerBean.create("manager","manager", "manager@mail.pt","123");
-        } catch (Exception ignore) {}
-        logger.info("Users created");
+            clientBean.create("client", "Client", "client@mail.pt", "123");
+            clientBean.create("client2", "Client 2", "client2@mail.pt", "123");
+            logisticianBean.create("logistician", "Logistician", "logistician@mail.pt", "123");
+            managerBean.create("manager", "Manager", "manager@mail.pt", "123");
+        } catch (Exception e) {
+            logger.warning("An error occurred while creating users: " + e.getMessage());
+        }
 
+        // Creating Products
         logger.info("Creating products");
         try {
-            productBean.create("P01", PackageType.NONE,"Banana");
-            productBean.create("P02", PackageType.FRAGILE,"TV");
-            productBean.create("P03", PackageType.ISOTERMIC,"product three");
-            productBean.create("P04", PackageType.GEOLOCATION,"Arduino");
-            productBean.create("P05", PackageType.FRAGILE_ISOTERMIC,"Chemical equipment");
-            productBean.create("P06", PackageType.FRAGILE_ISOTERMIC_GEOLOCATION,"Palm tree");
-        } catch (Exception ignore) {}
-        logger.info("Products created");
+            productBean.create("P01", PackageType.NONE, "T-shirt");
+            productBean.create("P02", PackageType.FRAGILE, "TV");
+            productBean.create("P03", PackageType.ISOTERMIC, "Ice Cream");
+            productBean.create("P04", PackageType.GEOLOCATION, "Parcel with Important Legal Documents");
+            productBean.create("P05", PackageType.FRAGILE_ISOTERMIC, "Specialty Chocolates");
+            productBean.create("P06", PackageType.FRAGILE_GEOLOCATION, "Crystal Chandelier");
+            productBean.create("P07", PackageType.ISOTERMIC_GEOLOCATION, "Frozen Gourmet Meal");
+            productBean.create("P08", PackageType.FRAGILE_ISOTERMIC_GEOLOCATION, "Temperature-Controlled Fine Jewelry");
+        } catch (Exception e) {
+            logger.warning("An error occurred while creating products: " + e.getMessage());
+        }
 
-        logger.info("Creating order");
-        try {
-            orderBean.create("O1","client");
-            volumeBean.create("V1", "O1", PackageType.ISOTERMIC_GEOLOCATION);
-            sensorBean.create("S1","V1",SensorType.TEMPERATURE);
-            sensorBean.create("S2","V1",SensorType.LOCATION);
-            lineOfSaleBean.create("V1","P01",10L);
-            lineOfSaleBean.create("V1","P02",20L);
-            sensorBean.create("S3","V1",SensorType.ACCELERATION);
-
-            volumeBean.create("V2", "O1", PackageType.ISOTERMIC_GEOLOCATION);
-            sensorBean.create("S4","V2",SensorType.TEMPERATURE);
-            sensorBean.create("S5","V2",SensorType.LOCATION);
-            lineOfSaleBean.create("V2","P01",1L);
-            lineOfSaleBean.create("V2","P02",2L);
-            sensorBean.create("S6","V2",SensorType.ACCELERATION);
-            int i = 7;
-            i = createVolume("1",i);
-            i = createVolume("2",i);
-            i = createVolume("3",i);
-            i = createVolume("4",i);
-            i = createVolume("5",i);
-
-            readingTemperatureBean.create("S1",24D);
-            readingLocationBean.create("S2",-50.61D, 165.97D);
-            readingAccelerationBean.create("S3",1.5D);
-
-            readingTemperatureBean.create("S4",24.2D);
-            readingLocationBean.create("S5",-50.61D, 165.97D);
-            readingAccelerationBean.create("S6",1.5D);
-        } catch (Exception ignore) {}
-        logger.info("Order created");
-
-        logger.info("DB populated");
-    }
-
-    private int createVolume(String volumeCode, int i)
-            throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
-        volumeBean.create(volumeCode, "O1", PackageType.ISOTERMIC_GEOLOCATION);
-        sensorBean.create("S"+i,volumeCode,SensorType.TEMPERATURE);
-        sensorBean.create("S"+(i+1),volumeCode,SensorType.LOCATION);
-        lineOfSaleBean.create(volumeCode,"P01",1L);
-        lineOfSaleBean.create(volumeCode,"P02",2L);
-        sensorBean.create("S"+(i+2),volumeCode,SensorType.ACCELERATION);
-
-        volumeBean.updateStatus(volumeCode, VolumeStatus.IN_TRANSIT);
-        return i+3;
+        logger.info("DB populated successfully");
     }
 }
 

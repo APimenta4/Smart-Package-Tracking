@@ -55,6 +55,11 @@ public class VolumeBean {
     @Transactional(rollbackOn = Exception.class)
     public void createWithDetails(VolumeDTO volumeDTO, String orderCode)
             throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        createWithDetailsNoTransaction(volumeDTO, orderCode);
+    }
+
+    public void createWithDetailsNoTransaction(VolumeDTO volumeDTO, String orderCode)
+            throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
         Counts counts = new Counts();
         String volumeCode = volumeDTO.getCode();
         PackageType volumePackageType = volumeDTO.getPackageType();

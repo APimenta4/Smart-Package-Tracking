@@ -12,13 +12,12 @@ import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.OrderDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.ProductDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.SensorDTO;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.dtos.VolumeDTO;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Client;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.enums.PackageType;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.monitoring.exceptions.CustomEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.monitoring.utils.Counts;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -54,21 +53,13 @@ public class OrderBean {
     @Transactional(rollbackOn = Exception.class)
     public void createWithDetails(OrderDTO orderDTO)
             throws CustomConstraintViolationException, CustomEntityNotFoundException, CustomEntityExistsException {
+        Counts counts = null;
         String orderCode = orderDTO.getCode();
         create(orderCode ,orderDTO.getClientCode());
 
         for(VolumeDTO volumeDTO : orderDTO.getVolumes()) {
-            String volumeCode = volumeDTO.getCode();
-            volumeBean.create(volumeCode, orderCode, volumeDTO.getPackageType());
-
-            for (ProductDTO productDTO : volumeDTO.getProducts()) {
-                lineOfSaleBean.create(volumeCode, productDTO.getCode(), productDTO.getQuantity());
-            }
-            for (SensorDTO sensorDTO : volumeDTO.getSensors()) {
-                sensorBean.create(sensorDTO.getCode(), volumeCode,sensorDTO.getType());
-            }
+           volumeBean.createWithDetailsNoTransaction(volumeDTO, orderCode);
         }
-
     }
 
     public void create(String code, String clientCode)
