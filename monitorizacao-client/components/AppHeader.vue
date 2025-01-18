@@ -16,15 +16,25 @@ const isDark = ref(false);
 const showFindDeliveryDialog = ref(false);
 const showFindVolumeDialog = ref(false);
 const showFindReadingDialog = ref(false);
+const showFindSensorDialog = ref(false);
 const showUpdateVolumeStatusDialog = ref(false);
 const showSimulateSensorDialog = ref(false);
+const showLocation = ref(false); 
+const showTemperature = ref(false); 
+const showAcceleration = ref(false);
+
 const searchDeliveryCode = ref("");
 const searchVolumeCode = ref("");
 const searchReadingCode = ref("");
 const updateVolumeCode = ref("");
 const newVolumeStatus = ref("");
 const sensorCode = ref("");
-const sensorValue = ref("");
+const sensor = ref(null);
+
+const temperature = ref("");
+const acceleration = ref("");
+const latitude = ref("");
+const longitude = ref("");
 
 const volumeStatusOptions = [
   { label: "In Transit", value: "IN_TRANSIT" },
@@ -33,10 +43,10 @@ const volumeStatusOptions = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
-async function simulateSensor() {
-  if (!validateString(sensorCode.value) || !validateString(sensorValue.value)) {
-    console.error("Sensor Code and Value are required.");
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code and Value are required.', life: 3000 });
+async function findSensor(){
+  if (!validateString(sensorCode.value)) {
+    console.error("Sensor Code are required.");
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Sensor Code are required.', life: 3000 });
     return;
   }
   try {
@@ -44,25 +54,50 @@ async function simulateSensor() {
     if (!sensorResponse.ok) {
       throw new Error("Failed to fetch sensor details");
     }
-    const sensorData = await sensorResponse.json();
-    const payload = { sensorCode: sensorCode.value };
+    sensor.value = await sensorResponse.json();
+
+    showFindSensorDialog.value = false;
+    showAcceleration.value = sensor.value.type === "ACCELERATION";
+    showTemperature.value = sensor.value.type === "TEMPERATURE";
+    showLocation.value = sensor.value.type === "LOCATION";
+    console.log(showLocation.value)
+    console.log(showTemperature.value)
+    console.log(showAcceleration.value)
+    showSimulateSensorDialog.value = true;
+
+  }catch (error){
+    console.error("Failed to find sensor:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+  }
+}
+
+function resetFindSensorDialog() {
+  sensorCode.value = "";
+}
+
+async function simulateSensor() {
+  if (sensor === null) {
+    console.error("Failed to find sensor:", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+    return;
+  }
+  try {
+    const payload = { sensorCode: sensor.value.code };
 
 
-    if (sensorData.type === "ACCELERATION") {
-      payload.acceleration = parseFloat(sensorValue.value);
-    } else if (sensorData.type === "TEMPERATURE") {
-      payload.temperature = parseFloat(sensorValue.value);
-    } else if (sensorData.type === "LOCATION") {
-      const [latitude, longitude] = sensorValue.value.split(",").map(Number);
-      payload.latitude = latitude;
-      payload.longitude = longitude;
+    if (sensor.value.type === "ACCELERATION") {
+      payload.acceleration = parseFloat(acceleration.value);
+    } else if (sensor.value.type === "TEMPERATURE") {
+      payload.temperature = parseFloat(temperature.value);
+    } else if (sensor.value.type === "LOCATION") {
+      payload.latitude = parseFloat(latitude.value);
+      payload.longitude = parseFloat(longitude.value);
     }
 
     const response = await fetch(`${api}/readings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`
       },
       body: JSON.stringify(payload),
     });
@@ -87,8 +122,13 @@ async function simulateSensor() {
 }
 
 function resetSimulateSensorDialog() {
-  sensorCode.value = "";
-  sensorValue.value = "";
+  showAcceleration.value = false;
+  showLocation.value = false;
+  showTemperature.value = false;
+  temperature.value ="";
+  acceleration.value ="";
+  latitude.value ="";
+  longitude.value ="";
 }
 
 const sensorTypeOptions = ["ACCELERATION (G)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
@@ -254,7 +294,7 @@ const updateMenuItems = () => {
         {
           label: "Simulate a Sensor",
           icon: "pi pi-cog",
-          command: () => (showSimulateSensorDialog.value = true),
+          command: () => (showFindSensorDialog.value = true),
         },
       ],
     },
@@ -490,11 +530,11 @@ onMounted(() => {
   </Dialog>
 
   <Dialog
-    v-model:visible="showSimulateSensorDialog"
+    v-model:visible="showFindSensorDialog"
     modal
     :header="'Simulate a Sensor'"
     :style="{ width: '90vw', maxWidth: '30rem' }"
-    @hide="resetSimulateSensorDialog"
+    @hide="resetFindSensorDialog"
   >
     <template #header>
       <div class="flex items-center gap-2">
@@ -515,17 +555,43 @@ onMounted(() => {
           >Sensor Code is required.</small
         >
       </span>
-      <span class="p-float-label">
-        <label for="sensorValue">Reading Value</label>
-        <InputText
-          id="sensorValue"
-          v-model="sensorValue"
-          class="w-full"
-          :class="{ 'p-invalid': !validateString(sensorValue) }"
-        />
-        <small v-if="!validateString(sensorValue)" class="p-error"
-          >Reading Value is required.</small
-        >
+    </div>
+
+    <template #footer>
+      <Button label="Cancel" text @click="showFindSensorDialog = false" />
+      <Button label="Find" @click="findSensor" />
+    </template>
+  </Dialog>
+
+  <Dialog
+    v-model:visible="showSimulateSensorDialog"
+    modal
+    :header="'Simulate a Sensor'"
+    :style="{ width: '90vw', maxWidth: '30rem' }"
+    @hide="resetSimulateSensorDialog"
+  >
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-cog text-xl"></i>
+        <span class="text-xl font-bold">Simulate a Reading for {{ sensor?.code }}</span>
+      </div>
+    </template>
+    <div class="flex flex-col gap-4">
+      <span v-if="showLocation" class="p-float-label">
+        <label for="latitude">Latitude</label>
+        <InputText id="latitude" v-model="latitude" class="w-full" />
+      </span>
+      <span v-if="showLocation" class="p-float-label">
+        <label for="longitude">Longitude</label>
+        <InputText id="longitude" v-model="longitude" class="w-full" />
+      </span>
+      <span v-if="showTemperature"class="p-float-label">
+        <label for="temperature">Temperature (ºC)</label>
+        <InputText id="temperature" v-model="temperature" class="w-full" />
+      </span>
+      <span v-if="showAcceleration" class="p-float-label">
+        <label for="acceleration">Acceleration (G)</label>
+        <InputText id="acceleration" v-model="acceleration" class="w-full" />
       </span>
     </div>
 

@@ -45,13 +45,12 @@ IPLeiria - ESTG, Desenvolvimento de Aplicações Empresariais
 
   - [Sensores](#sensores)
     - [EP22 Consultar Sensor](#ep22-consultar-sensor)
-    - [EP23 Consultar o Seu Sensor](#ep23-consultar-o-seu-sensor)
-    - [EP24 Consultar as Leituras de um Sensor](#ep24-consultar-as-leituras-de-um-sensor)
+    - [EP23 Consultar as Leituras de um Sensor](#ep23-consultar-as-leituras-de-um-sensor)
   
   - [Leituras](#leituras)
-    - [EP25 Enviar Leituras](#ep25-enviar-leituras)
-    - [EP26 Consultar Todas as Leituras](#ep26-consultar-todas-as-leituras)
-    - [EP27 Consultar Todas as Suas Leituras](#ep27-consultar-todas-as-suas-leituras)
+    - [EP24 Enviar Leituras](#ep24-enviar-leituras)
+    - [EP25 Consultar Todas as Leituras](#ep25-consultar-todas-as-leituras)
+    - [EP26 Consultar Todas as Suas Leituras](#ep26-consultar-todas-as-suas-leituras)
 
 ### Tipos de Usuários e Permissões
 
@@ -966,7 +965,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 #### `EP22` Consultar Sensor
 
-Um utilizador, autenticado como gestor, consulta os detalhes de um sensor.
+Um utilizador consulta os detalhes de um sensor.
 
 **HTTP GET** para o sítio:
 
@@ -986,29 +985,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ---
 
-#### `EP23` Consultar o Seu Sensor
-
-Um utilizador, autenticado como cliente, consulta os detalhes de um dos seus sensors.
-
-**HTTP GET** para o sítio:
-
-```text
-/monitoring/api/sensors/{sensorCode}
-```
-
-A resposta devolvida por este recurso segue o formato JSON:
-
-```json
-{
-  "code": "S1",
-  "type": "TEMPERATURE",
-  "volumeCode": "V1"
-}
-```
-
----
-
-#### `EP24` Consultar as Leituras de Um Sensor
+#### `EP23` Consultar as Leituras de Um Sensor
 
 Um utilizador, autenticado como gestor, consulta todas as leituras de um sensor em específico.
 
@@ -1041,7 +1018,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 
 ### Leituras
 
-#### `EP25` Enviar Leituras
+#### `EP24` Enviar Leituras
 
 Um sensor envia uma nova leitura para o sistema de monitorização.
 
@@ -1073,7 +1050,7 @@ ou
 
 ---
 
-#### `EP26` Consultar Todas as Leituras
+#### `EP25` Consultar Todas as Leituras
 
 Um utilizador, autenticado como gestor, consulta todas as leituras dos sensores.
 
@@ -1113,7 +1090,7 @@ A resposta devolvida por este recurso segue o formato JSON:
 ]
 ```
 
-#### `EP27` Consultar Todas as Suas Leituras
+#### `EP26` Consultar Todas as Suas Leituras
 
 Um utilizador, autenticado como cliente, consulta todas as leituras dos sensores associados aos volumes das suas encomendas.
 

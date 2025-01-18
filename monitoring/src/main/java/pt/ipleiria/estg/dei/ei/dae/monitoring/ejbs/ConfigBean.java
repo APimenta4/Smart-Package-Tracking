@@ -65,7 +65,7 @@ public class ConfigBean {
         try {
             productBean.create("P01", PackageType.NONE, "T-shirt");
             productBean.create("P02", PackageType.FRAGILE, "TV");
-            productBean.create("P03", PackageType.ISOTERMIC, "Ice Cream");
+            productBean.create("P03", PackageType.ISOTERMIC, "Special box Ice Cream");
             productBean.create("P04", PackageType.GEOLOCATION, "Parcel with Important Legal Documents");
             productBean.create("P05", PackageType.FRAGILE_ISOTERMIC, "Specialty Chocolates");
             productBean.create("P06", PackageType.FRAGILE_GEOLOCATION, "Crystal Chandelier");

@@ -324,7 +324,7 @@ const getPackageTypeSeverity = (type) => {
                   class="text-blue-600 hover:text-blue-800 p-0"
                   @click="showProductDetails(data.products)"
                 >
-                  {{ data.products.length }} products
+                  products
                 </Button>
               </template>
             </Column>
@@ -335,7 +335,7 @@ const getPackageTypeSeverity = (type) => {
                   class="text-blue-600 hover:text-blue-800 p-0"
                   @click="showSensorDetails(data.sensors)"
                 >
-                  {{ data.sensors.length }} sensors
+                  sensors
                 </Button>
               </template>
             </Column>

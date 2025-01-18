@@ -76,6 +76,7 @@ async function createVolume() {
         errorMessage = errorData.message || errorMessage;
       } catch (e) {
         errorMessage = errorText;
+        errorMessage = errorMessage.replace(/\./g, ".\n")
       }
       throw new Error(errorMessage);
     }
