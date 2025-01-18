@@ -127,7 +127,7 @@ onMounted(() => {
                   {{ data.temperature }}°C
                 </template>
                 <template v-else-if="data.type === 'ACCELERATION'">
-                  {{ data.acceleration }} m/s²
+                  {{ data.acceleration }} G
                 </template>
               </div>
             </template>

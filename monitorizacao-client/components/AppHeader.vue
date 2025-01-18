@@ -91,7 +91,7 @@ function resetSimulateSensorDialog() {
   sensorValue.value = "";
 }
 
-const sensorTypeOptions = ["ACCELERATION (m/s²)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
+const sensorTypeOptions = ["ACCELERATION (G)", "TEMPERATURE (ºC)", "LOCATION (LATITUDE,LONGITUDE)"];
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
