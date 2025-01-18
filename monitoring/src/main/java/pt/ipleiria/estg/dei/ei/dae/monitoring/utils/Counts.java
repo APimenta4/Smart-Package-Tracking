@@ -70,7 +70,23 @@ public class Counts {
 
     public void validate() throws CustomConstraintViolationException {
         if(acceleration != 0 || temperature != 0 || location != 0){
-            throw new CustomConstraintViolationException("Package types and sensor numbers don't match");
+            String message = "Package types and sensor numbers don't match. ";
+            if (acceleration < 0){
+                message += "Exceeding "+ -acceleration +" Acceleration sensor(s). ";
+            } else if (acceleration > 0) {
+                message += "Missing "+ acceleration +" Acceleration sensor(s). ";
+            }
+            if (location < 0){
+                message += "Exceeding "+ -location +" Location sensor(s). ";
+            } else if (location > 0) {
+                message += "Missing "+ location +" Location sensor(s). ";
+            }
+            if (temperature < 0){
+                message += "Exceeding "+ -temperature +" Temperature sensor(s). ";
+            } else if (temperature > 0) {
+                message += "Missing "+ temperature +" Temperature sensor(s). ";
+            }
+            throw new CustomConstraintViolationException(message);
         }
     }
 }
